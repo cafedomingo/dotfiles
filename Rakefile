@@ -8,22 +8,23 @@ desc 'link dotfiles into ~'
 task :install do
   @replace_all = false
   process_files(config_files, &method(:install_file))
-  process_files(config_files(true), FISH_CONFIG_PATH, FISH_INSTALL_PATH, &method(:install_file))
+  process_files(config_files(true), FISH_CONFIG_PATH, FISH_INSTALL_PATH, false, &method(:install_file))
 end
 
 desc 'unlink dotfiles from ~'
 task :uninstall do
   @remove_all = false
   process_files(config_files, &method(:uninstall_file))
-  process_files(config_files(true), FISH_CONFIG_PATH, FISH_INSTALL_PATH, &method(:uninstall_file))
+  process_files(config_files(true), FISH_CONFIG_PATH, FISH_INSTALL_PATH, false, &method(:uninstall_file))
 end
 
 private
 
-def process_files(files, source_path = ROOT_DIR, install_path = INSTALL_PATH, &process)
+def process_files(files, source_path = ROOT_DIR, install_path = INSTALL_PATH, add_dot = true, &process)
   files.each do |file|
     filename = File.basename(file)
-    destination = File.join(install_path, ".#{filename}")
+    filename = '.' + filename if add_dot
+    destination = File.join(install_path, filename)
     absolute_destination = File.expand_path(destination)
 
     process.call(file, destination, absolute_destination)
