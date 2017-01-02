@@ -118,7 +118,7 @@ formulas=(
   htop
   httpie
   jpegoptim
-  jqs
+  jq
   node
   optipng
   p7zip
