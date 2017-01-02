@@ -11,7 +11,9 @@ if /usr/libexec/java_home > /dev/null ^ /dev/null
   set -gx JAVA_HOME (/usr/libexec/java_home)
 end
 # node
-set -gx NODE_PATH /usr/local/lib/node_modules:$NODE_PATH
+if test -d /usr/local/lib/node_modules
+  set -gx NODE_PATH /usr/local/lib/node_modules $NODE_PATH
+end
 
 # PATH
 set -l paths /usr/local/bin /usr/local/sbin                                       # homebrew
@@ -22,11 +24,7 @@ set -l paths $paths /Library/Frameworks/Mono.framework/Versions/Current/Commands
 set -l paths $paths $HOME/.bin $HOME/bin                                          # user
 
 for path in $paths[-1..1]
-  if test -d $path
-    if not contains $path $PATH
-      set PATH $path $PATH
-    end
-  end
+  test -d $path; and not contains $path $PATH; and set PATH $path $PATH
 end
 
 # MANPATH
@@ -34,15 +32,8 @@ set -l paths /usr/local/opt/coreutils/libexec/gnuman    # homebrew GNU utilities
 set -l paths $paths /usr/local/opt/findutils/share/man  # homebrew find utilities
 
 for path in $paths[-1..1]
-  if test -d $path
-    if not contains $path $MANPATH
-      set MANPATH $path $MANPATH
-    end
-  end
+  test -d $path; and not contains $path $MANPATH; and set MANPATH $path $MANPATH
 end
-
-# cleanup
-set -e paths
 
 # highlighted `man` pages
 set -gx LESS_TERMCAP_mb \e'[01;31m'       # begin blinking
