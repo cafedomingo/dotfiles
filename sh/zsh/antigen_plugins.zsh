@@ -6,7 +6,7 @@ antigen use oh-my-zsh
 
 bundles=(
   git
-  tarruda/zsh-autosuggestions
+  zsh-users/zsh-autosuggestions
   zsh-users/zsh-history-substring-search
   zsh-users/zsh-syntax-highlighting
 )
