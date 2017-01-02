@@ -19,8 +19,7 @@ fi
 
 # PATH
 paths=(
-  /usr/local/bin                                                # homebrew
-  /usr/local/sbin                                               # homebrew
+  /usr/local/bin /usr/local/sbin                                # homebrew
   /usr/local/opt/coreutils/libexec/gnubin                       # homebrew GNU utilities (via brew --prefix coreutils)
   $GEM_HOME/bin                                                 # gem
   $HOME/.rvm/bin                                                # rvm
