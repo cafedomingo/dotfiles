@@ -3,9 +3,9 @@
 source ./util.sh
 
 if is_macos; then
-  . macos/prefs.sh
-  . macos/install.sh
+  source macos/prefs.sh
+  source macos/install.sh
 fi;
 
-. gem.sh
-. npm.sh
+source gem.sh
+source npm.sh
