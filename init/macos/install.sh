@@ -144,9 +144,9 @@ apps=(
   android-studio
   applepi-baker
   atom
+  boxer
   brave
   charles
-  dosbox
   dropbox
   firefox
   flux
