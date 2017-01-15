@@ -27,7 +27,9 @@ paths=(
   $HOME/.bin $HOME/bin                                          # user
 )
 for search_path in ${paths[@]}; do
-  [[ -d $search_path ]] && [[ $PATH != *$search_path* ]] && PATH=$search_path:$PATH
+  [[ -d $search_path ]] \
+  && [[ $PATH != *$search_path* ]] \
+  && PATH=$search_path:$PATH
 done
 export PATH
 
@@ -37,7 +39,9 @@ paths=(
   /usr/local/opt/findutils/share/man      # homebrew find utilities
 )
 for search_path in ${paths[@]}; do
-  [[ -d $search_path ]] && [[ $MANPATH != *$search_path* ]] && MANPATH=$search_path:$MANPATH
+  [[ -d $search_path ]] \
+  && [[ $MANPATH != *$search_path* ]] \
+  && MANPATH=$search_path:$MANPATH
 done
 export MANPATH
 
