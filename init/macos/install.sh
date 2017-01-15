@@ -1,6 +1,7 @@
 #!/usr/bin/env sh
 
-source ../util.sh
+location=$(dirname $([ -z $BASH_SOURCE ] && echo ${(%):-%x} || echo $BASH_SOURCE))
+source $location/../util.sh
 
 ##########
 # xcode cli tools
@@ -46,8 +47,9 @@ shells=(
   zsh
 )
 
+brew install ${shells[@]}
+
 for shell in ${shells[@]}; do
-  brew install $shell
   # add shells to system
   if ! fgrep -q $(brew --prefix)/bin/$shell /etc/shells; then
     echo $(brew --prefix)/bin/$shell | sudo tee -a /etc/shells > /dev/null;
@@ -62,9 +64,7 @@ completions=(
   rake-completion
 )
 
-for completion in "${completions[@]}"; do
-  brew install $completions
-done
+brew install ${completions[@]}
 
 ##########
 # install fonts (via homebrew)
@@ -82,9 +82,7 @@ fonts=(
   font-roboto-slab
 )
 
-for font in "${fonts[@]}"; do
-  brew cask install $font
-done
+brew cask install ${fonts[@]}
 
 # sf mono - https://medium.com/@deepak.gulati/using-sf-mono-in-emacs-6712c45b2a6d
 if [[ -d /Applications/Utilities/Terminal.app/Contents/Resources/Fonts ]]; then
@@ -168,9 +166,7 @@ apps=(
   vlc
 )
 
-for app in "${apps[@]}"; do
-  brew cask install $app
-done
+brew cask install ${apps[@]}
 
 ##########
 # cleanup
