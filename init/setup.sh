@@ -1,11 +1,12 @@
 #!/usr/bin/env sh
 
-source ./util.sh
+location=$(dirname $([ -z $BASH_SOURCE ] && echo ${(%):-%x} || echo $BASH_SOURCE))
+source $location/util.sh
 
 if is_macos; then
-  source macos/prefs.sh
-  source macos/install.sh
+  source $location/macos/prefs.sh
+  source $location/macos/install.sh
 fi;
 
-source gem.sh
-source npm.sh
+source $location/gem.sh
+source $location/npm.sh
