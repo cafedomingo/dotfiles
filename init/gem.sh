@@ -2,9 +2,16 @@
 
 # install command-line tools using gem
 
-gem install bundler
-gem install rake
+gems=(
+  bundler
+  rake
+)
 
 if is_macos; then
-  gem install cocoapods
+  gems+=(
+    cocoapods
+    iStats
+  )
 fi
+
+gem install ${gems[@]}
