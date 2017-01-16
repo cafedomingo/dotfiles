@@ -1,14 +1,11 @@
 #!/usr/bin/env sh
 
-# detect which `ls`
-if ls --color > /dev/null 2>&1; then # GNU `ls`
-  colorflag='--color'
-else # macOS `ls`
-  colorflag='-G'
-fi
-
 # ls
-alias ls="ls ${colorflag}"
+if ls --color &> /dev/null; then # GNU
+  alias ls="ls --color"
+else # macOS
+  alias ls="ls --G"
+fi
 alias l='ls -lFh'
 alias la='ls -lAFh'
 alias lr='ls -tRFh'
@@ -18,7 +15,6 @@ alias ldot='ls -ld .*'
 alias lS='ls -1FSsh'
 alias lart='ls -1Fcart'
 alias lrt='ls -1Fcrt'
-unset colorflag # cleanup
 
 # files
 alias rm='rm -i'
