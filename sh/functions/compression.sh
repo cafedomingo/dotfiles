@@ -25,23 +25,32 @@ function 7zm() {
 }
 
 # individually compress each file/directory in the current directory into it's own archive using 7z "ultra settings"
-function 7zm_contents() {
+function 7zm_cwd() {
   for entry in ./*; do
     7zm $entry
   done
 }
 
-# individually compress each file/directory in the current directory into it's own archive using zip
-function zip_contents() {
+# compress the given file or directory using zip max compression
+function z9() {
+  [ -z $1 ] || [ ! -e $1 ] && echo 'specify a file or directory to compress' && return 1
+
+  local location=$(dirname $1)
+  local filename=$(basename $1)
+
   local cmd=(
     zip
     -9                      # maximum compression
     -r                      # recurse into directories
-    --exclude="*.DS_Store"  # exclude .DS_Store files
+    --exclude='*.DS_Store'  # exclude .DS_Store files
   )
 
+  ${cmd[@]} "$location/$filename.zip" "$1"
+}
+
+# individually compress each file/directory in the current directory into it's own archive using zip max compression
+function z9_cwd() {
   for entry in ./*; do
-    local filename=$(basename $entry)
-    ${cmd[@]} "$filename.zip" "$filename"
+    z9 $entry
   done
 }
