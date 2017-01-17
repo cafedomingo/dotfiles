@@ -1,5 +1,6 @@
 {
-  "binary_file_patterns": [
+  "binary_file_patterns":
+  [
     "*.7z",
     "*.dds",
     "*.dll",
@@ -60,6 +61,10 @@
   ],
   "font_face": "SF Mono",
   "font_size": 12,
+  "ignored_packages":
+  [
+    "Vintage"
+  ],
   "line_numbers": true,
   "show_encoding": true,
   "show_line_endings": true,
