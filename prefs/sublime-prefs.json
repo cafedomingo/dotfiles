@@ -20,6 +20,7 @@
     "*.ttf",
     "*.zip"
   ],
+  "bold_folder_labels": true,
   "color_scheme": "Packages/Color Scheme - Default/Twilight.tmTheme",
   "default_encoding": "UTF-8",
   "default_line_ending": "system",
@@ -61,11 +62,13 @@
   ],
   "font_face": "SF Mono",
   "font_size": 12,
+  "highlight_line": true,
   "ignored_packages":
   [
     "Vintage"
   ],
   "line_numbers": true,
+  "line_padding_bottom": 1,
   "show_encoding": true,
   "show_line_endings": true,
   "tab_size": 2,
