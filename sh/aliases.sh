@@ -37,6 +37,9 @@ alias sgrep='grep -R -n -H -C 5 --exclude-dir={.git,.svn,CVS}'
 alias h='history'
 alias hgrep='fc -El 0 | grep'
 
+# mkdir
+alias mkdir="mkdir -p"
+
 # bundler
 alias be='bundle exec'
 alias bi='bundle install'
