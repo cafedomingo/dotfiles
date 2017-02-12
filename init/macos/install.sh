@@ -117,6 +117,7 @@ formulas=(
   httpie
   jpegoptim
   jq
+  nano
   node
   optipng
   p7zip
