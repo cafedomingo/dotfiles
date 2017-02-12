@@ -121,7 +121,6 @@ formulas=(
   optipng
   p7zip
   pngcrush
-  unrar
   wifi-password
   'wget --with-iri'
 )
@@ -157,6 +156,7 @@ apps=(
   openemu
   opera
   paw
+  rar
   safari-technology-preview
   sketch
   sublime-text
