@@ -31,6 +31,33 @@ function 7zm_cwd() {
   done
 }
 
+# compress the given file or directory using rar max compression
+function rar5() {
+  [ -z $1 ] || [ ! -e $1 ] && echo 'specify a file or directory to compress' && return 1
+
+  local location=$(dirname $1)
+  local filename=$(basename $1)
+
+  local cmd=(
+    rar
+    a                 # add/create
+    -s                # solid archive
+    -m5               # max compression
+    -md64             # 64mb dictionary
+    -ma5              # rar 5.x formar
+    '-x!*.DS_Store'   # exclude .DS_Store files
+  )
+
+  ${cmd[@]} "$location/$filename.rar" "$1"
+}
+
+# individually compress each file/directory in the current directory into it's own archive using rar max compression
+function rar5_cwd() {
+  for entry in ./*; do
+    rar5 $entry
+  done
+}
+
 # compress the given file or directory using zip max compression
 function z9() {
   [ -z $1 ] || [ ! -e $1 ] && echo 'specify a file or directory to compress' && return 1
