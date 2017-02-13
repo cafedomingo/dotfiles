@@ -8,6 +8,10 @@ export GEM_HOME=$HOME/.gem
 export GEM_PATH=$GEM_HOME
 # homebrew
 export HOMEBREW_CASK_OPTS='--appdir=/Applications' # set cask install directory
+# android
+if [[ -d $HOME/Library/Android/sdk ]]; then
+  export ANDROID_SDK=$HOME/Library/Android/sdk
+fi
 # java
 if [[ $(/usr/libexec/java_home &> /dev/null) ]]; then
   export JAVA_HOME=$(/usr/libexec/java_home)
