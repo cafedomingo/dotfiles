@@ -6,6 +6,10 @@ set -gx GEM_HOME $HOME/.gem
 set -gx GEM_PATH $GEM_HOME
 # homebrew
 set -gx HOMEBREW_CASK_OPTS '--appdir=/Applications' # set cask install directory
+# android
+if test -d $HOME/Library/Android/sdk
+  set -gx ANDROID_SDK $HOME/Library/Android/sdk
+end
 # java
 if /usr/libexec/java_home > /dev/null ^ /dev/null
   set -gx JAVA_HOME (/usr/libexec/java_home)
