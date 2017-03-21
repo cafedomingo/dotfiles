@@ -77,6 +77,6 @@ def unlink(filename)
 end
 
 def ask(*args)
-    print(*args)
-    $stdin.gets.chomp
+  print(*args)
+  $stdin.gets.chomp
 end
