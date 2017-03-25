@@ -111,6 +111,7 @@ formulas=(
   gifsicle
   git
   gpg2
+  guetzli
   homebrew/dupes/openssh
   htmlcompressor
   htop
