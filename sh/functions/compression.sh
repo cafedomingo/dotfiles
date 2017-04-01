@@ -1,5 +1,33 @@
 #!/usr/bin/env sh
 
+# extracts archived files / mounts disk images
+# credit: https://raw.githubusercontent.com/holman/dotfiles/master/functions/extract & http://nparikh.org/notes/zshrc.txt
+function extract() {
+  if [ -f $1 ]; then
+    case $1 in
+      *.7z)       7za x $1                            ;;
+      *.tar.bz2)  tar -jxvf $1                        ;;
+      *.tar.bz2)  tar -jxvf $1                        ;;
+      *.tar.gz)   tar -zxvf $1                        ;;
+      *.bz2)      bunzip2 $1                          ;;
+      *.dmg)      hdiutil mount $1                    ;;
+      *.gz)       gunzip $1                           ;;
+      *.tar)      tar -xvf $1                         ;;
+      *.tbz2)     tar -jxvf $1                        ;;
+      *.tgz)      tar -zxvf $1                        ;;
+      *.zip)      unzip $1                            ;;
+      *.ZIP)      unzip $1                            ;;
+      *.pax)      cat $1 | pax -r                     ;;
+      *.pax.Z)    uncompress $1 --stdout | pax -r     ;;
+      *.rar)      unrar x $1                          ;;
+      *.Z)        uncompress $1                       ;;
+      *)          echo "'$1' cannot be extracted/mounted" && return 1;;
+    esac
+  else
+    echo "'$1' is not a valid file" && return 1
+  fi
+}
+
 # compress the given file or directory using 7z "ultra settings"
 function 7zm() {
   [ -z $1 ] || [ ! -e $1 ] && echo 'specify a file or directory to compress' && return 1
