@@ -4,7 +4,8 @@
 function password()
 {
   local usage="\
-usage: password [-s] [-n length]
+Usage: password [-s] [-n length]
+Options:
   -s      exclude symbols/punctuation
   -n=NUM  specify password length"
   local length=40
@@ -13,9 +14,9 @@ usage: password [-s] [-n length]
   while getopts n:s opt
   do
      case "$opt" in
-        n) length=$OPTARG;;
-        s) chars=${chars%"[:punct:]"};;
-        [?]) echo $usage && return 1;;
+        n) length=$OPTARG               ;;
+        s) chars=${chars%"[:punct:]"}   ;;
+        *) echo $usage && return 1      ;;
      esac
   done
 
