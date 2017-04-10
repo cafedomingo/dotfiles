@@ -3,38 +3,40 @@
 # extracts archived files / mounts disk images
 # credit: https://raw.githubusercontent.com/holman/dotfiles/master/functions/extract & http://nparikh.org/notes/zshrc.txt
 function extract() {
-  if [ -f $1 ]; then
-    case $1 in
-      *.7z)       7za x $1                            ;;
-      *.tar.bz2)  tar -jxvf $1                        ;;
-      *.tar.bz2)  tar -jxvf $1                        ;;
-      *.tar.gz)   tar -zxvf $1                        ;;
-      *.bz2)      bunzip2 $1                          ;;
-      *.dmg)      hdiutil mount $1                    ;;
-      *.gz)       gunzip $1                           ;;
-      *.tar)      tar -xvf $1                         ;;
-      *.tbz2)     tar -jxvf $1                        ;;
-      *.tgz)      tar -zxvf $1                        ;;
-      *.zip)      unzip $1                            ;;
-      *.ZIP)      unzip $1                            ;;
-      *.pax)      cat $1 | pax -r                     ;;
-      *.pax.Z)    uncompress $1 --stdout | pax -r     ;;
-      *.rar)      unrar x $1                          ;;
-      *.Z)        uncompress $1                       ;;
-      *)          echo "'$1' cannot be extracted/mounted" && return 1;;
-    esac
-  else
-    echo "'$1' is not a valid file" && return 1
-  fi
+  local usage="\
+Usage: extract <file>"
+
+  [ -f $1 ] && echo "'$1' is not a valid file" && return 1
+
+  case $1 in
+    *.7z)       7za x $1                            ;;
+    *.tar.bz2)  tar -jxvf $1                        ;;
+    *.tar.bz2)  tar -jxvf $1                        ;;
+    *.tar.gz)   tar -zxvf $1                        ;;
+    *.bz2)      bunzip2 $1                          ;;
+    *.dmg)      hdiutil mount $1                    ;;
+    *.gz)       gunzip $1                           ;;
+    *.tar)      tar -xvf $1                         ;;
+    *.tbz2)     tar -jxvf $1                        ;;
+    *.tgz)      tar -zxvf $1                        ;;
+    *.zip)      unzip $1                            ;;
+    *.ZIP)      unzip $1                            ;;
+    *.pax)      cat $1 | pax -r                     ;;
+    *.pax.Z)    uncompress $1 --stdout | pax -r     ;;
+    *.rar)      unrar x $1                          ;;
+    *.Z)        uncompress $1                       ;;
+    *)          echo "'$1' cannot be extracted/mounted" && return 1;;
+  esac
 }
 
 # compress target file or directory using one of multiple compression options
 function shrink() {
   local usage="\
-usage: shrink [-7|r|z] [file|directory]
-  -7      compress using 7-zip
-  -r      compress using rar
-  -z      compress using zip (default)"
+Usage: shrink [-7 | -r | -z] (<file> | <directory>)
+Options:
+  -7    compress using 7-zip
+  -r    compress using rar
+  -z    compress using zip (default)"
   local z7=(
     7za
     a                       # add/create
@@ -65,13 +67,13 @@ usage: shrink [-7|r|z] [file|directory]
   local cmd=("${zip[@]}")
   local extension='7z'
 
-  while getopts 7rz opt
+  while getopts 7rzh opt
   do
      case $opt in
         7) extension='7z'   &&  cmd=("${z7[@]}")    ;;
         r) extension='rar'  &&  cmd=("${rar[@]}")   ;;
         z) extension='zip'  &&  cmd=("${zip[@]}")   ;;
-        [?]) echo $usage && return 1                ;;
+        *) echo $usage && return 1                  ;;
      esac
   done
 
