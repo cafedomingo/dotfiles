@@ -45,10 +45,6 @@ alias be='bundle exec'
 alias bi='bundle install'
 alias bu='bundle update'
 
-# cocoapods
-alias pi='pod install'
-alias pu='pod update'
-
 # [en|de]coding
 alias urlencode='python -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1])"'
 alias urldecode='python -c "import sys, urllib as ul; print ul.unquote_plus(sys.argv[1])"'
@@ -69,6 +65,10 @@ if [[ is_macos ]]; then
     alias cask='brew cask'
     alias bup='brew update; brew upgrade; brew cleanup'
   fi
+
+  # cocoapods
+  alias pi='pod install'
+  alias pu='pod update'
 
   # open
   alias o='open'
