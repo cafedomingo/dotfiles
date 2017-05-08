@@ -33,6 +33,9 @@ alias ff='find . -type f -name'
 alias grep='grep --color'
 alias sgrep='grep -R -n -H -C 5 --exclude-dir={.git,.svn,CVS}'
 
+# ag
+alias a='ag --noheading -S'
+
 # history
 alias h='history'
 alias hgrep='fc -El 0 | grep'
