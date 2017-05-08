@@ -106,6 +106,7 @@ formulas=(
   homebrew/dupes/openssh
   'vim --with-override-system-vi'
 
+  ag
   css-crush
   exif
   gifsicle
