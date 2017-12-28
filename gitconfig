@@ -94,6 +94,7 @@
 [pull]
   # rebase instead of merging when using `git pull`
   rebase = true
+  default = current
 
 [push]
   # push current branch
