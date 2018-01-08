@@ -4,8 +4,8 @@ files=(
   ~/.sh/functions.sh
   ~/.sh/zsh/antigenrc.zsh
   ~/.sh/aliases.sh
-  ~/.aliases.local
   ~/.sh/zsh/aliases.zsh
+  ~/.aliases.local
   ~/.zshrc.local
 )
 
