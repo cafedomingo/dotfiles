@@ -65,7 +65,7 @@ Options:
   )
 
   local cmd=("${zip[@]}")
-  local extension='7z'
+  local extension='zip'
 
   while getopts 7rzh opt
   do
