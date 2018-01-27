@@ -1,8 +1,0 @@
-blob-store
-compile-cache
-dev
-packages/README.md
-storage
-.apm/.apmrc
-.node-gyp
-.npm
