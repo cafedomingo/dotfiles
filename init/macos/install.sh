@@ -72,9 +72,6 @@ brew install ${completions[@]}
 brew tap caskroom/fonts   # https://github.com/caskroom/homebrew-fonts
 
 fonts=(
-  font-droid-sans
-  font-droid-sans-mono
-  font-droid-serif
   font-hack
   font-roboto
   font-roboto-condensed
@@ -149,8 +146,6 @@ apps=(
   charles
   dropbox
   firefox
-  flux
-  garmin-express
   google-chrome
   imageoptim
   iterm2
