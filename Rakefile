@@ -1,21 +1,17 @@
 NON_CONFIG_FILES = %w[init LICENSE prefs Rakefile README.md]
 ROOT_DIR = File.dirname(__FILE__)
-FISH_CONFIG_PATH = File.join(ROOT_DIR, 'sh', 'fish')
 INSTALL_PATH = '~'
-FISH_INSTALL_PATH = File.join(INSTALL_PATH, '.config', 'fish')
 
 desc 'link dotfiles into ~'
 task :install do
   @replace_all = false
   process_files(config_files, &method(:install_file))
-  process_files(config_files(true), FISH_CONFIG_PATH, FISH_INSTALL_PATH, false, &method(:install_file))
 end
 
 desc 'unlink dotfiles from ~'
 task :uninstall do
   @remove_all = false
   process_files(config_files, &method(:uninstall_file))
-  process_files(config_files(true), FISH_CONFIG_PATH, FISH_INSTALL_PATH, false, &method(:uninstall_file))
 end
 
 private
@@ -31,10 +27,8 @@ def process_files(files, source_path = ROOT_DIR, install_path = INSTALL_PATH, ad
   end
 end
 
-def config_files(is_fish = false)
-  is_fish ?
-    Dir[File.join(FISH_CONFIG_PATH, '*')]
-    : Dir[File.join(ROOT_DIR, '*')].reject { |f| NON_CONFIG_FILES.include?(File.basename(f)) }
+def config_files()
+  Dir[File.join(ROOT_DIR, '*')].reject { |f| NON_CONFIG_FILES.include?(File.basename(f)) }
 end
 
 def uninstall_file(source, destination, absolute_destination)
