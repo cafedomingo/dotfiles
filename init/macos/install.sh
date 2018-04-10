@@ -43,7 +43,6 @@ brew tap homebrew/completions   # https://github.com/Homebrew/homebrew-completio
 
 shells=(
   bash
-  fish
   zsh
 )
 
@@ -86,10 +85,10 @@ if [[ -d /Applications/Utilities/Terminal.app/Contents/Resources/Fonts ]]; then
   open /Applications/Utilities/Terminal.app/Contents/Resources/Fonts/SFMono-*
 fi;
 
-# sf ui & sf compact - https://developer.apple.com/fonts/
+# sf pro & sf compact - https://developer.apple.com/fonts/
 if [[ -d ~/Dropbox/Fonts/SF* ]]; then
-  open ~/Dropbox/Fonts/SF-UI*/*
-  open ~/Dropbox/Fonts/SF-Compact*/*
+  open ~/Dropbox/Fonts/SF-Pro/*
+  open ~/Dropbox/Fonts/SF-Compact/*
 fi;
 
 ##########
@@ -110,7 +109,6 @@ formulas=(
   git
   gpg2
   guetzli
-  homebrew/dupes/openssh
   htmlcompressor
   htop
   httpie
