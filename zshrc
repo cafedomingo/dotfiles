@@ -3,10 +3,10 @@ files=(
   ~/.env.local
   ~/.sh/functions.sh
   ~/.sh/zsh/antigenrc.zsh
-  ~/.sh/aliases.sh
   ~/.sh/zsh/aliases.zsh
-  ~/.aliases.local
+  ~/.sh/aliases.sh
   ~/.zshrc.local
+  ~/.aliases.local
 )
 
 for file in ${files[@]}; do
