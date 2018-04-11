@@ -20,6 +20,8 @@ if [[ is_macos ]]; then
   antigen bundle osx
 fi
 
-antigen theme avit
+SPACESHIP_GIT_SYMBOL=''
+SPACESHIP_CHAR_PREFIX='\033[1;90m%* '
+antigen theme https://github.com/denysdovhan/spaceship-prompt spaceship
 
 antigen apply
