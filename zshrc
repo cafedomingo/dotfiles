@@ -2,9 +2,9 @@ files=(
   ~/.sh/env.sh
   ~/.env.local
   ~/.sh/functions.sh
+  ~/.sh/aliases.sh
   ~/.sh/zsh/antigenrc.zsh
   ~/.sh/zsh/aliases.zsh
-  ~/.sh/aliases.sh
   ~/.zshrc.local
   ~/.aliases.local
 )
