@@ -4,6 +4,7 @@ source $(dirname ${(%):-%x})/antigen/antigen.zsh
 
 antigen use oh-my-zsh
 
+## Bundles
 bundles=(
   git
   gitignore
@@ -20,8 +21,38 @@ if [[ is_macos ]]; then
   antigen bundle osx
 fi
 
+## Configure prompt
+# Spaceship documentation: https://denysdovhan.com/spaceship-prompt
 SPACESHIP_GIT_SYMBOL=''
-SPACESHIP_CHAR_PREFIX='\033[1;90m%* '
+SPACESHIP_TIME_SHOW=true
+SPACESHIP_TIME_PREFIX=''
+SPACESHIP_TIME_COLOR='#121212'
+SPACESHIP_PROMPT_ORDER=(
+  user          # Username section
+  dir           # Current directory section
+  host          # Hostname section
+  git           # Git section (git_branch + git_status)
+  hg            # Mercurial section (hg_branch  + hg_status)
+  package       # Package version
+  node          # Node.js section
+  ruby          # Ruby section
+  xcode         # Xcode section
+  swift         # Swift section
+  golang        # Go section
+  docker        # Docker section
+  aws           # Amazon Web Services section
+  venv          # virtualenv section
+  pyenv         # Pyenv section
+  dotnet        # .NET section
+  exec_time     # Execution time
+  line_sep      # Line break
+  battery       # Battery level and status
+  vi_mode       # Vi-mode indicator
+  jobs          # Background jobs indicator
+  time          # Time stampts section
+  exit_code     # Exit code section
+  char          # Prompt character
+)
 antigen theme https://github.com/denysdovhan/spaceship-prompt spaceship
 
 antigen apply
