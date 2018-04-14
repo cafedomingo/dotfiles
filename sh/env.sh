@@ -11,7 +11,12 @@ export HOMEBREW_CASK_OPTS='--appdir=/Applications' # set cask install directory
 # android
 if [[ -d $HOME/Library/Android/sdk ]]; then
   export ANDROID_SDK=$HOME/Library/Android/sdk
+  export ANDROID_HOME=$HOME/Library/Android/sdk
+  if [[ -d $HOME/Library/Android/sdk/ndk-bundle ]]; then
+    export ANDROID_NDK=$HOME/Library/Android/sdk/ndk-bundle
+  fi
 fi
+
 # java
 if [[ $(/usr/libexec/java_home &> /dev/null) ]]; then
   export JAVA_HOME=$(/usr/libexec/java_home)
