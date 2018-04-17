@@ -23,6 +23,8 @@ fi
 
 ## Configure prompt
 # Spaceship documentation: https://denysdovhan.com/spaceship-prompt
+SPACESHIP_DIR_TRUNC=0
+SPACESHIP_DIR_TRUNC_REPO=false
 SPACESHIP_GIT_SYMBOL=''
 SPACESHIP_TIME_SHOW=true
 SPACESHIP_TIME_PREFIX=''
