@@ -67,6 +67,10 @@
   # http://michael-kuehnel.de/git/2014/11/21/git-mac-osx-and-german-umlaute.html
   precomposeunicode = false
 
+[fetch]
+  # remove remote branches that no longer exist
+  prune = true
+
 [gpg]
   program = gpg2
 
