@@ -26,13 +26,14 @@ fi
 SPACESHIP_DIR_TRUNC=0
 SPACESHIP_DIR_TRUNC_REPO=false
 SPACESHIP_GIT_SYMBOL=''
+SPACESHIP_HOST_PREFIX='@ '
 SPACESHIP_TIME_SHOW=true
 SPACESHIP_TIME_PREFIX=''
 SPACESHIP_TIME_COLOR='#121212'
 SPACESHIP_PROMPT_ORDER=(
   user          # Username section
-  dir           # Current directory section
   host          # Hostname section
+  dir           # Current directory section
   git           # Git section (git_branch + git_status)
   hg            # Mercurial section (hg_branch  + hg_status)
   package       # Package version
