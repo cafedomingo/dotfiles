@@ -61,13 +61,13 @@
 	<key>NSWindow Frame SUAutomaticUpdateAlert</key>
 	<string>654 753 616 174 0 0 1920 1178 </string>
 	<key>NSWindow Frame SUUpdateAlert</key>
-	<string>652 589 620 392 0 0 1920 1178 </string>
+	<string>650 589 620 392 0 0 1920 1178 </string>
 	<key>NSWindow Frame SharedPreferences</key>
-	<string>676 546 918 394 0 0 1920 1178 </string>
+	<string>676 507 796 473 0 0 1920 1178 </string>
 	<key>NSWindow Frame iTerm Window 0</key>
-	<string>107 229 850 800 0 0 1920 1178 </string>
+	<string>175 239 850 800 0 0 1920 1178 </string>
 	<key>NSWindow Frame iTerm Window 1</key>
-	<string>85 339 850 798 0 0 1920 1178 </string>
+	<string>85 324 850 800 0 0 1920 1178 </string>
 	<key>New Bookmarks</key>
 	<array>
 		<dict>
@@ -780,7 +780,9 @@
 			<key>Screen</key>
 			<integer>-1</integer>
 			<key>Scrollback Lines</key>
-			<integer>10000</integer>
+			<integer>100000</integer>
+			<key>Scrollback in Alternate Screen</key>
+			<true/>
 			<key>Selected Text Color</key>
 			<dict>
 				<key>Blue Component</key>
@@ -899,7 +901,7 @@
 	<key>SUHasLaunchedBefore</key>
 	<true/>
 	<key>SULastCheckTime</key>
-	<date>2017-10-18T18:51:43Z</date>
+	<date>2018-06-28T23:47:58Z</date>
 	<key>SUSendProfileInfo</key>
 	<false/>
 	<key>ShowBookmarkName</key>
@@ -911,6 +913,6 @@
 	<key>UseBorder</key>
 	<false/>
 	<key>iTerm Version</key>
-	<string>3.1.2</string>
+	<string>3.1.6</string>
 </dict>
 </plist>
