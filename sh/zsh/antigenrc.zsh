@@ -21,6 +21,9 @@ if [[ is_macos ]]; then
   antigen bundle osx
 fi
 
+# disable the oh-my-zsh ls color craziness
+DISABLE_LS_COLORS=true
+
 ## Configure prompt
 # Spaceship documentation: https://denysdovhan.com/spaceship-prompt
 SPACESHIP_DIR_TRUNC=0
