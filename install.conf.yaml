@@ -1,0 +1,27 @@
+- defaults:
+    link:
+      relink: true
+
+- clean: ['~', '~/bin']
+
+- link:
+    ~/bin:
+      create: true
+      glob: true
+      path: bin/*
+    ~/bin/sublime: bin/subl
+    ~/.bash_profile:
+    ~/.bashrc:
+    ~/.curlrc:
+    ~/.gemrc:
+    ~/.gitconfig:
+    ~/.gitignore:
+    ~/.hushlogin:
+    ~/.nanorc:
+    ~/.sh:
+    ~/.ssh/config: ssh.config
+    ~/.vimrc:
+    ~/.zshrc:
+
+- shell:
+  - [git submodule update --init --recursive, installing submodules]

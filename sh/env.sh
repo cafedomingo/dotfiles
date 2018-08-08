@@ -33,7 +33,7 @@ paths=(
   $GEM_HOME/bin                                                 # gem
   $HOME/.rvm/bin                                                # rvm
   /Library/Frameworks/Mono.framework/Versions/Current/Commands  # xamarin
-  $HOME/.bin $HOME/bin                                          # user
+  $HOME/bin                                                     # user
 )
 for search_path in ${paths[@]}; do
   [[ -d $search_path ]] \
