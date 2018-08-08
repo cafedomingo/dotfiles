@@ -16,7 +16,6 @@ if [[ -d $HOME/Library/Android/sdk ]]; then
     export ANDROID_NDK=$HOME/Library/Android/sdk/ndk-bundle
   fi
 fi
-
 # java
 if [[ $(/usr/libexec/java_home &> /dev/null) ]]; then
   export JAVA_HOME=$(/usr/libexec/java_home)
@@ -31,7 +30,6 @@ paths=(
   /usr/local/bin /usr/local/sbin                                # homebrew
   /usr/local/opt/coreutils/libexec/gnubin                       # homebrew GNU utilities (via brew --prefix coreutils)
   $GEM_HOME/bin                                                 # gem
-  $HOME/.rvm/bin                                                # rvm
   /Library/Frameworks/Mono.framework/Versions/Current/Commands  # xamarin
   $HOME/bin                                                     # user
 )
