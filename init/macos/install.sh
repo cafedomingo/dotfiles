@@ -36,11 +36,14 @@ if ! brew cask > /dev/null; then
 fi;
 
 ##########
-# install shells (via homebrew)
+# setup taps
 ##########
-brew tap homebrew/versions      # https://github.com/Homebrew/homebrew-versions
 brew tap homebrew/completions   # https://github.com/Homebrew/homebrew-completions
+brew tap caskroom/fonts         # https://github.com/caskroom/homebrew-fonts
 
+##########
+# install shells
+##########
 shells=(
   bash
   zsh
@@ -66,10 +69,8 @@ completions=(
 brew install ${completions[@]}
 
 ##########
-# install fonts (via homebrew)
+# install fonts
 ##########
-brew tap caskroom/fonts   # https://github.com/caskroom/homebrew-fonts
-
 fonts=(
   font-hack
   font-roboto
@@ -114,6 +115,7 @@ formulas=(
   httpie
   jpegoptim
   jq
+  mas
   nano
   node
   optipng
@@ -128,17 +130,14 @@ for formula in "${formulas[@]}"; do
 done
 
 ##########
-# install gui apps
+# install apps
 ##########
-brew tap caskroom/versions  # https://github.com/caskroom/homebrew-versions
-
 apps=(
   1password
   aerial
   alfred
   android-studio
   applepi-baker
-  atom
   boxer
   brave
   charles

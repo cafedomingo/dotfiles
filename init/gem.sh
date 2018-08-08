@@ -10,7 +10,6 @@ gems=(
 if is_macos; then
   gems+=(
     cocoapods
-    iStats
   )
 fi
 
