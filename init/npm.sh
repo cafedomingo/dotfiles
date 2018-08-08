@@ -3,3 +3,4 @@
 # install command-line tools using npm
 
 npm install -g diff-so-fancy
+npm install -g tldr
