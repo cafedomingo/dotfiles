@@ -22,6 +22,3 @@
     ~/.ssh/config: ssh.config
     ~/.vimrc:
     ~/.zshrc:
-
-- shell:
-  - [git submodule update --init --recursive, installing submodules]
