@@ -17,7 +17,7 @@ if [[ -d $HOME/Library/Android/sdk ]]; then
   fi
 fi
 # java
-if [[ $(/usr/libexec/java_home &> /dev/null) ]]; then
+if [[ $(/usr/libexec/java_home) ]]; then
   export JAVA_HOME=$(/usr/libexec/java_home)
 fi;
 # node
