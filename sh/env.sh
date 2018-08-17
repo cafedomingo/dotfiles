@@ -30,6 +30,7 @@ paths=(
   /usr/local/bin /usr/local/sbin                                # homebrew
   /usr/local/opt/coreutils/libexec/gnubin                       # homebrew GNU utilities (via brew --prefix coreutils)
   $GEM_HOME/bin                                                 # gem
+  $ANDROID_HOME/tools $ANDROID_HOME/platform-tools              # android
   /Library/Frameworks/Mono.framework/Versions/Current/Commands  # xamarin
   $HOME/bin                                                     # user
 )
