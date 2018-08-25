@@ -22,10 +22,6 @@ while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 defaults write NSGlobalDomain AppleLanguages -array "en-US"
 defaults write NSGlobalDomain AppleLocale -string "en_US"
 
-# set the timezone
-## see `sudo systemsetup -listtimezones` for other values
-sudo systemsetup -settimezone "America/Los_Angeles" > /dev/null
-
 ################################################################################
 # finder
 ################################################################################
@@ -79,10 +75,6 @@ defaults write com.apple.finder OpenWindowForNewRemovableDisk -bool true
 # use list view in all finder windows by default
 ## codes for the view modes: `Nlsv`, `icnv`, `clmv`, `Flwv`
 defaults write com.apple.finder FXPreferredViewStyle -string "Nlsv"
-
-# enable the MacBook Air SuperDrive on any mac
-## starting with macOS Sierra (10.12), this needs to run in recovery mode
-#sudo nvram boot-args="mbasd=1"
 
 # show the ~/Library folder
 chflags nohidden ~/Library

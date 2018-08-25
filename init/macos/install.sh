@@ -38,7 +38,6 @@ fi;
 ##########
 # setup taps
 ##########
-brew tap homebrew/completions   # https://github.com/Homebrew/homebrew-completions
 brew tap caskroom/fonts         # https://github.com/caskroom/homebrew-fonts
 
 ##########
@@ -100,7 +99,7 @@ formulas=(
   coreutils # GNU core utilities
   findutils # GNU `find`, `locate`, `updatedb`, `xargs`, and `g`-prefixed
   moreutils # other useful utilities like `sponge`
-  homebrew/dupes/openssh
+  openssh
   'vim --with-override-system-vi'
 
   ag
@@ -122,7 +121,7 @@ formulas=(
   p7zip
   pngcrush
   wifi-password
-  'wget --with-iri'
+  wget
 )
 
 for formula in "${formulas[@]}"; do
@@ -152,7 +151,6 @@ apps=(
   opera
   paw
   rar
-  safari-technology-preview
   sketch
   sublime-text
   transmission
@@ -161,7 +159,9 @@ apps=(
   vlc
 )
 
-brew cask install ${apps[@]}
+for app in "${apps[@]}"; do
+  brew cask install $app
+done
 
 ##########
 # cleanup
