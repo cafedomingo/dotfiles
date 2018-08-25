@@ -437,7 +437,7 @@ fi
 # transmission
 ################################################################################
 if [[ -d /Applications/Transmission.app ]]; then
-  # use `~/Downloas` to store incomplete downloads
+  # use `~/Downloads` to store incomplete downloads
   defaults write org.m0k.transmission UseIncompleteDownloadFolder -bool true
   defaults write org.m0k.transmission IncompleteDownloadFolder -string "${HOME}/Downloads"
 
