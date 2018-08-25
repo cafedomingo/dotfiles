@@ -4,7 +4,7 @@
 if ls --color &> /dev/null; then # GNU
   alias ls='ls --color'
 else # macOS
-  alias ls='ls --G'
+  alias ls='ls -G'
 fi
 alias l='ls -lFh'
 alias la='ls -lAFh'
