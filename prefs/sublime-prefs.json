@@ -21,7 +21,7 @@
 		"*.zip"
 	],
 	"bold_folder_labels": true,
-	"color_scheme": "Packages/Colorsublime - Themes/cache/Colorsublime-Themes-master/themes/Into-the-Dark.tmTheme",
+	"color_scheme": "Packages/Colorsublime - Themes/Into-the-Dark.tmTheme",
 	"default_encoding": "UTF-8",
 	"default_line_ending": "system",
 	"draw_white_space": "all",
