@@ -24,6 +24,10 @@
                 "0": {
                     "key": "ESC",
                     "label": "ESC"
+                },
+                "2": {
+                    "key": "BACKTICK",
+                    "label": "`"
                 }
             }
         },
@@ -265,12 +269,16 @@
             "h": 4,
             "layers": {
                 "0": {
-                    "key": "SYS:SLEEP",
-                    "label": "SLEEP"
+                    "key": "BACKSPACE",
+                    "label": "BKSP"
                 },
                 "1": {
                     "key": "CONS:EJECT",
                     "label": "EJECT"
+                },
+                "2": {
+                    "key": "#:flashMode()",
+                    "label": "FLASH"
                 }
             }
         },
@@ -481,8 +489,8 @@
             "h": 4,
             "layers": {
                 "0": {
-                    "key": "CAPSLOCK",
-                    "label": "CAPSLK"
+                    "key": "FUN2",
+                    "label": "\u01922"
                 }
             }
         },
