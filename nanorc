@@ -1,5 +1,5 @@
 set autoindent    # auto-indentation
-set const         # constantly display the cursor position in the status bar
+set constantshow  # constantly display the cursor position in the status bar
 set mouse         # enable mouse support
 set noconvert     # don’t convert files from DOS/Mac format
 unset nonewlines  # add newlines to the ends of files
