@@ -66,7 +66,7 @@ if [[ is_macos ]]; then
   # brew
   if [[ has_homebrew ]]; then
     alias cask='brew cask'
-    alias bup='brew update; brew upgrade; brew cleanup'
+    alias bup='brew upgrade; brew cleanup'
   fi
 
   # cocoapods
