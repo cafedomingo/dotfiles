@@ -17,7 +17,7 @@
   patch = !git --no-pager diff --no-color
   rb = rebase
   # view the current working tree status using the short format
-  s = status -s
+  s = status -sb
 
 [apply]
   whitespace = fix
@@ -57,7 +57,7 @@
   # treat spaces before tabs and all kinds of trailing whitespace as an error
   # [default] trailing-space: looks for spaces at the end of a line
   # [default] space-before-tab: looks for spaces before tabs at the beginning of a line
-  whitespace = space-before-tab,-indent-with-non-tab,trailing-space
+  whitespace = trailing-space,space-before-tab
 
   # make `git rebase` safer on macos
   # http://www.git-tower.com/blog/make-git-rebase-safe-on-osx/
@@ -98,12 +98,19 @@
 [pull]
   # rebase instead of merging when using `git pull`
   rebase = true
-  default = current
 
 [push]
-  # push current branch
-  # http://stackoverflow.com/a/23918418/89484
-  default = current
+  default = upstream
+
+[rebase]
+  autostash = true
+  stat = true
+
+[status]
+  showUntrackedFiles = all
+
+[submodule]
+  fetchJobs = 4
 
 # URL shorthands
 [url "git@github.com:"]
