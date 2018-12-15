@@ -2,7 +2,7 @@
     link:
       relink: true
 
-- clean: ['~', '~/bin']
+- clean: ['~', '~/bin', '~.ssh']
 
 - link:
     ~/bin:
