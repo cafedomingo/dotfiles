@@ -3,10 +3,13 @@
 set -e
 
 CONFIG="install.yaml"
-BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-DOTBOT_DIR="${BASEDIR}/dotbot"
-DOTBOT_BIN="${DOTBOT_DIR}/bin/dotbot"
+DOTBOT_DIR="dotbot"
 
-cd "${BASEDIR}"
-git submodule update --init --recursive --quiet
-"${DOTBOT_BIN}" -d "${BASEDIR}" -c "${CONFIG}" "${@}"
+DOTBOT_BIN="bin/dotbot"
+BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+if [ ! -d "${DOTBOT_DIR}" ]; then
+  git submodule update --init --recursive "${DOTBOT_DIR}"
+fi
+
+"${DOTBOT_DIR}/${DOTBOT_BIN}" -d "${BASEDIR}" -c "${CONFIG}" "${@}"
