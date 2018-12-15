@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 
-source $(dirname ${(%):-%x})/antigen/antigen.zsh
+source "$(dirname "${(%):-%x}")"/antigen/antigen.zsh
 
 antigen use oh-my-zsh
 
@@ -13,8 +13,8 @@ bundles=(
   zsh-users/zsh-syntax-highlighting
 )
 
-for bundle in ${bundles[@]}; do
-  antigen bundle $bundle
+for bundle in "${bundles[@]}"; do
+  antigen bundle "$bundle"
 done
 
 if [[ is_macos ]]; then
