@@ -16,12 +16,12 @@ Options:
      case "$opt" in
         n) length=$OPTARG               ;;
         s) chars=${chars%"[:punct:]"}   ;;
-        *) echo $usage && return 1      ;;
+        *) echo "$usage" && return 1    ;;
      esac
   done
 
   ! [ "$length" -eq "$length" ] 2>/dev/null && echo "error: $length is not a valid length" && return 1
-  [ $length -lt 1 ] && echo "error: length must be greater than 0" && return 1
+  [ "$length" -lt 1 ] && echo "error: length must be greater than 0" && return 1
 
-  LC_ALL=C tr -dc "$chars" < /dev/urandom | head -c $length | pbcopy
+  LC_ALL=C tr -dc "$chars" < /dev/urandom | head -c "$length" | pbcopy
 }

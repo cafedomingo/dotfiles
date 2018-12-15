@@ -17,15 +17,3 @@ function is_macos() {
   [[ $(uname -s) == Darwin ]]
   return $?
 }
-
-# determines if the current shell is bash
-function is_bash() {
-  [[ ! -z $BASH_VERSION ]]
-  return $?
-}
-
-# determines if the current shell is zsh
-function is_zsh() {
-  [[ ! -z $ZSH_VERSION ]]
-  return $?
-}
