@@ -11,6 +11,6 @@ files=(
   ~/.aliases.local
 )
 
-for file in ${files[@]}; do
-  [[ -s $file ]] && source $file
+for file in "${files[@]}"; do
+  [[ -s $file ]] && source "$file"
 done

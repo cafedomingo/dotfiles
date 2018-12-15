@@ -13,4 +13,4 @@ if is_macos; then
   )
 fi
 
-gem install ${gems[@]}
+gem install "${gems[@]}"

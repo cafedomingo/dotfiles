@@ -7,7 +7,7 @@ encode64() {
   if [[ $# -eq 0 ]]; then
     cat | base64
   else
-    printf '%s' $1 | base64
+    printf '%s' "$1" | base64
   fi
 }
 
@@ -15,6 +15,6 @@ decode64() {
   if [[ $# -eq 0 ]]; then
     cat | base64 --decode
   else
-    printf '%s' $1 | base64 --decode
+    printf '%s' "$1" | base64 --decode
   fi
 }

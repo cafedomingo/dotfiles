@@ -29,12 +29,12 @@ fi
 paths=(
   /usr/local/bin /usr/local/sbin                                # homebrew
   /usr/local/opt/coreutils/libexec/gnubin                       # homebrew GNU utilities (via brew --prefix coreutils)
-  $GEM_HOME/bin                                                 # gem
-  $ANDROID_HOME/tools $ANDROID_HOME/platform-tools              # android
+  "$GEM_HOME/bin"                                               # gem
+  "$ANDROID_HOME/tools" "$ANDROID_HOME/platform-tools"          # android
   /Library/Frameworks/Mono.framework/Versions/Current/Commands  # xamarin
-  $HOME/bin                                                     # user
+  "$HOME/bin"                                                   # user
 )
-for search_path in ${paths[@]}; do
+for search_path in "${paths[@]}"; do
   [[ -d $search_path ]] \
   && [[ $PATH != *$search_path* ]] \
   && PATH=$search_path:$PATH
@@ -46,7 +46,7 @@ paths=(
   /usr/local/opt/coreutils/libexec/gnuman # homebrew GNU utilities
   /usr/local/opt/findutils/share/man      # homebrew find utilities
 )
-for search_path in ${paths[@]}; do
+for search_path in "${paths[@]}"; do
   [[ -d $search_path ]] \
   && [[ $MANPATH != *$search_path* ]] \
   && MANPATH=$search_path:$MANPATH
@@ -70,9 +70,6 @@ export LESS_TERMCAP_us=$'\E[04;38;5;146m' # begin underline
 # http://unix.stackexchange.com/a/4861
 export EDITOR='vi -e'
 export VISUAL='subl -w'
-
-# turn on tab-complete for commands and file/dir without typing a letter
-set autolist=ambiguous
 
 # keep history up to date, across sessions, in realtime
 # http://unix.stackexchange.com/a/48113

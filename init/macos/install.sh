@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
-location=$(dirname $([ -z $BASH_SOURCE ] && echo ${(%):-%x} || echo $BASH_SOURCE))
-source $location/../util.sh
+location=$(dirname "$([ -z "${BASH_SOURCE[0]}" ] && echo "${(%):-%x}" || echo "${BASH_SOURCE[0]}")")
+source "$location"/../util.sh
 
 ##########
 # xcode cli tools
@@ -25,7 +25,7 @@ if ! has_homebrew; then
 else
   brew update &> /dev/null
   brew upgrade &> /dev/null
-fi;
+fi
 
 ##########
 # homebrew cask
@@ -33,7 +33,7 @@ fi;
 ##########
 if ! brew cask > /dev/null; then
   brew install caskroom/cask/brew-cask
-fi;
+fi
 
 ##########
 # setup taps
@@ -48,13 +48,13 @@ shells=(
   zsh
 )
 
-brew install ${shells[@]}
+brew install "${shells[@]}"
 
-for shell in ${shells[@]}; do
+for shell in "${shells[@]}"; do
   # add shells to system
-  if ! fgrep -q $(brew --prefix)/bin/$shell /etc/shells; then
-    echo $(brew --prefix)/bin/$shell | sudo tee -a /etc/shells > /dev/null;
-  fi;
+  if ! grep -F -q "$(brew --prefix)/bin/$shell" /etc/shells; then
+    echo "$(brew --prefix)/bin/$shell" | sudo tee -a /etc/shells > /dev/null
+  fi
 done
 
 completions=(
@@ -65,7 +65,7 @@ completions=(
   rake-completion
 )
 
-brew install ${completions[@]}
+brew install "${completions[@]}"
 
 ##########
 # install fonts
@@ -78,18 +78,19 @@ fonts=(
   font-roboto-slab
 )
 
-brew cask install ${fonts[@]}
+brew cask install "${fonts[@]}"
 
 # sf mono - https://medium.com/@deepak.gulati/using-sf-mono-in-emacs-6712c45b2a6d
-if [[ -d /Applications/Utilities/Terminal.app/Contents/Resources/Fonts ]]; then
+if [ -d /Applications/Utilities/Terminal.app/Contents/Resources/Fonts ]; then
   open /Applications/Utilities/Terminal.app/Contents/Resources/Fonts/SFMono-*
-fi;
+fi
 
 # sf pro & sf compact - https://developer.apple.com/fonts/
-if [[ -d ~/Dropbox/Fonts/SF* ]]; then
-  open ~/Dropbox/Fonts/SF-Pro/*
-  open ~/Dropbox/Fonts/SF-Compact/*
-fi;
+for directory in ~/Dropbox/Fonts/SF*; do
+  if [ -d "$directory" ]; then
+    open "$directory"/*
+  fi
+done
 
 ##########
 # install cli apps
@@ -125,7 +126,7 @@ formulas=(
 )
 
 for formula in "${formulas[@]}"; do
-  brew install $formula
+  brew install "$formula"
 done
 
 ##########
@@ -160,7 +161,7 @@ apps=(
 )
 
 for app in "${apps[@]}"; do
-  brew cask install $app
+  brew cask install "$app"
 done
 
 ##########
