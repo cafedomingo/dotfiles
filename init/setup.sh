@@ -1,9 +1,8 @@
 #!/usr/bin/env sh
 
 location=$(dirname "$([ -z "${BASH_SOURCE[0]}" ] && echo "${(%):-%x}" || echo "${BASH_SOURCE[0]}")")
-source "$location"/util.sh
 
-if is_macos; then
+if [[ $(uname -s) == Darwin ]]; then
   source "$location"/macos/prefs.sh
   source "$location"/macos/install.sh
 fi;
