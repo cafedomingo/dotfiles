@@ -1,7 +1,6 @@
 #!/usr/bin/env sh
 
 location=$(dirname "$([ -z "${BASH_SOURCE[0]}" ] && echo "${(%):-%x}" || echo "${BASH_SOURCE[0]}")")
-source "$location"/../util.sh
 
 ##########
 # xcode cli tools
@@ -19,12 +18,12 @@ xcode-select --install
 # homebrew
 # └─ http://brew.sh
 ##########
-if ! has_homebrew; then
-  printf "\n" | ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" &> /dev/null
-  # └─ simulate the ENTER keypress
-else
+if [[ command -v "brew" &> /dev/null ]]; then
   brew update &> /dev/null
   brew upgrade &> /dev/null
+else
+  printf "\n" | ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" &> /dev/null
+  # └─ simulate the ENTER keypress
 fi
 
 ##########
@@ -138,6 +137,7 @@ apps=(
   alfred
   android-studio
   applepi-baker
+  balenaetcher
   boxer
   brave
   charles
