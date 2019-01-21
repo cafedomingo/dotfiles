@@ -55,9 +55,6 @@ alias urldecode='python -c "import sys, urllib as ul; print ul.unquote(sys.argv[
 # allow sudo to use aliases
 alias sudo='sudo '
 
-# get current ip address
-alias ip='ipconfig getifaddr en0'
-
 # generate a random number
 alias rand='od -An -N2 -i /dev/urandom | xargs'
 
@@ -72,6 +69,9 @@ if [[ is_macos ]]; then
   # cocoapods
   alias pi='pod install'
   alias pu='pod update'
+
+  # get current ip address
+  alias ip='ipconfig getifaddr en0'
 
   # open
   alias o='open'
