@@ -17,3 +17,9 @@ function is_macos() {
   [[ $(uname -s) == Darwin ]]
   return $?
 }
+
+# determine if the system is running macOS
+function is_linux() {
+  [[ $(uname -s) == Linux ]]
+  return $?
+}
