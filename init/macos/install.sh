@@ -114,6 +114,7 @@ formulas=(
   httpie
   jpegoptim
   jq
+  lsd
   mas
   nano
   node
