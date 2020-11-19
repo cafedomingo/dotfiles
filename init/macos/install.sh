@@ -139,7 +139,6 @@ apps=(
   applepi-baker
   balenaetcher
   boxer
-  brave
   charles
   dropbox
   firefox
@@ -152,11 +151,11 @@ apps=(
   opera
   paw
   rar
-  sketch
   sublime-text
   transmission
   transmit
   visual-studio
+  visual-studio-code
   vlc
 )
 
