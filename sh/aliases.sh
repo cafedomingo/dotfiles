@@ -42,7 +42,9 @@ alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
 
 # ag
-alias a='ag --noheading -S'
+if command -v ag > /dev/null; then
+  alias a='ag --noheading -S'
+fi
 
 # history
 alias h='history'
@@ -50,11 +52,6 @@ alias hgrep='fc -El 0 | grep'
 
 # mkdir
 alias mkdir="mkdir -p"
-
-# bundler
-alias be='bundle exec'
-alias bi='bundle install'
-alias bu='bundle update'
 
 # [en|de]coding
 alias urlencode='python -c "import sys, urllib as ul; print ul.quote(sys.argv[1])"'
@@ -65,6 +62,13 @@ alias sudo='sudo '
 
 # generate a random number
 alias rand='od -An -N2 -i /dev/urandom | xargs'
+
+# bundler
+if command -v bundle > /dev/null; then
+  alias be='bundle exec'
+  alias bi='bundle install'
+  alias bu='bundle update'
+fi
 
 # macOS
 if [ $(uname -s) = "Darwin" ]; then
