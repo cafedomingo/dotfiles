@@ -1,11 +1,13 @@
 #!/usr/bin/env sh
 
+# colors
+alias ls='ls --color=auto'
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+alias diff='diff --color=auto'
+
 # ls
-if ls --color &> /dev/null; then # GNU
-  alias ls='ls --color'
-else # macOS
-  alias ls='ls -G'
-fi
 alias l='ls -lFh'
 alias la='ls -lAFh'
 alias lr='ls -tRFh'
@@ -30,7 +32,6 @@ alias fd='find . -type d -name'
 alias ff='find . -type f -name'
 
 # grep
-alias grep='grep --color'
 alias sgrep='grep -R -n -H -C 5 --exclude-dir={.git,.svn,CVS}'
 
 # ag
@@ -65,10 +66,6 @@ if [ $(uname -s) = "Darwin" ]; then
     alias cask='brew cask'
     alias bup='brew upgrade; brew cleanup'
   fi
-
-  # cocoapods
-  alias pi='pod install'
-  alias pu='pod update'
 
   # get current ip address
   alias ip='ipconfig getifaddr en0'
