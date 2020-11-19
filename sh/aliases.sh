@@ -1,27 +1,31 @@
 #!/usr/bin/env sh
 
-# colors
-alias ls='ls --color=auto'
-alias grep='grep --color=auto'
-alias fgrep='fgrep --color=auto'
-alias egrep='egrep --color=auto'
-alias diff='diff --color=auto'
-
 # ls
-alias l='ls -lFh'
-alias la='ls -lAFh'
-alias lr='ls -tRFh'
-alias lt='ls -ltFh'
+alias ls='ls --color=auto -Fh'
+alias l='ls'
 alias ll='ls -l'
+alias la='l -A'
+alias lr='ls -tR'
+alias ltime='ls -ltm'
 alias ldot='ls -ld .*'
-alias lS='ls -1FSsh'
-alias lart='ls -1Fcart'
-alias lrt='ls -1Fcrt'
+alias lsize='ls -1Ss'
+
+# lsd
+if command -v lsd > /dev/null; then
+  alias lsd='lsd -l --group-dirs first'
+  alias ls='lsd -l'
+  alias lsize='lsd --sizesort'
+  alias tree='lsd --tree'
+  alias lt='tree'
+fi
 
 # files
 alias rm='rm -i'
 alias cp='cp -i'
 alias mv='mv -i'
+
+# diff
+#alias diff='diff --color=auto'
 
 # du
 alias dud='du -d 1 -h'
@@ -32,7 +36,10 @@ alias fd='find . -type d -name'
 alias ff='find . -type f -name'
 
 # grep
+alias grep='grep --color=auto'
 alias sgrep='grep -R -n -H -C 5 --exclude-dir={.git,.svn,CVS}'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
 
 # ag
 alias a='ag --noheading -S'
