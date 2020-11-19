@@ -103,6 +103,7 @@ formulas=(
   'vim --with-override-system-vi'
 
   ag
+  bat
   css-crush
   exif
   gifsicle
