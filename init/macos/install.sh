@@ -65,7 +65,7 @@ fonts=(
   font-roboto-slab
 )
 
-brew cask install "${fonts[@]}"
+brew install --cask "${fonts[@]}"
 
 # sf mono - https://medium.com/@deepak.gulati/using-sf-mono-in-emacs-6712c45b2a6d
 if [ -d /Applications/Utilities/Terminal.app/Contents/Resources/Fonts ]; then
@@ -150,7 +150,7 @@ apps=(
 )
 
 for app in "${apps[@]}"; do
-  brew cask install "$app"
+  brew install --cask "$app"
 done
 
 ##########
