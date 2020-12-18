@@ -25,6 +25,7 @@ fi
 ##########
 brew tap homebrew/cask
 brew tap homebrew/cask-fonts
+brew tap homebrew/cask-versions
 
 ##########
 # install shells
