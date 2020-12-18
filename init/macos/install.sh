@@ -21,17 +21,10 @@ else
 fi
 
 ##########
-# homebrew cask
-# └─ https://caskroom.github.io
+# setup homebrew taps
 ##########
-if ! brew cask > /dev/null; then
-  brew install caskroom/cask/brew-cask
-fi
-
-##########
-# setup taps
-##########
-brew tap caskroom/fonts         # https://github.com/caskroom/homebrew-fonts
+brew tap homebrew/cask
+brew tap homebrew/cask-fonts
 
 ##########
 # install shells
