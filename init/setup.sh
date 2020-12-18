@@ -7,5 +7,4 @@ if [ $(uname -s) = "Darwin" ]; then
   source "$location"/macos/install.sh
 fi;
 
-source "$location"/gem.sh
 source "$location"/npm.sh
