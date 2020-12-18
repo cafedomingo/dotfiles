@@ -1,7 +1,11 @@
 #!/usr/bin/env sh
 
 # ls
-alias ls='ls --color=auto -Fh'
+if ls --color &> /dev/null; then # GNU    
+  alias ls='ls --color -Fh'    
+else # macOS   
+  alias ls='ls -GFh'   
+fi
 alias l='ls'
 alias ll='ls -l'
 alias la='l -A'
