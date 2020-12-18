@@ -17,7 +17,7 @@ alias lsize='ls -1Ss'
 # lsd
 if command -v lsd > /dev/null; then
   alias lsd='lsd -l --group-dirs first'
-  alias ls='lsd -l'
+  alias ls='lsd'
   alias lsize='lsd --sizesort'
   alias tree='lsd --tree'
   alias lt='tree'
@@ -78,7 +78,6 @@ fi
 if [ $(uname -s) = "Darwin" ]; then
   # brew
   if command -v "brew" &> /dev/null; then
-    alias cask='brew cask'
     alias bup='brew upgrade; brew cleanup'
   fi
 
