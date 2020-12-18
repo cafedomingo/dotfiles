@@ -9,12 +9,6 @@ location=$(dirname "$([ -z "${BASH_SOURCE[0]}" ] && echo "${(%):-%x}" || echo "$
 xcode-select --install
 
 ##########
-# java runtime
-# └─ https://www.java.com/en/download/manual.jsp
-##########
-/usr/libexec/java_home --request
-
-##########
 # homebrew
 # └─ http://brew.sh
 ##########
