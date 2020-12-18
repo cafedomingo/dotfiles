@@ -59,15 +59,12 @@ brew install "${completions[@]}"
 ##########
 fonts=(
   font-hack
-  font-roboto
+  font-hack-nerd-font
+  font-jetbrains-mono
+  font-jetbrains-mono-nerd-font
 )
 
 brew install --cask "${fonts[@]}"
-
-# sf mono - https://medium.com/@deepak.gulati/using-sf-mono-in-emacs-6712c45b2a6d
-if [ -d /Applications/Utilities/Terminal.app/Contents/Resources/Fonts ]; then
-  open /Applications/Utilities/Terminal.app/Contents/Resources/Fonts/SFMono-*
-fi
 
 # sf pro & sf compact - https://developer.apple.com/fonts/
 for directory in ~/Dropbox/Fonts/SF*; do
