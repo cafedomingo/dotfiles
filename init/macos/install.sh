@@ -105,6 +105,7 @@ formulas=(
   optipng
   p7zip
   pngcrush
+  pssh
   wget
   wifi-password
 )
@@ -135,6 +136,7 @@ apps=(
   openemu
   paw
   rar
+  slack
   sublime-text
   transmission
   transmit
