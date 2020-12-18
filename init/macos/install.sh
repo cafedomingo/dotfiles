@@ -49,7 +49,7 @@ completions=(
   brew-cask-completion
   gem-completion
   launchctl-completion
-  rake-completion
+  zsh-completion
 )
 
 brew install "${completions[@]}"
@@ -60,9 +60,6 @@ brew install "${completions[@]}"
 fonts=(
   font-hack
   font-roboto
-  font-roboto-condensed
-  font-roboto-mono
-  font-roboto-slab
 )
 
 brew install --cask "${fonts[@]}"
@@ -94,6 +91,7 @@ formulas=(
   bat
   css-crush
   exif
+  gh
   gifsicle
   git
   gpg2
@@ -110,8 +108,8 @@ formulas=(
   optipng
   p7zip
   pngcrush
-  wifi-password
   wget
+  wifi-password
 )
 
 for formula in "${formulas[@]}"; do
@@ -132,13 +130,12 @@ apps=(
   charles
   dropbox
   firefox
-  google-chrome
+  handbrake
   imageoptim
   iterm2
   kaleidoscope
   microsoft-office
   openemu
-  opera
   paw
   rar
   sublime-text
