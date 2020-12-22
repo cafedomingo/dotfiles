@@ -6,5 +6,3 @@ if [ $(uname -s) = "Darwin" ]; then
   source "$location"/macos/prefs.sh
   source "$location"/macos/install.sh
 fi;
-
-source "$location"/npm.sh
