@@ -16,7 +16,7 @@ alias lsize='ls -1Ss'
 
 # lsd
 if command -v lsd > /dev/null; then
-  alias lsd='lsd -l --group-dirs first'
+  alias lsd='lsd -l --icon never --group-dirs first'
   alias ls='lsd'
   alias lsize='lsd --sizesort'
   alias tree='lsd --tree'
