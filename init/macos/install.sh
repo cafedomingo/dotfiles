@@ -87,6 +87,7 @@ formulas=(
   ag
   bat
   css-crush
+  diff-so-fancy
   exif
   gh
   gifsicle
@@ -99,13 +100,13 @@ formulas=(
   jpegoptim
   jq
   lsd
-  mas
   nano
   node
   optipng
   p7zip
   pngcrush
   pssh
+  tldr
   wget
   wifi-password
 )
