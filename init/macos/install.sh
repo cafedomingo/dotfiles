@@ -49,7 +49,6 @@ completions=(
   brew-cask-completion
   gem-completion
   launchctl-completion
-  zsh-completion
 )
 
 brew install "${completions[@]}"
