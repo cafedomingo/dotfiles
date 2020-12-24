@@ -1,9 +1,18 @@
 [submodule "sh/bash/bash-git-prompt"]
 	path = sh/bash/bash-git-prompt
 	url = https://github.com/magicmonty/bash-git-prompt.git
-[submodule "sh/zsh/antigen"]
-	path = sh/zsh/antigen
-	url = https://github.com/zsh-users/antigen.git
 [submodule "dotbot"]
 	path = dotbot
 	url = https://github.com/anishathalye/dotbot
+[submodule "sh/zsh/plugins/zsh-autosuggestions"]
+	path = sh/zsh/plugins/zsh-autosuggestions
+	url = git@github.com:zsh-users/zsh-autosuggestions
+[submodule "sh/zsh/plugins/zsh-syntax-highlighting"]
+	path = sh/zsh/plugins/zsh-syntax-highlighting
+	url = git@github.com:zsh-users/zsh-syntax-highlighting
+[submodule "sh/zsh/plugins/zsh-history-substring-search"]
+	path = sh/zsh/plugins/zsh-history-substring-search
+	url = git@github.com:zsh-users/zsh-history-substring-search
+[submodule "sh/zsh/plugins/spaceship-prompt"]
+	path = sh/zsh/plugins/spaceship-prompt
+	url = git@github.com:denysdovhan/spaceship-prompt

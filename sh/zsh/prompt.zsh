@@ -1,28 +1,6 @@
 #!/usr/bin/env zsh
 
-source "$(dirname "${(%):-%x}")"/antigen/antigen.zsh
-
-antigen use oh-my-zsh
-
-## Bundles
-bundles=(
-  git
-  gitignore
-  zsh-users/zsh-autosuggestions
-  zsh-users/zsh-history-substring-search
-  zsh-users/zsh-syntax-highlighting
-)
-
-for bundle in "${bundles[@]}"; do
-  antigen bundle "$bundle"
-done
-
-if [[ is_macos ]]; then
-  antigen bundle osx
-fi
-
-# disable the oh-my-zsh ls color craziness
-DISABLE_LS_COLORS=true
+fpath=( "$HOME/.zfunctions" $fpath )
 
 ## Configure prompt
 # Spaceship documentation: https://denysdovhan.com/spaceship-prompt
@@ -47,6 +25,6 @@ SPACESHIP_PROMPT_ORDER=(
   exit_code     # Exit code section
   char          # Prompt character
 )
-antigen theme https://github.com/denysdovhan/spaceship-prompt spaceship
 
-antigen apply
+autoload -U promptinit; promptinit
+prompt spaceship

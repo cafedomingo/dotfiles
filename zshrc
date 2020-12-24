@@ -1,7 +1,8 @@
 files=(
   ~/.sh/env.sh
   ~/.env.local
-  ~/.sh/zsh/antigenrc.zsh
+  ~/.sh/zsh/plugins.zsh
+  ~/.sh/zsh/prompt.zsh
   ~/.sh/functions.sh
   ~/.sh/aliases.sh
   ~/.sh/zsh/aliases.zsh
