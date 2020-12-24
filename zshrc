@@ -2,6 +2,7 @@ files=(
   ~/.sh/env.sh
   ~/.env.local
   ~/.sh/zsh/plugins.zsh
+  ~/.sh/zsh/completions.zsh
   ~/.sh/zsh/prompt.zsh
   ~/.sh/functions.sh
   ~/.sh/aliases.sh
