@@ -2,10 +2,7 @@
     link:
       relink: true
 
-- clean: ["~", "~/bin", "~/.ssh", "~/.zfunctions"]
-
-- create:
-    - ~/.zfunctions
+- clean: ["~", "~/bin", "~/.ssh", "~/.zsh"]
 
 - link:
     ~/bin:
@@ -24,5 +21,7 @@
     ~/.sh:
     ~/.ssh/config: ssh.config
     ~/.vimrc:
-    ~/.zfunctions/prompt_spaceship_setup: sh/zsh/plugins/spaceship-prompt/spaceship.zsh
+    ~/.zsh/spaceship/prompt_spaceship_setup:
+      create: true
+      path: sh/zsh/plugins/spaceship-prompt/spaceship.zsh
     ~/.zshrc:

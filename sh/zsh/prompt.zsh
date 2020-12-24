@@ -1,7 +1,5 @@
 #!/usr/bin/env zsh
 
-fpath=( "$HOME/.zfunctions" $fpath )
-
 ## Configure prompt
 # Spaceship documentation: https://denysdovhan.com/spaceship-prompt
 SPACESHIP_DIR_TRUNC=0
@@ -25,6 +23,8 @@ SPACESHIP_PROMPT_ORDER=(
   exit_code     # Exit code section
   char          # Prompt character
 )
+
+fpath=( "$HOME/.zsh/spaceship" $fpath )
 
 autoload -U promptinit; promptinit
 prompt spaceship
