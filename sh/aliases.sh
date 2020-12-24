@@ -23,10 +23,15 @@ if command -v lsd > /dev/null; then
   alias lt='tree'
 fi
 
-# files
+# files/directories
 alias rm='rm -i'
 alias cp='cp -i'
 alias mv='mv -i'
+alias mkdir="mkdir -p"
+
+# history
+alias h='history'
+alias hgrep='fc -El 0 | grep'
 
 # diff
 #alias diff='diff --color=auto'
@@ -45,17 +50,13 @@ alias sgrep='grep -R -n -H -C 5 --exclude-dir={.git,.svn,CVS}'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
 
+# git
+alias g='git'
+
 # ag
 if command -v ag > /dev/null; then
   alias a='ag --noheading -S'
 fi
-
-# history
-alias h='history'
-alias hgrep='fc -El 0 | grep'
-
-# mkdir
-alias mkdir="mkdir -p"
 
 # [en|de]coding
 alias urlencode='python -c "import sys, urllib as ul; print ul.quote(sys.argv[1])"'
@@ -67,18 +68,13 @@ alias sudo='sudo '
 # generate a random number
 alias rand='od -An -N2 -i /dev/urandom | xargs'
 
-# bundler
-if command -v bundle > /dev/null; then
-  alias be='bundle exec'
-  alias bi='bundle install'
-  alias bu='bundle update'
-fi
-
 # macOS
 if [ $(uname -s) = "Darwin" ]; then
   # brew
   if command -v "brew" &> /dev/null; then
-    alias bup='brew upgrade; brew cleanup'
+    alias bup='brew upgrade && brew cleanup'
+    alias brews='brew list'
+    alias casks='brew list --cask'
   fi
 
   # get current ip address
