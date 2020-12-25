@@ -46,9 +46,6 @@ done
 
 completions=(
   bash-completion2
-  brew-cask-completion
-  gem-completion
-  launchctl-completion
 )
 
 brew install "${completions[@]}"
@@ -57,6 +54,8 @@ brew install "${completions[@]}"
 # install fonts
 ##########
 fonts=(
+  font-fira-code-mono
+  font-fira-code-mono-nerd-font
   font-hack
   font-hack-nerd-font
   font-jetbrains-mono
