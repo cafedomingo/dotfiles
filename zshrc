@@ -14,3 +14,6 @@ files=(
 for file in "${files[@]}"; do
   [[ -s $file ]] && source "$file"
 done
+
+# cleanup
+unset files
