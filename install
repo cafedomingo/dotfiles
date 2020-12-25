@@ -8,8 +8,6 @@ DOTBOT_DIR="dotbot"
 DOTBOT_BIN="bin/dotbot"
 BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-if [ ! -d "${DOTBOT_DIR}" ]; then
-  git submodule update --init --recursive "${DOTBOT_DIR}"
-fi
+git submodule update --init --recursive
 
 "${DOTBOT_DIR}/${DOTBOT_BIN}" -d "${BASEDIR}" -c "${CONFIG}" "${@}"
