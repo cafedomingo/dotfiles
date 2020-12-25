@@ -1,21 +1,21 @@
-[submodule "sh/bash/bash-git-prompt"]
-	path = sh/bash/bash-git-prompt
-	url = https://github.com/magicmonty/bash-git-prompt.git
 [submodule "dotbot"]
 	path = dotbot
 	url = https://github.com/anishathalye/dotbot
+[submodule "sh/bash/bash-git-prompt"]
+	path = sh/bash/bash-git-prompt
+	url = https://github.com/magicmonty/bash-git-prompt.git
 [submodule "sh/zsh/plugins/spaceship-prompt"]
 	path = sh/zsh/plugins/spaceship-prompt
 	url = https://github.com/denysdovhan/spaceship-prompt
 [submodule "sh/zsh/plugins/zsh-autosuggestions"]
 	path = sh/zsh/plugins/zsh-autosuggestions
 	url = https://github.com/zsh-users/zsh-autosuggestions
-[submodule "sh/zsh/plugins/zsh-syntax-highlighting"]
-	path = sh/zsh/plugins/zsh-syntax-highlighting
-	url = https://github.com/zsh-users/zsh-syntax-highlighting
-[submodule "sh/zsh/plugins/zsh-history-substring-search"]
-	path = sh/zsh/plugins/zsh-history-substring-search
-	url = https://github.com/zsh-users/zsh-history-substring-search
 [submodule "sh/zsh/plugins/zsh-completions"]
 	path = sh/zsh/plugins/zsh-completions
 	url = https://github.com/zsh-users/zsh-completions.git
+[submodule "sh/zsh/plugins/zsh-history-substring-search"]
+	path = sh/zsh/plugins/zsh-history-substring-search
+	url = https://github.com/zsh-users/zsh-history-substring-search
+[submodule "sh/zsh/plugins/zsh-syntax-highlighting"]
+	path = sh/zsh/plugins/zsh-syntax-highlighting
+	url = https://github.com/zsh-users/zsh-syntax-highlighting
