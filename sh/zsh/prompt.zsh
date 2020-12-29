@@ -4,6 +4,7 @@
 # Spaceship documentation: https://denysdovhan.com/spaceship-prompt
 SPACESHIP_DIR_TRUNC=0
 SPACESHIP_DIR_TRUNC_REPO=false
+SPACESHIP_EXEC_TIME_ELAPSED=5
 SPACESHIP_GIT_SYMBOL=''
 SPACESHIP_HOST_PREFIX='@ '
 SPACESHIP_TIME_SHOW=true
