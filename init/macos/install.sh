@@ -99,7 +99,6 @@ formulas=(
   jq
   lsd
   nano
-  node
   optipng
   p7zip
   pngcrush
@@ -120,10 +119,7 @@ apps=(
   1password
   aerial
   alfred
-  android-studio
-  applepi-baker
   balenaetcher
-  boxer
   charles
   dropbox
   firefox
@@ -139,7 +135,6 @@ apps=(
   sublime-text
   transmission
   transmit
-  visual-studio
   visual-studio-code
   vlc
 )
