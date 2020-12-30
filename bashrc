@@ -1,12 +1,12 @@
 files=(
   ~/.sh/env.sh
   ~/.env.local
+  ~/.sh/bash/colors.bash
+  ~/.sh/bash/completions.bash
+  ~/.sh/bash/prompt.bash
   ~/.sh/functions.sh
   ~/.sh/aliases.sh
-  ~/.sh/bash/colors.bash
   ~/.sh/bash/aliases.bash
-  ~/.sh/bash/completion.bash
-  ~/.sh/bash/prompt.bash
   ~/.bashrc.local
   ~/.aliases.local
 )
