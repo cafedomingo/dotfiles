@@ -4,23 +4,23 @@ export LANG='en_US.UTF-8'
 export LANGUAGE='en_US:en'
 
 # gem / ruby
-export GEM_HOME=$HOME/.gem
-export GEM_PATH=$GEM_HOME
+export GEM_HOME="$HOME/.gem"
+export GEM_PATH="$GEM_HOME"
 # homebrew
 if command -v brew &>/dev/null; then
   export HOMEBREW_CASK_OPTS='--appdir=/Applications' # set cask install directory
 fi;
 # android
 if [[ -d $HOME/Library/Android/sdk ]]; then
-  export ANDROID_SDK=$HOME/Library/Android/sdk
-  export ANDROID_HOME=$HOME/Library/Android/sdk
-  if [[ -d $HOME/Library/Android/sdk/ndk-bundle ]]; then
-    export ANDROID_NDK=$HOME/Library/Android/sdk/ndk-bundle
+  export ANDROID_SDK="$HOME/Library/Android/sdk"
+  export ANDROID_HOME="$HOME/Library/Android/sdk"
+  if [[ -d "$HOME/Library/Android/sdk/ndk-bundle" ]]; then
+    export ANDROID_NDK="$HOME/Library/Android/sdk/ndk-bundle"
   fi
 fi;
 # java
 if [[ $(/usr/libexec/java_home 2> /dev/null) ]]; then
-  export JAVA_HOME=$(/usr/libexec/java_home)
+  export JAVA_HOME="$(/usr/libexec/java_home)"
 fi;
 # node
 if [[ -d /usr/local/lib/node_modules ]]; then
