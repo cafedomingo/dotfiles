@@ -7,7 +7,9 @@ export LANGUAGE='en_US:en'
 export GEM_HOME=$HOME/.gem
 export GEM_PATH=$GEM_HOME
 # homebrew
-export HOMEBREW_CASK_OPTS='--appdir=/Applications' # set cask install directory
+if command -v brew &>/dev/null; then
+  export HOMEBREW_CASK_OPTS='--appdir=/Applications' # set cask install directory
+fi;
 # android
 if [[ -d $HOME/Library/Android/sdk ]]; then
   export ANDROID_SDK=$HOME/Library/Android/sdk
@@ -15,7 +17,7 @@ if [[ -d $HOME/Library/Android/sdk ]]; then
   if [[ -d $HOME/Library/Android/sdk/ndk-bundle ]]; then
     export ANDROID_NDK=$HOME/Library/Android/sdk/ndk-bundle
   fi
-fi
+fi;
 # java
 if [[ $(/usr/libexec/java_home 2> /dev/null) ]]; then
   export JAVA_HOME=$(/usr/libexec/java_home)
