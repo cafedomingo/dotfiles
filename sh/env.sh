@@ -23,16 +23,15 @@ fi;
 # node
 if [[ -d /usr/local/lib/node_modules ]]; then
   export NODE_PATH=/usr/local/lib/node_modules:$NODE_PATH
-fi
+fi;
 
 # PATH
 paths=(
-  /usr/local/bin /usr/local/sbin                                # homebrew
-  /usr/local/opt/coreutils/libexec/gnubin                       # homebrew GNU utilities (via brew --prefix coreutils)
   "$GEM_HOME/bin"                                               # gem
   "$ANDROID_HOME/tools" "$ANDROID_HOME/platform-tools"          # android
-  /Library/Frameworks/Mono.framework/Versions/Current/Commands  # xamarin
-  "$HOME/bin"                                                   # user
+  /usr/local/opt/coreutils/libexec/gnubin                       # homebrew GNU utilities (via brew --prefix coreutils)
+  /usr/local/bin /usr/local/sbin /opt/homebrew/bin              # homebrew
+  "$HOME/.bin" "$HOME/bin"                                      # user
 )
 for search_path in "${paths[@]}"; do
   [[ -d $search_path ]] \
