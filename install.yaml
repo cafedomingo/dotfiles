@@ -2,14 +2,17 @@
     link:
       relink: true
 
-- clean: ["~", "~/bin", "~/.ssh", "~/.zsh"]
+- clean:
+    ~/:
+      force: true
+    ~/.bin:
+    ~/.ssh:
+    ~/.zsh:
+      recursive: true
 
 - link:
-    ~/bin:
+    ~/.bin:
       create: true
-      glob: true
-      path: bin/*
-    ~/bin/sublime: bin/subl
     ~/.bash_profile:
     ~/.bashrc:
     ~/.curlrc:
