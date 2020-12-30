@@ -54,10 +54,6 @@ for search_path in "${paths[@]}"; do
 done
 export MANPATH
 
-# cleanup
-unset paths
-unset search_path
-
 # pager highlighting
 export LESS_TERMCAP_mb=$'\e[1;32m'    # begin blinking
 export LESS_TERMCAP_md=$'\e[1;32m'    # begin bold
@@ -71,3 +67,7 @@ export LESS_TERMCAP_us=$'\e[1;4;31m'  # begin underline
 # http://unix.stackexchange.com/a/4861
 export EDITOR='vi -e'
 export VISUAL='subl -w'
+
+# cleanup
+unset paths
+unset search_path
