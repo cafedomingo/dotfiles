@@ -22,6 +22,9 @@
 [apply]
   whitespace = fix
 
+[checkout]
+  guess = true
+
 [color]
   ui = auto
 [color "diff"]
@@ -80,6 +83,9 @@
 [i18n]
   commitencoding = utf8
 
+[init]
+  defaultBranch = main
+
 [log]
   date = local
 
@@ -110,7 +116,7 @@
   showUntrackedFiles = all
 
 [submodule]
-  fetchJobs = 4
+  fetchJobs = 8
 
 # URL shorthands
 [url "git@github.com:"]
