@@ -9,3 +9,6 @@ location=$(dirname "$([ -z "${BASH_SOURCE[0]}" ] && echo "${(%):-%x}" || echo "$
 for file in "$location"/functions/*.sh; do
   [[ -s $file ]] && source "$file"
 done
+
+# cleanup
+unset location
