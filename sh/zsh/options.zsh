@@ -7,7 +7,7 @@ HISTSIZE=500000
 SAVEHIST=100000
 
 # append history to the zsh_history file
-setopt append_history 
+setopt append_history
 
 setopt extended_history
 
@@ -33,8 +33,9 @@ setopt cdable_vars
 
 # configure directory stack
 DIRSTACKSIZE=16
+setopt auto_pushd         # cd pushes to directory stack
 setopt pushd_ignore_dups  # ignore duplicates
-setopt pushd_minus        # exchange meaning of ‘-‘ and ‘+‘ when navigating stack 
+setopt pushd_minus        # exchange meaning of ‘-‘ and ‘+‘ when navigating stack
 setopt pushd_silent       # do not print the directory stack after pushd or popd
 setopt pushd_to_home      # pushd with no arguments acts like ‘pushd $HOME’
 
