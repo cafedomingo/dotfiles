@@ -21,7 +21,6 @@
 		"*.zip"
 	],
 	"bold_folder_labels": true,
-	"color_scheme": "Packages/Colorsublime - Themes/Into-the-Dark.tmTheme",
 	"default_encoding": "UTF-8",
 	"default_line_ending": "system",
 	"draw_white_space": "all",
@@ -72,8 +71,8 @@
 	"show_encoding": true,
 	"show_line_endings": true,
 	"tab_size": 2,
-	"theme": "Soda Dark 3.sublime-theme",
+	"theme": "Adaptive.sublime-theme",
 	"translate_tabs_to_spaces": true,
 	"trim_trailing_white_space_on_save": true,
-	"use_tab_stops": true
+	"use_tab_stops": true,
 }
