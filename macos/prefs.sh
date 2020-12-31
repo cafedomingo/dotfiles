@@ -67,7 +67,7 @@ defaults write com.apple.finder FXInfoPanesExpanded -dict \
 killall "Finder" &> /dev/null
 
 
-### desktop / dock 
+### desktop / dock
 # dark mode
 defaults write NSGlobalDomain AppleInterfaceStyle -string Dark
 
@@ -178,12 +178,12 @@ defaults write com.apple.terminal SecureKeyboardEntry -bool true
 defaults write com.apple.Terminal AutoMarkPromptLines -int 0
 
 
-### sublime text 3
+### sublime text
 # link preferences - NOTE: assumes dotfiles are located at ~/.dotfiles
-if [[ -d ~/Library/Application\ Support/Sublime\ Text\ 3/Packages/User ]]; then
-  if [[ -f ~/Library/Application\ Support/Sublime\ Text\ 3/Packages/User/Preferences.sublime-settings ]]; then
-    rm -f ~/Library/Application\ Support/Sublime\ Text\ 3/Packages/User/Preferences.sublime-settings
-  fi;
-
-  ln -s ~/.dotfiles/prefs/sublime-prefs.json ~/Library/Application\ Support/Sublime\ Text\ 3/Packages/User/Preferences.sublime-settings &> /dev/null
+if [[ -d "$HOME/Library/Application Support/Sublime Text 3/Packages/User" ]]; then
+  rm -f "$HOME/Library/Application Support/Sublime Text 3/Packages/User/Preferences.sublime-settings"
+  ln -s "$HOME/.dotfiles/prefs/sublime-prefs.json" "$HOME/Library/Application Support/Sublime Text 3/Packages/User/Preferences.sublime-settings" &> /dev/null
+elif [[ -d "$HOME/Library/Application Support/Sublime Text/Packages/User" ]]; then
+  rm "$HOME/Library/Application Support/Sublime Text/Packages/User/Preferences.sublime-settings"
+  ln -s "$HOME/.dotfiles/prefs/sublime-prefs.json" "$HOME/Library/Application Support/Sublime Text/Packages/User/Preferences.sublime-settings" &> /dev/null
 fi;
