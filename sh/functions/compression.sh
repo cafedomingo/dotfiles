@@ -6,7 +6,7 @@ function extract() {
   local usage="\
 Usage: extract <file>"
 
-  [ -f "$1" ] && echo "'$1' is not a valid file" && return 1
+  [ ! -f "$1" ] && echo "'$1' is not a valid file" && return 1
 
   case $1 in
     *.7z)       7za x "$1"                          ;;
