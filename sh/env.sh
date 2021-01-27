@@ -29,11 +29,13 @@ fi;
 
 # PATH
 paths=(
-  "$GEM_HOME/bin"                                               # gem
-  "$ANDROID_HOME/tools" "$ANDROID_HOME/platform-tools"          # android
-  /usr/local/opt/coreutils/libexec/gnubin                       # homebrew GNU utilities (via brew --prefix coreutils)
-  /usr/local/bin /usr/local/sbin /opt/homebrew/bin              # homebrew
-  "$HOME/.bin" "$HOME/bin"                                      # user
+  "$GEM_HOME/bin"                                         # gem
+  "$ANDROID_HOME/tools" "$ANDROID_HOME/platform-tools"    # android
+  /usr/local/opt/coreutils/libexec/gnubin                 # homebrew GNU utilities (intel)
+  /usr/local/bin /usr/local/sbin                          # homebrew (intel)
+  /opt/homebrew/opt/coreutils/libexec/gnubin              # homebrew GNU utilities (arm64)
+  /opt/homebrew/bin /opt/homebrew/sbin                    # homebrew (arm64)
+  "$HOME/.bin" "$HOME/bin"                                # user
 )
 for search_path in "${paths[@]}"; do
   [[ -d $search_path ]] \
@@ -44,8 +46,10 @@ export PATH
 
 # MANPATH
 paths=(
-  /usr/local/opt/coreutils/libexec/gnuman # homebrew GNU utilities
-  /usr/local/opt/findutils/share/man      # homebrew find utilities
+  /usr/local/opt/coreutils/libexec/gnuman       # homebrew GNU utilities (intel)
+  /usr/local/opt/findutils/share/man            # homebrew find utilities (intel)
+  /opt/homebrew/opt/coreutils/libexec/gnuman    # homebrew GNU utilities (arm64)
+  /opt/homebrew/opt/findutils/share/man         # homebrew find utilities (arm64)
 )
 for search_path in "${paths[@]}"; do
   [[ -d $search_path ]] \
