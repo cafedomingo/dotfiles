@@ -134,6 +134,9 @@ defaults write com.apple.systempreferences NSQuitAlwaysKeepsWindows -bool false
 # increase window resize speed for Cocoa applications
 defaults write NSGlobalDomain NSWindowResizeTime -float 0.001
 
+# disable font smoothing
+defaults -currentHost write -g AppleFontSmoothing -int 0
+
 killall SystemUIServer &> /dev/null
 
 
