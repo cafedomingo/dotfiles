@@ -27,9 +27,6 @@
     ~/.sh:
     ~/.ssh/config: ssh.config
     ~/.vimrc:
-    ~/.zsh/spaceship/prompt_spaceship_setup:
-      create: true
-      path: sh/zsh/plugins/spaceship-prompt/spaceship.zsh
     ~/.zshrc:
 
 - create:
