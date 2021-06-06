@@ -4,9 +4,6 @@
 [submodule "sh/bash/bash-git-prompt"]
 	path = sh/bash/bash-git-prompt
 	url = https://github.com/magicmonty/bash-git-prompt.git
-[submodule "sh/zsh/plugins/spaceship-prompt"]
-	path = sh/zsh/plugins/spaceship-prompt
-	url = https://github.com/spaceship-prompt/spaceship-prompt
 [submodule "sh/zsh/plugins/zsh-autosuggestions"]
 	path = sh/zsh/plugins/zsh-autosuggestions
 	url = https://github.com/zsh-users/zsh-autosuggestions

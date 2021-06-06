@@ -11,3 +11,6 @@ BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 git submodule update --init --recursive
 
 "${DOTBOT_DIR}/${DOTBOT_BIN}" -d "${BASEDIR}" -c "${CONFIG}" "${@}"
+
+# install starship
+curl -fsSL https://starship.rs/install.sh | sh -s -- --bin-dir=$HOME/bin --yes

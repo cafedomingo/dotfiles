@@ -15,6 +15,9 @@
       create: true
     ~/.bash_profile:
     ~/.bashrc:
+    ~/.config/starship.toml:
+      create: true
+      path: sh/zsh/starship.toml
     ~/.curlrc:
     ~/.gemrc:
     ~/.gitconfig:
@@ -28,3 +31,6 @@
       create: true
       path: sh/zsh/plugins/spaceship-prompt/spaceship.zsh
     ~/.zshrc:
+
+- create:
+  - ~/bin
