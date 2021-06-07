@@ -6,6 +6,8 @@
     ~/:
       force: true
     ~/.bin:
+    ~/.config:
+      recursive: true
     ~/.ssh:
     ~/.zsh:
       recursive: true
@@ -15,6 +17,9 @@
       create: true
     ~/.bash_profile:
     ~/.bashrc:
+    ~/.config/starship.toml:
+      create: true
+      path: sh/zsh/starship.toml
     ~/.curlrc:
     ~/.gemrc:
     ~/.gitconfig:
@@ -24,7 +29,7 @@
     ~/.sh:
     ~/.ssh/config: ssh.config
     ~/.vimrc:
-    ~/.zsh/spaceship/prompt_spaceship_setup:
-      create: true
-      path: sh/zsh/plugins/spaceship-prompt/spaceship.zsh
     ~/.zshrc:
+
+- create:
+  - ~/bin
