@@ -6,6 +6,8 @@
     ~/:
       force: true
     ~/.bin:
+    ~/.config:
+      recursive: true
     ~/.ssh:
     ~/.zsh:
       recursive: true
