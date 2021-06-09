@@ -1,7 +1,6 @@
 files=(
   ~/.sh/env.sh
   ~/.env.local
-  ~/.sh/bash/colors.bash
   ~/.sh/bash/options.bash
   ~/.sh/bash/completions.bash
   ~/.sh/bash/prompt.bash
