@@ -8,8 +8,7 @@ if [[ command -v "brew" &> /dev/null ]]; then
   brew update &> /dev/null
   brew upgrade &> /dev/null
 else
-  printf "\n" | ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" &> /dev/null
-  # └─ simulate the ENTER keypress
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 fi
 
 # install packages
