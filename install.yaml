@@ -19,7 +19,7 @@
     ~/.bashrc:
     ~/.config/starship.toml:
       create: true
-      path: sh/zsh/starship.toml
+      path: sh/starship.toml
     ~/.curlrc:
     ~/.gemrc:
     ~/.gitconfig:
