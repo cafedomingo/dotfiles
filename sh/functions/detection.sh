@@ -14,12 +14,12 @@ function has_homebrew() {
 
 # determine if the system is running macOS
 function is_macos() {
-  [[ $(uname -s) == "Darwin" ]]
+  [[ "$(uname -s)" == "Darwin" ]]
   return $?
 }
 
 # determine if the system is running linux
 function is_linux() {
-  [[ $(uname -s) == "Linux" ]]
+  [[ "$(uname -s)" == "Linux" ]]
   return $?
 }
