@@ -69,7 +69,7 @@ alias sudo='sudo '
 alias rand='od -An -N2 -i /dev/urandom | xargs'
 
 # macOS
-if [ $(uname -s) = "Darwin" ]; then
+if [ "$(uname -s)" = "Darwin" ]; then
   # brew
   if command -v "brew" &> /dev/null; then
     alias bup='brew upgrade && brew cleanup'
