@@ -8,7 +8,7 @@ function has() {
 
 # determine if homebrew is available
 function has_homebrew() {
-  is_macos && has brew
+  has brew
   return $?
 }
 
