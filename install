@@ -1,20 +1,11 @@
 #!/usr/bin/env bash
 
-set -e
+set -eu
 
-# dotbot install
-# source: ./dotbot/tools/git-submodule/install
-CONFIG="install.yaml"
-DOTBOT_DIR="dotbot"
+# run dotbot install
+ln -fs dotbot/tools/git-submodule/install ./dotbot-install
+. ./dotbot-install
+rm -f dotbot-install
 
-DOTBOT_BIN="bin/dotbot"
-BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
-cd "${BASEDIR}"
-git -C "${DOTBOT_DIR}" submodule sync --quiet --recursive
-git submodule update --init --recursive "${DOTBOT_DIR}"
-
-"${BASEDIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" -d "${BASEDIR}" -c "${CONFIG}" "${@}"
-
-# install starship
+# install / update starship prompt
 curl -fsSL https://starship.rs/install.sh | sh -s -- --bin-dir="${HOME}/bin" --yes
