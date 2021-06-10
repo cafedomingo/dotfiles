@@ -1,6 +1,7 @@
 !.gitignore
 *.local
 Brewfile*.lock.json
+dotbot-install
 
 # macOS
 *.DS_Store
