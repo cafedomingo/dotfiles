@@ -3,6 +3,8 @@
 export LANG='en_US.UTF-8'
 export LANGUAGE='en_US:en'
 
+# gpg
+export GPG_TTY=$(tty)
 # gem / ruby
 export GEM_HOME="$HOME/.gem"
 export GEM_PATH="$GEM_HOME"
