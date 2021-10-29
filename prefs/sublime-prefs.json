@@ -64,7 +64,7 @@
 	"highlight_line": true,
 	"ignored_packages":
 	[
-		"Vintage"
+		"Vintage",
 	],
 	"line_numbers": true,
 	"line_padding_bottom": 1,
