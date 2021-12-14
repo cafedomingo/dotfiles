@@ -5,7 +5,7 @@ tap 'homebrew/cask-versions'
 
 # shell
 brew 'bash'
-brew 'bash-completion2'
+brew 'bash-completion@2'
 brew 'zsh'
 
 brew 'ag'
