@@ -4,7 +4,7 @@
 xcode-select --install
 
 # homebrew: http://brew.sh
-if [[ command -v "brew" &> /dev/null ]]; then
+if command -v "brew" &> /dev/null; then
   brew update &> /dev/null
   brew upgrade &> /dev/null
 else
@@ -13,7 +13,7 @@ fi
 
 # install packages
 brew tap 'homebrew/bundle'
-brew bundle --file="$./Brewfile"
+brew bundle --file="./Brewfile"
 brew bundle --file="./Brewfile.cask"
 
 # set macOS prefs
