@@ -3,8 +3,8 @@
 set -eu
 
 # run dotbot install
-ln -fs dotbot/tools/git-submodule/install ./dotbot-install
-. ./dotbot-install
+ln -f dotbot/tools/git-submodule/install ./dotbot-install
+./dotbot-install
 rm -f dotbot-install
 
 # install / update starship prompt
