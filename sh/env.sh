@@ -33,8 +33,6 @@ fi;
 paths=(
   "$GEM_HOME/bin"                                         # gem
   "$ANDROID_HOME/tools" "$ANDROID_HOME/platform-tools"    # android
-  /usr/local/opt/coreutils/libexec/gnubin                 # homebrew GNU utilities (intel)
-  /usr/local/bin /usr/local/sbin                          # homebrew (intel)
   /opt/homebrew/opt/coreutils/libexec/gnubin              # homebrew GNU utilities (arm64)
   /opt/homebrew/bin /opt/homebrew/sbin                    # homebrew (arm64)
   "$HOME/.bin" "$HOME/bin"                                # user
@@ -48,8 +46,6 @@ export PATH
 
 # MANPATH
 paths=(
-  /usr/local/opt/coreutils/libexec/gnuman       # homebrew GNU utilities (intel)
-  /usr/local/opt/findutils/share/man            # homebrew find utilities (intel)
   /opt/homebrew/opt/coreutils/libexec/gnuman    # homebrew GNU utilities (arm64)
   /opt/homebrew/opt/findutils/share/man         # homebrew find utilities (arm64)
 )
