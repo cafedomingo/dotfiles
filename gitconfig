@@ -8,6 +8,7 @@
   # show the diff between the latest commit and the current state
   d = !"git diff-index --quiet HEAD -- || clear; git --no-pager diff --patch-with-stat"
   f = fetch
+  fr = pull --rebase
   # switch to a branch, creating it if necessary
   go = "!f() { git checkout -b \"$1\" 2> /dev/null || git checkout \"$1\"; }; f"
   # view abbreviated SHA, description, and history graph of the latest 20 commits
