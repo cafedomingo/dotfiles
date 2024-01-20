@@ -54,6 +54,7 @@
 	],
 	"folder_exclude_patterns":
 	[
+		"bazel-*",
 		"CVS",
 		".git",
 		".hg",
