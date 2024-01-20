@@ -1,25 +1,4 @@
 {
-	"binary_file_patterns":
-	[
-		"*.7z",
-		"*.dds",
-		"*.dll",
-		"*.eot",
-		"*.exe",
-		"*.gif",
-		"*.ico",
-		"*.jar",
-		"*.jpeg",
-		"*.jpg",
-		"*.pdf",
-		"*.png",
-		"*.swf",
-		"*.tar.gz",
-		"*.tga",
-		"*.tgz",
-		"*.ttf",
-		"*.zip"
-	],
 	"bold_folder_labels": true,
 	"default_encoding": "UTF-8",
 	"default_line_ending": "system",
@@ -30,8 +9,10 @@
 		"*.a",
 		"*.class",
 		"*.db",
+		"*.dll",
 		"*.DS_Store",
 		"*.dylib",
+		"*.exe",
 		"*.idb",
 		"*.lib",
 		"*.ncb",
@@ -46,11 +27,10 @@
 		"*.sublime-workspace",
 		"*.suo",
 		"._*",
+		".directory",
+		".DS_Store",
 		".Spotlight-V100",
-		"Desktop.ini",
-		"ehthumbs.db",
-		"ehthumbs_vista.db",
-		"Thumbs.db"
+		"desktop.ini"
 	],
 	"folder_exclude_patterns":
 	[
@@ -58,22 +38,30 @@
 		"CVS",
 		".git",
 		".hg",
-		".svn"
+		".svn",
+		".Trash",
+		".Trash-*"
 	],
 	"font_face": "SF Mono",
-	"font_size": 13,
+	"font_size": 12,
 	"highlight_line": true,
 	"ignored_packages":
 	[
 		"Vintage",
 	],
+	"index_exclude_patterns":
+	[
+		"*.log",
+		"*/bazel-*",
+	],
+	"index_files": true,
 	"line_numbers": true,
 	"line_padding_bottom": 1,
 	"show_encoding": true,
 	"show_line_endings": true,
 	"tab_size": 2,
-	"theme": "Adaptive.sublime-theme",
 	"translate_tabs_to_spaces": true,
 	"trim_trailing_white_space_on_save": true,
+	"update_check": true,
 	"use_tab_stops": true,
 }
