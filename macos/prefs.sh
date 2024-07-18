@@ -58,12 +58,6 @@ defaults write com.apple.finder FXInfoPanesExpanded -dict \
   OpenWith -bool true \
   Privileges -bool true
 
-# enable spring loading for directories
-# defaults write NSGlobalDomain com.apple.springing.enabled -bool true
-
-# set the spring loading delay for directories
-# defaults write NSGlobalDomain com.apple.springing.delay -float 0.5
-
 killall "Finder" &> /dev/null
 
 
@@ -182,11 +176,8 @@ defaults write com.apple.Terminal AutoMarkPromptLines -int 0
 
 
 ### sublime text
-# link preferences - NOTE: assumes dotfiles are located at ~/.dotfiles
-if [[ -d "$HOME/Library/Application Support/Sublime Text 3/Packages/User" ]]; then
-  rm -f "$HOME/Library/Application Support/Sublime Text 3/Packages/User/Preferences.sublime-settings"
-  ln -s "$HOME/.dotfiles/prefs/sublime-prefs.json" "$HOME/Library/Application Support/Sublime Text 3/Packages/User/Preferences.sublime-settings" &> /dev/null
-elif [[ -d "$HOME/Library/Application Support/Sublime Text/Packages/User" ]]; then
+# link preferences
+if [[ -d "$HOME/Library/Application Support/Sublime Text/Packages/User" ]]; then
   rm "$HOME/Library/Application Support/Sublime Text/Packages/User/Preferences.sublime-settings"
   ln -s "$HOME/.dotfiles/prefs/sublime-prefs.json" "$HOME/Library/Application Support/Sublime Text/Packages/User/Preferences.sublime-settings" &> /dev/null
 fi;
