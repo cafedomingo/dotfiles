@@ -24,17 +24,3 @@ brew 'pssh'
 brew 'tldr'
 brew 'wget'
 brew 'wifi-password'
-
-# GNU
-# brew 'coreutils'
-# GNU `find`, `locate`, `updatedb`, `xargs`, and `g`-prefixed
-# brew 'findutils'
-# other useful utilities like `sponge`
-# brew 'moreutils'
-
-# image utils
-# brew 'gifsicle'
-# brew 'guetzli'
-# brew 'jpegoptim'
-# brew 'oxipng'
-# brew 'pngcrush'
