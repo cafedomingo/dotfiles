@@ -21,7 +21,6 @@
       create: true
       path: sh/starship.toml
     ~/.curlrc:
-    ~/.gemrc:
     ~/.gitconfig:
     ~/.gitignore:
     ~/.hushlogin:
