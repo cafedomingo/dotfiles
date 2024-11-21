@@ -1,12 +1,8 @@
 #!/usr/bin/env zsh
 
-function {
-  local completions="$(dirname "${(%):-%x}")"/plugins
-
-  # Load completions
-  local fpaths=(
-    "$completions/zsh-completions"                # standard zsh completions
-  )
+() {
+  local -r completions="$(dirname "${(%):-%x}")"/plugins
+  local -a fpaths=("$completions/zsh-completions")
 
   # completions for homebrew packages
   if command -v brew &>/dev/null; then
@@ -19,8 +15,7 @@ function {
     && fpath=( $search_path $fpath )
   done
 
-  autoload -Uz compinit
-  compinit
+  autoload -Uz compinit && compinit
 }
 
 # enable cursor menu selection

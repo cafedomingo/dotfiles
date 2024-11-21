@@ -1,9 +1,14 @@
 #!/usr/bin/env zsh
 
-function {
-	local plugins="$(dirname "${(%):-%x}")"/plugins
+() {
+  local -r plugin_dir="$(dirname "${(%):-%x}")/plugins"
+  local -r plugins=(
+    zsh-syntax-highlighting    # Load this last for best compatibility
+    zsh-history-substring-search
+    zsh-autosuggestions
+  )
 
-	source "$plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"
-	source "$plugins/zsh-history-substring-search/zsh-history-substring-search.zsh"
-	source "$plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+  for plugin in ${plugins:|tac}; do 
+    source "$plugin_dir/$plugin/$plugin.zsh"
+  done
 }
