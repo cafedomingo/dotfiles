@@ -2,12 +2,10 @@
 
 alias help='run-help'
 
-# files/directories
+# navigation
 alias -- -='cd -'
 alias -g ...='../..'
 alias -g ....='../../..'
-alias -g .....='../../../..'
-alias -g ......='../../../../..'
 
 alias -g H='| head'
 alias -g T='| tail'
