@@ -68,4 +68,4 @@ done
 export PATH MANPATH
 
 # cleanup
-unset -f paths manpaths p
+unset paths manpaths p
