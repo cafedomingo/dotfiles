@@ -61,28 +61,40 @@
 [core]
   attributesfile = ~/.gitattributes
   excludesfile = ~/.gitignore
-
   # handle windows line endings
   # https://help.github.com/articles/dealing-with-line-endings/
   autocrlf = input
   safecrlf = warn
-
-  # https://github.com/so-fancy/diff-so-fancy
-  pager = diff-so-fancy | less --tabs=4 -RFX
-
+  # https://github.com/dandavison/delta
+  pager = delta
   # prevent showing files whose names contain non-ASCII symbols as unversioned.
   # http://michael-kuehnel.de/git/2014/11/21/git-mac-osx-and-german-umlaute.html
   precomposeunicode = false
-
   # make `git rebase` safer on macos
   # http://www.git-tower.com/blog/make-git-rebase-safe-on-osx/
   trustctime = false
-
   # speed up commands involving untracked files
   untrackedCache = true
-
   # treat spaces before tabs at start of lineand all kinds of trailing whitespace as an error
   whitespace = trailing-space,space-before-tab
+
+[delta]
+  # Better diff presentation
+  plus-style = "syntax #012800"
+  minus-style = "syntax #340001"
+  syntax-theme = Monokai Extended
+  navigate = true
+  line-numbers = true
+  side-by-side = true
+
+[diff]
+  # use better diff algorithm
+  algorithm = histogram
+  # detect copies as well as renames
+  renames = copies
+  # enable better word diff
+  wordRegex = [A-Za-z0-9_]+|[^[:space:]]
+  colorMoved = default
 
 [fetch]
   # remove remote branches that no longer exist
@@ -95,7 +107,7 @@
   autocorrect = 1
 
 [interactive]
-  diffFilter = diff-so-fancy --patch
+  diffFilter = delta --color-only
 
 [i18n]
   commitencoding = utf8
@@ -111,6 +123,8 @@
   log = true
   # show a diffstat at the end of the merge
   stat = true
+  # always show common ancestor in merge conflicts
+  conflictstyle = diff3
 
 [pull]
   # rebase instead of merging when using `git pull`
