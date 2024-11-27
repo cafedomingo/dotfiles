@@ -11,8 +11,9 @@
   co = checkout
   # clone a repository including all submodules
   cr = clone --recursive
+  d = diff
   # show the diff between the latest commit and the current state
-  d = !"git diff-index --quiet HEAD -- || clear; git --no-pager diff --patch-with-stat"
+  ds = !"git diff-index --quiet HEAD -- || clear; git --no-pager diff --patch-with-stat"
   f = fetch
   fr = pull --rebase
   # switch to a branch, creating it if necessary
@@ -27,6 +28,8 @@
   rb = rebase
   # view the current working tree status using the short format
   s = status -sb
+  # undo last commit but keep changes
+  undo = reset HEAD~1 --mixed
 
 [apply]
   whitespace = fix
@@ -60,37 +63,54 @@
 [core]
   attributesfile = ~/.gitattributes
   excludesfile = ~/.gitignore
-
   # handle windows line endings
   # https://help.github.com/articles/dealing-with-line-endings/
   autocrlf = input
   safecrlf = warn
-
-  # treat spaces before tabs and all kinds of trailing whitespace as an error
-  # [default] trailing-space: looks for spaces at the end of a line
-  # [default] space-before-tab: looks for spaces before tabs at the beginning of a line
-  whitespace = trailing-space,space-before-tab
-
-  # make `git rebase` safer on macos
-  # http://www.git-tower.com/blog/make-git-rebase-safe-on-osx/
-  trustctime = false
-
+  # https://github.com/dandavison/delta
+  pager = delta
   # prevent showing files whose names contain non-ASCII symbols as unversioned.
   # http://michael-kuehnel.de/git/2014/11/21/git-mac-osx-and-german-umlaute.html
   precomposeunicode = false
-
+  # make `git rebase` safer on macos
+  # http://www.git-tower.com/blog/make-git-rebase-safe-on-osx/
+  trustctime = false
   # speed up commands involving untracked files
   untrackedCache = true
+  # treat spaces before tabs at start of lineand all kinds of trailing whitespace as an error
+  whitespace = trailing-space,space-before-tab
+
+[delta]
+  # Better diff presentation
+  plus-style = "syntax #012800"
+  minus-style = "syntax #340001"
+  syntax-theme = Monokai Extended
+  navigate = true
+  line-numbers = true
+  side-by-side = true
+
+[diff]
+  # use better diff algorithm
+  algorithm = histogram
+  # detect copies as well as renames
+  renames = copies
+  # enable better word diff
+  wordRegex = [A-Za-z0-9_]+|[^[:space:]]
+  colorMoved = default
 
 [fetch]
-  # remove remote branches that no longer exist
+  # remove remote branches and tags that no longer exist
   prune = true
+  pruneTags = true
 
 [gpg]
   program = gpg2
 
 [help]
   autocorrect = 1
+
+[interactive]
+  diffFilter = delta --color-only
 
 [i18n]
   commitencoding = utf8
@@ -106,12 +126,8 @@
   log = true
   # show a diffstat at the end of the merge
   stat = true
-
-[pager]
-  # https://github.com/so-fancy/diff-so-fancy
-  diff = diff-so-fancy | less --tabs=4 -RFX
-  log  = diff-so-fancy | less --tabs=4 -RFX
-  show = diff-so-fancy | less --tabs=4 -RFX
+  # always show common ancestor in merge conflicts
+  conflictstyle = diff3
 
 [pull]
   # rebase instead of merging when using `git pull`
@@ -151,6 +167,6 @@
 [github]
   user = cafedomingo
 
-# use separate file for user info, etc.
 [include]
+  # use separate file for user info, etc.
   path = ~/.gitconfig.local
