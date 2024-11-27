@@ -28,6 +28,8 @@
   rb = rebase
   # view the current working tree status using the short format
   s = status -sb
+  # undo last commit but keep changes
+  undo = reset HEAD~1 --mixed
 
 [apply]
   whitespace = fix
@@ -97,8 +99,9 @@
   colorMoved = default
 
 [fetch]
-  # remove remote branches that no longer exist
+  # remove remote branches and tags that no longer exist
   prune = true
+  pruneTags = true
 
 [gpg]
   program = gpg2
@@ -164,6 +167,6 @@
 [github]
   user = cafedomingo
 
-# use separate file for user info, etc.
 [include]
+  # use separate file for user info, etc.
   path = ~/.gitconfig.local
