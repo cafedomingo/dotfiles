@@ -13,7 +13,7 @@
   cr = clone --recursive
   d = diff
   # show the diff between the latest commit and the current state
-  ds = !"git diff-index --quiet HEAD -- || clear; git --no-pager diff --patch-with-stat"
+  dd = diff HEAD --patch-with-stat
   f = fetch
   fr = pull --rebase
   # switch to a branch, creating it if necessary
