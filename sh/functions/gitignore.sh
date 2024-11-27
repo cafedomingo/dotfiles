@@ -1,7 +1,6 @@
 #!/usr/bin/env sh
 
-# generate gitignore file from https://www.gitignore.io
-# https://github.com/joeblau/gitignore.io
+# generate gitignore file from https://www.toptal.com/developers/gitignore/
 gi() {
-  curl -sL "https://www.gitignore.io/api/$*"
+  curl -sL "https://www.toptal.com/developers/gitignore/api/$*"
 }
