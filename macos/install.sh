@@ -12,7 +12,6 @@ else
 fi
 
 # install packages
-brew tap 'homebrew/bundle'
 brew bundle --file="./Brewfile"
 brew bundle --file="./Brewfile.cask"
 
