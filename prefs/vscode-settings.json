@@ -1,0 +1,53 @@
+{
+    "editor.fontFamily": "MonoLisa, SF Mono, Menlo",
+    "editor.fontSize": 12,
+    "editor.insertSpaces": true,
+    "editor.lineNumbers": "on",
+    "editor.renderWhitespace": "all",
+    "editor.tabSize": 2,
+    "files.autoGuessEncoding": true,
+    "files.eol": "auto",
+    "files.exclude": {
+        "**/*.a": true,
+        "**/*.class": true,
+        "**/*.db": true,
+        "**/*.dll": true,
+        "**/*.DS_Store": true,
+        "**/*.dylib": true,
+        "**/*.exe": true,
+        "**/*.idb": true,
+        "**/*.lib": true,
+        "**/*.ncb": true,
+        "**/*.o": true,
+        "**/*.obj": true,
+        "**/*.pdb": true,
+        "**/*.psd": true,
+        "**/*.pyc": true,
+        "**/*.pyo": true,
+        "**/*.sdf": true,
+        "**/*.so": true,
+        "**/*.sublime-workspace": true,
+        "**/*.suo": true,
+        "**/._*": true,
+        "**/.directory": true,
+        "**/.DS_Store": true,
+        "**/.Spotlight-V100": true,
+        "**/desktop.ini": true
+    },
+    "files.insertFinalNewline": true,
+    "files.trimTrailingWhitespace": true,
+    "files.watcherExclude": {
+        "**/bazel-*": true,
+        "**/CVS": true,
+        "**/.git": true,
+        "**/.hg": true,
+        "**/.svn": true,
+        "**/.Trash": true,
+        "**/.Trash-*": true
+    },
+    "search.exclude": {
+        "**/*.log": true,
+        "**/bazel-*": true
+    },
+    "editor.guides.highlightActiveIndentation": true
+}
