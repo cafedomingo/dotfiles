@@ -1,11 +1,9 @@
-# taps
-tap '1password/tap'
-
-# shell
+# shells
 brew 'bash'
 brew 'bash-completion@2'
 brew 'zsh'
 
+# tools
 brew 'ag'
 brew 'bat'
 brew 'exif'
@@ -20,4 +18,30 @@ brew 'p7zip'
 brew 'pssh'
 brew 'tldr'
 brew 'wget'
-brew 'wifi-password'
+
+# apps
+cask '1password'
+cask '1password-cli'
+cask 'alfred'
+cask 'balenaetcher'
+cask 'blockblock'
+cask 'charles'
+cask 'dropbox'
+cask 'firefox'
+cask 'handbrake'
+cask 'imageoptim'
+cask 'iterm2'
+cask 'kaleidoscope'
+cask 'rapidapi'
+cask 'rar'
+cask 'sublime-text'
+cask 'transmission'
+cask 'transmit'
+cask 'visual-studio-code'
+cask 'vlc'
+
+# fonts
+cask 'font-commit-mono'
+cask 'font-new-york'
+cask 'font-sf-pro'
+cask 'font-sf-mono'
