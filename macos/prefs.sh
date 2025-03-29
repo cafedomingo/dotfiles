@@ -1,17 +1,18 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 # inspired by: https://mths.be/macos
 # `defaults find` is good at finding some set preferences.
 
-# close System Preferences, to prevent overriding settings we’re about to change
-osascript -e 'tell application "System Preferences" to quit'
+# close System Settings to prevent overriding settings
+osascript -e 'tell application "System Settings" to quit'
 
 # ask for the administrator password upfront
 sudo -v
 
 # keep-alive: update existing `sudo` time stamp until `prefs.sh` has finished
 while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
-
 
 ### finder
 # show status bar
@@ -21,7 +22,7 @@ defaults write com.apple.finder ShowStatusBar -bool true
 defaults write com.apple.finder ShowPathbar -bool true
 
 # set sidebar icon size to small
-defaults write NSGlobalDomain NSTableViewDefaultSizeMode -int 1
+defaults write Apple Global Domain NSTableViewDefaultSizeMode -int 1
 
 # search the current folder by default
 defaults write com.apple.finder FXDefaultSearchScope -string "SCcf"
@@ -51,19 +52,16 @@ defaults write com.apple.finder FXPreferredViewStyle -string "Nlsv"
 chflags nohidden ~/Library
 sudo chflags nohidden /Volumes
 
-# expand the following file info panes:
+# expand file info panes
 defaults write com.apple.finder FXInfoPanesExpanded -dict \
   General -bool true \
   MetaData -bool true \
   OpenWith -bool true \
   Privileges -bool true
 
-killall "Finder" &> /dev/null
-
-
 ### desktop / dock
 # dark mode
-defaults write NSGlobalDomain AppleInterfaceStyle -string Dark
+defaults write Apple Global Domain AppearancePreference -string Dark
 
 # position the dock on the left
 defaults write com.apple.dock orientation -string "left"
@@ -71,7 +69,7 @@ defaults write com.apple.dock orientation -string "left"
 # set the icon size of Dock items to 32 pixels
 defaults write com.apple.dock tilesize -int 32
 
-# minimize windows into their application’s icon
+# minimize windows into their application's icon
 defaults write com.apple.dock minimize-to-application -bool true
 
 # enable app exposé gesture (swipe down with 3 fingers)
@@ -86,29 +84,25 @@ defaults write com.apple.dock autohide-time-modifier -float .5
 # automatically hide and show the Dock
 defaults write com.apple.dock autohide -bool true
 
-killall "Dock" &> /dev/null
-
-
 ### input
-# trackpad two finger tap to right-click
-defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadCornerSecondaryClick -int 0
-defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadRightClick -bool true
-defaults -currentHost write NSGlobalDomain com.apple.trackpad.trackpadCornerClickBehavior -int 0
-defaults -currentHost write NSGlobalDomain com.apple.trackpad.enableSecondaryClick -bool true
+# check for trackpad before applying settings
+if system_profiler SPBluetoothDataType | grep -q "Apple Trackpad"; then
+  defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadRightClick -bool true
+  defaults -currentHost write NSGlobalDomain com.apple.trackpad.enableSecondaryClick -bool true
+fi
 
 # use keyboard navigation to move focus between controls
-defaults write NSGlobalDomain AppleKeyboardUIMode -int 2
+defaults write Apple Global Domain AppleKeyboardUIMode -int 2
 
 # set keyboard repeat rate
-defaults write NSGlobalDomain KeyRepeat -int 2          # normal minimum is 2 (30 ms)
-defaults write NSGlobalDomain InitialKeyRepeat -int 25  # normal minimum is 15 (225 ms)
+defaults write Apple Global Domain KeyRepeat -int 2
+defaults write Apple Global Domain InitialKeyRepeat -int 25
 
 # disable auto-capitalization
-defaults write NSGlobalDomain NSAutomaticCapitalizationEnabled -bool false
+defaults write Apple Global Domain NSAutomaticCapitalizationEnabled -bool false
 
 # disable auto-correct
-defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
-
+defaults write Apple Global Domain NSAutomaticSpellingCorrectionEnabled -bool false
 
 ### misc
 # avoid creating .DS_Store files on network or usb volumes
@@ -119,20 +113,14 @@ defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true
 defaults write com.apple.screencapture disable-shadow -bool true
 
 # expand save panel by default
-defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode -bool true
-defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode2 -bool true
-
-# disable Resume system-wide
-defaults write com.apple.systempreferences NSQuitAlwaysKeepsWindows -bool false
+defaults write Apple Global Domain NSNavPanelExpandedStateForSaveMode -bool true
+defaults write Apple Global Domain NSNavPanelExpandedStateForSaveMode2 -bool true
 
 # increase window resize speed for Cocoa applications
-defaults write NSGlobalDomain NSWindowResizeTime -float 0.001
+defaults write Apple Global Domain NSWindowResizeTime -float 0.001
 
 # disable font smoothing
 defaults -currentHost write -g AppleFontSmoothing -int 0
-
-killall SystemUIServer &> /dev/null
-
 
 ### activity monitor
 # show the main window when launching Activity Monitor
@@ -142,42 +130,40 @@ defaults write com.apple.ActivityMonitor OpenMainWindow -bool true
 defaults write com.apple.ActivityMonitor IconType -int 5
 
 # show all processes in Activity Monitor
-defaults write com.apple.ActivityMonitor ShowCategory -int 100
-
+defaults write com.apple.ActivityMonitor ShowCategory -int 107
 
 ### mail
-# copy email addresses as `foo@example.com` instead of `Foo Bar <foo@example.com>`
+# copy email addresses without names
 defaults write com.apple.mail AddressesIncludeNameOnPasteboard -bool false
 
-# add the keyboard shortcut ⌘ + Enter to send an email in Mail.app
+# add ⌘ + Enter to send email
 defaults write com.apple.mail NSUserKeyEquivalents -dict-add "Send" "@\U21a9"
 
-
 ### text edit
-# use plain text mode for new TextEdit documents
+# use plain text mode for new documents
 defaults write com.apple.TextEdit RichText -int 0
 
 # open and save files as UTF-8
 defaults write com.apple.TextEdit PlainTextEncoding -int 4
 defaults write com.apple.TextEdit PlainTextEncodingForWrite -int 4
 
-for app in "Activity Monitor" "Mail" "Text Edit"; do
-  killall "${app}" &> /dev/null
-done
-
-
 ### terminal
 # enable Secure Keyboard Entry in terminal
 # https://security.stackexchange.com/a/47786/8918
 defaults write com.apple.terminal SecureKeyboardEntry -bool true
 
-# disable the prompt line marks
+# disable prompt line marks
 defaults write com.apple.Terminal AutoMarkPromptLines -int 0
 
-
 ### sublime text
-# link preferences
-if [[ -d "$HOME/Library/Application Support/Sublime Text/Packages/User" ]]; then
-  rm "$HOME/Library/Application Support/Sublime Text/Packages/User/Preferences.sublime-settings"
-  ln -s "$HOME/.dotfiles/prefs/sublime-prefs.json" "$HOME/Library/Application Support/Sublime Text/Packages/User/Preferences.sublime-settings" &> /dev/null
-fi;
+SUBLIME_PREFS_DIR="$HOME/Library/Application Support/Sublime Text/Packages/User"
+if [[ -d "$SUBLIME_PREFS_DIR" ]]; then
+  PREFS_FILE="$SUBLIME_PREFS_DIR/Preferences.sublime-settings"
+  rm -f "$PREFS_FILE" || true
+  ln -sf "$HOME/.dotfiles/prefs/sublime-prefs.json" "$PREFS_FILE"
+fi
+
+# restart affected apps
+for app in "Activity Monitor" "Mail" "TextEdit" "Finder" "Dock" "SystemUIServer" "Terminal"; do
+  killall "${app}" &> /dev/null || true
+done
