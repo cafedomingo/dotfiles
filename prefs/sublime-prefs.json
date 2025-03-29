@@ -42,17 +42,18 @@
 		".Trash",
 		".Trash-*"
 	],
-	"font_face": "SF Mono",
+	"font_face": "MonoLisa, SF Mono, Menlo",
 	"font_size": 12,
+	"hardware_acceleration": "opengl",
 	"highlight_line": true,
 	"ignored_packages":
 	[
-		"Vintage",
+		"Vintage"
 	],
 	"index_exclude_patterns":
 	[
 		"*.log",
-		"*/bazel-*",
+		"*/bazel-*"
 	],
 	"index_files": true,
 	"line_numbers": true,
@@ -63,5 +64,5 @@
 	"translate_tabs_to_spaces": true,
 	"trim_trailing_white_space_on_save": true,
 	"update_check": true,
-	"use_tab_stops": true,
+	"use_tab_stops": true
 }
