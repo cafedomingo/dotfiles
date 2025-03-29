@@ -340,5 +340,7 @@
 		<key>Red Component</key>
 		<real>0.56857091188430786</real>
 	</dict>
+	<key>Name</key>
+	<string>lpl</string>
 </dict>
 </plist>
