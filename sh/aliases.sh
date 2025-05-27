@@ -1,10 +1,10 @@
 #!/usr/bin/env sh
 
 # ls
-if ls --color &> /dev/null; then # GNU    
-  alias ls='ls --color -Fh'    
-else # macOS   
-  alias ls='ls -GFh'   
+if ls --color &> /dev/null; then # GNU
+  alias ls='ls --color -Fh'
+else # macOS
+  alias ls='ls -GFh'
 fi
 alias l='ls'
 alias ll='ls -l'
@@ -52,6 +52,10 @@ alias egrep='egrep --color=auto'
 
 # git
 alias g='git'
+alias gf='git fetch'
+alias grb='git rebase'
+alias gfrb='git fetch && git rebase'
+alias gco='git checkout'
 
 # ag
 if command -v ag > /dev/null; then
