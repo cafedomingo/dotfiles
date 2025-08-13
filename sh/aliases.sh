@@ -62,10 +62,6 @@ if command -v ag > /dev/null; then
   alias a='ag --noheading -S'
 fi
 
-# [en|de]coding
-alias urlencode='python3 -c "import sys, urllib.parse as ul; print(ul.quote(sys.argv[1]))"'
-alias urldecode='python3 -c "import sys, urllib.parse as ul; print(ul.unquote(sys.argv[1]))"'
-
 # allow sudo to use aliases
 alias sudo='sudo '
 
