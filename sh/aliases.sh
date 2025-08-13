@@ -63,8 +63,8 @@ if command -v ag > /dev/null; then
 fi
 
 # [en|de]coding
-alias urlencode='python -c "import sys, urllib as ul; print ul.quote(sys.argv[1])"'
-alias urldecode='python -c "import sys, urllib as ul; print ul.unquote(sys.argv[1])"'
+alias urlencode='python3 -c "import sys, urllib.parse as ul; print(ul.quote(sys.argv[1]))"'
+alias urldecode='python3 -c "import sys, urllib.parse as ul; print(ul.unquote(sys.argv[1]))"'
 
 # allow sudo to use aliases
 alias sudo='sudo '
@@ -96,9 +96,6 @@ if [ "$(uname -s)" = "Darwin" ]; then
 
   # rebuild launch services database
   alias lsrebuild='/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user'
-
-  # SSID for current wi-fi network
-  alias wifi='/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport -I | awk '\''/ SSID/ {print substr($0, index($0, $2))}'\'
 
   # install xcode command line tools
   alias xcinstall='xcode-select --install'
