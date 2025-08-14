@@ -15,12 +15,16 @@ alias ldot='ls -ld .*'
 alias lsize='ls -1Ss'
 
 # lsd
-if command -v lsd > /dev/null; then
+if has lsd; then
   alias lsd='lsd -l --icon never --group-dirs first'
   alias ls='lsd'
   alias lsize='lsd --sizesort'
-  alias tree='lsd --tree'
-  alias lt='tree'
+  if has tree; then
+    alias lt='tree'
+  else
+    alias tree='lsd --tree'
+    alias lt='tree'
+  fi
 fi
 
 # files/directories
@@ -45,10 +49,15 @@ alias fd='find . -type d -name '
 alias ff='find . -type f -name '
 
 # grep
-alias grep='grep --color=auto'
+if echo test | grep --color=auto test >/dev/null 2>&1; then
+  alias grep='grep --color=auto'
+  alias fgrep='grep -F --color=auto'
+  alias egrep='grep -E --color=auto'
+else
+  alias fgrep='grep -F'
+  alias egrep='grep -E'
+fi
 alias sgrep='grep -R -n -H -C 5 --exclude-dir={.git,.svn,CVS}'
-alias fgrep='fgrep --color=auto'
-alias egrep='egrep --color=auto'
 
 # git
 alias g='git'
@@ -58,7 +67,7 @@ alias gfrb='git fetch && git rebase'
 alias gco='git checkout'
 
 # ag
-if command -v ag > /dev/null; then
+if has ag; then
   alias a='ag --noheading -S'
 fi
 
@@ -69,9 +78,9 @@ alias sudo='sudo '
 alias rand='od -An -N2 -i /dev/urandom | xargs'
 
 # macOS
-if [ "$(uname -s)" = "Darwin" ]; then
+if is_macos; then
   # brew
-  if command -v "brew" &> /dev/null; then
+  if has brew; then
     alias bup='brew upgrade && brew cleanup'
     alias brews='brew list'
     alias casks='brew list --cask'
@@ -83,9 +92,6 @@ if [ "$(uname -s)" = "Darwin" ]; then
   # open
   alias o='open'
   alias oo='open .'
-
-  # cpu brand string
-  alias cpu='sysctl -n machdep.cpu.brand_string'
 
   # clear DNS cache
   alias flushdns='sudo dscacheutil -flushcache && sudo killall -HUP mDNSResponder'
