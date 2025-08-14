@@ -1,27 +1,39 @@
 #!/usr/bin/env sh
 
-# generate a random string of letters, digits and symbols and copy to clipboard
+# generate a random string of letters, digits and optionally symbols; copy to clipboard if available
 password()
 {
-  local usage="\
-Usage: password [-s] [-n length]
+  usage="Usage: password [-s] [-n NUM]
 Options:
-  -s      exclude symbols/punctuation
-  -n=NUM  specify password length"
-  local length=40
-  local chars="A-Za-z0-9!@#$%^&*()_+-=[]{}|;:,.<>?~"
+  -s       exclude symbols/punctuation (use alnum only)
+  -n NUM   specify password length (default 40)"
+  length=40
+  use_punct=1
 
-  while getopts n:s opt; do
-     case "$opt" in
-        n) length=$OPTARG               ;;
-        s) chars=${chars%"[:punct:]"}   ;;
-        *) echo "$usage" && return 1    ;;
-     esac
+  while getopts "n:s" opt; do
+    case "$opt" in
+      n) length=$OPTARG ;;
+      s) use_punct=0 ;;
+      *) printf '%s\n' "$usage" >&2; return 1 ;;
+    esac
   done
 
-  if ! [[ "$length" =~ ^[0-9]+$ ]] || [ "$length" -lt 1 ]; then
-    echo "error: invalid length" && return 1
+  case $length in
+    ''|*[!0-9]*) printf 'error: invalid length\n' >&2; return 1 ;;
+  esac
+  if [ "$length" -lt 1 ]; then
+    printf 'error: invalid length\n' >&2; return 1
   fi
 
-  LC_ALL=C tr -dc "$chars" < /dev/urandom | head -c "$length" | pbcopy
+  if [ "$use_punct" -eq 1 ]; then
+    charset='[:alnum:][:punct:]'
+  else
+    charset='[:alnum:]'
+  fi
+
+  if command -v pbcopy >/dev/null 2>&1; then
+    LC_ALL=C tr -dc "$charset" < /dev/urandom | head -c "$length" | pbcopy
+  else
+    LC_ALL=C tr -dc "$charset" < /dev/urandom | head -c "$length"
+  fi
 }
