@@ -8,4 +8,4 @@ ln -f dotbot/tools/git-submodule/install ./dotbot-install
 rm -f dotbot-install
 
 # install / update starship prompt
-curl -fsSL https://starship.rs/install.sh | sh -s -- --bin-dir="${HOME}/bin" --yes
+curl -fsSL https://starship.rs/install.sh | sh -s -- --bin-dir="${HOME}/bin" --yes | sed '/Please follow the steps for your shell/,$d'
