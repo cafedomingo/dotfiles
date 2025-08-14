@@ -1,5 +1,3 @@
-#!/usr/bin/env sh
-
 # ls
 if ls --color &> /dev/null; then # GNU
   alias ls='ls --color -Fh'
