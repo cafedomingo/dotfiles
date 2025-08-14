@@ -1,5 +1,3 @@
-#!/usr/bin/env zsh
-
 () {
   local -r plugin_dir="$(dirname "${(%):-%x}")/plugins"
   local -r plugins=(

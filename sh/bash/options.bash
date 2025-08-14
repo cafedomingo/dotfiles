@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 # keep history up to date, across sessions, in realtime
 # http://unix.stackexchange.com/a/48113
 HISTCONTROL=ignoredups:erasedups

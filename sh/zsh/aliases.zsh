@@ -1,5 +1,4 @@
-#!/usr/bin/env zsh
-
+# help
 alias help='run-help'
 
 # navigation

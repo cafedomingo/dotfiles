@@ -1,5 +1,3 @@
-#!/usr/bin/env sh
-
 # generate a random string of letters, digits and optionally symbols; copy to clipboard if available
 password()
 {

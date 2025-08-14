@@ -1,5 +1,3 @@
-#!/usr/bin/env sh
-
 # extracts archived files / mounts disk images
 # credit: http://nparikh.org/notes/zshrc.txt
 extract() {
