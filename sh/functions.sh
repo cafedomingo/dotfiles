@@ -1,10 +1,14 @@
-#!/usr/bin/env sh
-
-location=$(dirname "$([ -z "${BASH_SOURCE[0]}" ] && echo "${(%):-%x}" || echo "${BASH_SOURCE[0]}")")
+if [ -n "${ZSH_VERSION-}" ]; then
+  eval 'location=${${(%):-%x}:A:h}'
+elif [ -n "${BASH_VERSION-}" ]; then
+  location=$(CDPATH= cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+else
+  location=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd -P)
+fi
 
 # load functions
 for file in "$location"/functions/*.sh; do
-  [[ -s $file ]] && source "$file"
+  [ -f "$file" ] && [ -s "$file" ] && . "$file"
 done
 
 # cleanup
