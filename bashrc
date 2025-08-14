@@ -1,6 +1,6 @@
+[[ $- != *i* ]] && return
+
 files=(
-  ~/.sh/env.sh
-  ~/.env.local
   ~/.sh/bash/options.bash
   ~/.sh/bash/completions.bash
   ~/.sh/bash/prompt.bash

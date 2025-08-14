@@ -1,7 +1,5 @@
 () {
   local -r files=(
-    ~/.sh/env.sh
-    ~/.env.local
     ~/.sh/zsh/options.zsh
     ~/.sh/zsh/plugins.zsh
     ~/.sh/zsh/completions.zsh
