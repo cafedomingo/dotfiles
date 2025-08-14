@@ -1,54 +1,61 @@
-#!/usr/bin/env sh
-
 # locale
 export LANG='en_US.UTF-8'
-export LANGUAGE='en_US:en'
+case "$OSTYPE" in
+  linux*)  export LANGUAGE='en_US:en' ;;    # gettext uses this
+  darwin*) export LC_CTYPE='en_US.UTF-8' ;; # fixes UTF-8 issues in some macOS terminals
+esac
 
 # gpg
 export GPG_TTY=$(tty)
 
-# gem / ruby
-export GEM_HOME="$HOME/.gem"
-export GEM_PATH="$GEM_HOME"
-
 # default editors
-# http://unix.stackexchange.com/a/4861
 export EDITOR='vi -e'
 export VISUAL='subl -w'
 
 # pager highlighting
-export MANPAGER="less -R --use-color -Dd+G -Du+B"
+if less --use-color -Dk -F -X </dev/null >/dev/null 2>&1; then
+  export MANPAGER="less -R -X -F --use-color -Dd+G -Du+B"
+else
+  export MANPAGER="less -R -X -F"
+fi
 
 ### conditional exports
-# homebrew
-command -v brew >/dev/null && 
-  export HOMEBREW_CASK_OPTS='--appdir=/Applications'
-
-# android sdk
-[[ -d "$HOME/Library/Android/sdk" ]] && {
-  export ANDROID_SDK="$HOME/Library/Android/sdk"
-  export ANDROID_HOME="$ANDROID_SDK"
-  [[ -d "$ANDROID_SDK/ndk-bundle" ]] && 
-    export ANDROID_NDK="$ANDROID_SDK/ndk-bundle"
-}
-
 # java
-command -v /usr/libexec/java_home >/dev/null &&
-  [[ $(/usr/libexec/java_home 2>/dev/null) ]] &&
-  export JAVA_HOME="$(/usr/libexec/java_home)"
+if command -v /usr/libexec/java_home >/dev/null 2>&1; then
+  java_home_path="$('/usr/libexec/java_home' 2>/dev/null)"
+  if [[ -n $java_home_path ]]; then
+    export JAVA_HOME="$java_home_path"
+  fi
+fi
 
 # node
-[[ -d /usr/local/lib/node_modules ]] &&
-  export NODE_PATH="/usr/local/lib/node_modules${NODE_PATH:+:$NODE_PATH}"
+npm_global_bin=""
+if command -v npm >/dev/null 2>&1; then
+  npm_prefix="$(npm config get prefix 2>/dev/null)"
+  if [[ -n $npm_prefix && -d "$npm_prefix/bin" ]]; then
+    npm_global_bin="$npm_prefix/bin"
+  fi
+fi
 
 # PATH
 paths=(
   "$GEM_HOME/bin"                                         # gem
-  "$ANDROID_HOME/tools" "$ANDROID_HOME/platform-tools"    # android
+  "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin"            # android cmdline-tools
+  "$npm_global_bin"                                       # npm global bin
   /opt/homebrew/opt/coreutils/libexec/gnubin              # homebrew GNU utilities (arm64)
   /opt/homebrew/bin /opt/homebrew/sbin                    # homebrew (arm64)
   "$HOME/.bin" "$HOME/bin"                                # user
 )
+
+for p in ${paths[@]}; do
+  if [[ -d "$p" ]]; then
+    case ":$PATH:" in
+      *":$p:") ;;
+      *) PATH="$p:$PATH" ;;
+    esac
+  fi
+done
+export PATH
 
 # MANPATH
 manpaths=(
@@ -56,16 +63,18 @@ manpaths=(
   /opt/homebrew/opt/findutils/share/man
 )
 
-# Add paths if they exist and aren't already in PATH/MANPATH
-for p in ${paths[@]}; do
-  [[ -d $p && $PATH != *$p* ]] && PATH="$p:$PATH"
-done
-
+mp=""
 for p in ${manpaths[@]}; do
-  [[ -d $p && $MANPATH != *$p* ]] && MANPATH="$p:$MANPATH"
+  [[ -d "$p" ]] && mp="${mp:+$mp:}$p"
 done
 
-export PATH MANPATH
+if [[ -n $mp ]]; then
+  if [[ -z ${MANPATH:-} ]]; then
+    export MANPATH="${mp}:"
+  else
+    export MANPATH="${mp}:${MANPATH}"
+  fi
+fi
 
 # cleanup
-unset paths manpaths p
+unset paths manpaths p mp java_home_path npm_global_bin npm_prefix
