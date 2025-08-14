@@ -1,5 +1,3 @@
-#!/usr/bin/env zsh
-
 () {
   local -r completions="$(dirname "${(%):-%x}")"/plugins
   local -a fpaths=("$completions/zsh-completions")

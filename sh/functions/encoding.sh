@@ -1,5 +1,3 @@
-#!/usr/bin/env sh
-
 # base64 encoding/decoding
 encode64() {
   printf '%s' "${1:-$(cat)}" | base64
