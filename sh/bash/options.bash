@@ -7,4 +7,13 @@ HISTIGNORE='&:ls:[bf]g:exit:history'
 
 # enable history appending and immediate sharing between sessions
 shopt -s histappend 2>/dev/null
-PROMPT_COMMAND="history -a; history -c; history -r; ${PROMPT_COMMAND:-}"
+
+if [[ -t 1 ]]; then
+    # Set tab title to current directory
+    set_tab_title() {
+        echo -ne "\e]1;${PWD/#$HOME/~}\a"
+    }
+
+    # Add tab title update to PROMPT_COMMAND
+    PROMPT_COMMAND="history -a; history -c; history -r; set_tab_title; ${PROMPT_COMMAND:-}"
+fi
