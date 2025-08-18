@@ -28,6 +28,15 @@ unsetopt menu_complete    # do notautoselect first completion
 # prompt
 setopt prompt_subst       # enable command substitution in prompt. needed for the suggestion plugins
 
+# Set tab title to current directory
+autoload -U add-zsh-hook
+
+function set_tab_title() {
+  print -Pn "\e]1;%~\a"  # Set tab title to current directory
+}
+
+add-zsh-hook precmd set_tab_title
+
 # help system
 () {
     local help_dirs=(
