@@ -69,6 +69,14 @@ if has ag; then
   alias a='ag --noheading -S'
 fi
 
+# bat
+if has bat; then
+  alias batn='bat --style=numbers'
+  alias cat='bat --paging=never'
+  alias ccat='bat --plain --paging=never'
+  alias less='bat --paging=always'
+fi
+
 # allow sudo to use aliases
 alias sudo='sudo '
 
