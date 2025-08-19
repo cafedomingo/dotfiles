@@ -26,6 +26,6 @@ while IFS= read -r package; do
             warn "✗ $package not available or failed to install, continuing..."
         fi
     fi
-done < <(grep -v '^#' "$(dirname "$0")/packages.list" | grep -v '^$')
+done < <(grep -v '^#' "$(dirname "$0")/packages.list" | grep -v '^\s*$')
 
 sudo apt autoclean
