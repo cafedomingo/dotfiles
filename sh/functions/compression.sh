@@ -88,3 +88,38 @@ if command -v zip >/dev/null 2>&1; then
   function zip-fast() { zip -6 -r "$@"; }
   function zip-all() { _compress_all "zip" "$@"; }
 fi
+
+# list archive contents
+ls_archive() {
+  local file="$1"
+
+  if [ -z "$file" ]; then
+    echo "Usage: list_archive <file>"
+    return 1
+  fi
+
+  if [ ! -f "$file" ]; then
+    echo "Error: File '$file' not found" >&2
+    return 1
+  fi
+
+  case "$file" in
+    *.tar.gz|*.tgz)     tar -tzf "$file" ;;
+    *.tar.bz2|*.tbz|*.tbz2) tar -tjf "$file" ;;
+    *.tar.xz|*.txz)     tar -tJf "$file" ;;
+    *.tar.zst)          tar --zstd -tf "$file" ;;
+    *.tar.lz|*.tlz)     tar --lzip -tf "$file" ;;
+    *.tar.Z|*.taz)      tar -tZf "$file" ;;
+    *.tar)              tar -tf "$file" ;;
+    *.7z)               7za l "$file" ;;
+    *.zip|*.ZIP)        unzip -l "$file" ;;
+    *.rar)              unrar l "$file" ;;
+    *.bz2)              bzip2 -tv "$file" ;;
+    *.gz)               gzip -l "$file" ;;
+    *.xz)               xz -l "$file" ;;
+    *.zst)              zstd -l "$file" ;;
+    *.lz)               lzip -l "$file" ;;
+    *.Z)                uncompress -l "$file" 2>/dev/null || gzip -l "$file" ;;
+    *)                  echo "Unsupported format: $file" >&2; return 1 ;;
+  esac
+}
