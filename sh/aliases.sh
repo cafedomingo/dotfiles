@@ -13,11 +13,11 @@ alias ldot='ls -ld .*'
 alias lsize='ls -1Ss'
 
 # lsd
-if has lsd; then
+if command -v lsd >/dev/null 2>&1; then
   alias lsd='lsd -l --icon never --group-dirs first'
   alias ls='lsd'
   alias lsize='lsd --sizesort'
-  if has tree; then
+  if command -v tree >/dev/null 2>&1; then
     alias lt='tree'
   else
     alias tree='lsd --tree'
@@ -65,7 +65,7 @@ alias gfrb='git fetch && git rebase'
 alias gco='git checkout'
 
 # ripgrep (rg)
-if has rg; then
+if command -v rg >/dev/null 2>&1; then
   alias rg='rg --smart-case'
   alias a='rg --no-heading --smart-case'
   alias rgc='rg --context 3'
@@ -76,7 +76,7 @@ if has rg; then
 fi
 
 # fzf
-if has fzf; then
+if command -v fzf >/dev/null 2>&1; then
   alias fv='fzf --preview "bat --color=always --style=header,grid --line-range :300 {}" | xargs -r $EDITOR'
   alias fp='fzf --preview "bat --color=always --style=header,grid --line-range :300 {}"'
   alias fd='cd "$(find . -type d 2>/dev/null | fzf)"'
@@ -87,7 +87,7 @@ if has fzf; then
 fi
 
 # bat
-if has bat; then
+if command -v bat >/dev/null 2>&1; then
   alias batn='bat --style=numbers'
   alias cat='bat --paging=never'
   alias ccat='bat --plain --paging=never'
@@ -103,7 +103,7 @@ alias rand='od -An -N2 -i /dev/urandom | xargs'
 # macOS
 if is_macos; then
   # brew
-  if has brew; then
+  if command -v brew >/dev/null 2>&1; then
     alias bup='brew upgrade && brew cleanup'
     alias brews='brew list'
     alias casks='brew list --cask'
