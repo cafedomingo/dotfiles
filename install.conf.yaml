@@ -9,8 +9,6 @@
     ~/.config:
       recursive: true
     ~/.ssh:
-    ~/.zsh:
-      recursive: true
 
 - link:
     ~/.bin:
