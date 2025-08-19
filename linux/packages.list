@@ -9,11 +9,15 @@ zsh
 bat
 exif
 fzf
+gh
 git
+git-delta
 htop
 jq
+lsd
 nano
 p7zip-full
 pigz
 ripgrep
+tldr
 wget
