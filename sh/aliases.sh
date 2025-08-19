@@ -64,9 +64,26 @@ alias grb='git rebase'
 alias gfrb='git fetch && git rebase'
 alias gco='git checkout'
 
-# ag
-if has ag; then
-  alias a='ag --noheading -S'
+# ripgrep (rg)
+if has rg; then
+  alias rg='rg --smart-case'
+  alias a='rg --no-heading --smart-case'
+  alias rgc='rg --context 3'
+  alias rgjs='rg --type js'
+  alias rgpy='rg --type py'
+  alias rgjson='rg --type json'
+  alias rga='rg --no-ignore --hidden'
+fi
+
+# fzf
+if has fzf; then
+  alias fv='fzf --preview "bat --color=always --style=header,grid --line-range :300 {}" | xargs -r $EDITOR'
+  alias fp='fzf --preview "bat --color=always --style=header,grid --line-range :300 {}"'
+  alias fd='cd "$(find . -type d 2>/dev/null | fzf)"'
+  alias fgl='git log --oneline --color=always | fzf --ansi --preview "git show --color=always {1}" | cut -d" " -f1 | xargs -r git show'
+  alias fgb='git branch -a | grep -v HEAD | sed "s/.* //" | sed "s#remotes/[^/]*/##" | sort -u | fzf | xargs -r git checkout'
+  alias fkill='ps aux | fzf --header-lines=1 | awk "{print \$2}" | xargs -r kill'
+  alias frg='rg --line-number --no-heading --color=always --smart-case . | fzf --ansi --delimiter : --preview "bat --color=always --highlight-line {2} {1}" | cut -d: -f1 | xargs -r $EDITOR'
 fi
 
 # bat

@@ -76,5 +76,17 @@ if [[ -n $mp ]]; then
   fi
 fi
 
+# fzf (fuzzy finder) - environment variables only
+if command -v fzf >/dev/null 2>&1; then
+  # Default options
+  export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border --inline-info'
+
+  # Use ripgrep for file finding if available
+  if command -v rg >/dev/null 2>&1; then
+    export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git/*"'
+    export FZF_CTRL_T_COMMAND='rg --files --hidden --follow --glob "!.git/*"'
+  fi
+fi
+
 # cleanup
 unset paths manpaths p mp java_home_path npm_global_bin npm_prefix
