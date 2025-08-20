@@ -105,6 +105,7 @@
   # remove remote branches and tags that no longer exist
   prune = true
   pruneTags = true
+  pruneRefspecs = true
 
 [help]
   autocorrect = 1
@@ -120,6 +121,9 @@
 
 [log]
   date = local
+
+[maintenance]
+  auto = true
 
 [merge]
   # include summaries of merged commits in newly created merge commit messages
