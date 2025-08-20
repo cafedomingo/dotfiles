@@ -34,6 +34,8 @@
 [apply]
   whitespace = fix
 
+[branch]
+  autosetuprebase = always
 
 [color]
   ui = auto
@@ -102,13 +104,15 @@
   colorMoved = default
 
 [fetch]
-  # remove remote branches and tags that no longer exist
+  # check object integrity
+  fsckobjects = true
+  # prune deleted remote refs
   prune = true
   pruneTags = true
   pruneRefspecs = true
 
 [help]
-  autocorrect = 1
+  autocorrect = 10
 
 [interactive]
   diffFilter = delta --color-only
@@ -144,6 +148,11 @@
 [rebase]
   autostash = true
   stat = true
+
+[rerere]
+  enabled = true
+  # automatically update the index with the result of successful rebase merges
+  autoupdate = true
 
 [status]
   showUntrackedFiles = all
