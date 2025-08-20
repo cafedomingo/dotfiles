@@ -34,8 +34,6 @@
 [apply]
   whitespace = fix
 
-[checkout]
-  guess = true
 
 [color]
   ui = auto
@@ -102,9 +100,6 @@
   # remove remote branches and tags that no longer exist
   prune = true
   pruneTags = true
-
-[gpg]
-  program = gpg2
 
 [help]
   autocorrect = 1
