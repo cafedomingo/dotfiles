@@ -1,0 +1,23 @@
+# linux apt package list
+# one package per line
+
+# shells
+bash-completion
+zsh
+
+# tools
+bat
+exif
+fzf
+gh
+git
+git-delta
+htop
+jq
+lsd
+nano
+p7zip-full
+pigz
+ripgrep
+tldr
+wget
