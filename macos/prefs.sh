@@ -301,42 +301,25 @@ setting "com.apple.TextEdit" "PlainTextEncodingForWrite" "int" "4"
 ### sublime text
 echo -e "${GREEN}=== Configuring Sublime Text ===${NC}"
 
-SUBLIME_PREFS_DIR="$HOME/Library/Application Support/Sublime Text/Packages/User"
-PREFS_FILE="$SUBLIME_PREFS_DIR/Preferences.sublime-settings"
 SOURCE_FILE="$DOTFILES_ROOT/prefs/sublime-prefs.json"
+PREFS_FILE="$HOME/Library/Application Support/Sublime Text/Packages/User/Preferences.sublime-settings"
 
 if [[ "$DRY_RUN" == "true" ]]; then
-  if [[ -d "$SUBLIME_PREFS_DIR" ]]; then
-    if [[ -L "$PREFS_FILE" ]] && [[ "$(readlink "$PREFS_FILE")" == "$SOURCE_FILE" ]]; then
-      echo -e "${GREEN}✓${NC} Sublime Text preferences already symlinked"
-    elif [[ -f "$PREFS_FILE" ]]; then
-      echo -e "${RED}→${NC} Sublime Text: ${YELLOW}regular file${NC} → ${GREEN}symlink to dotfiles${NC}"
-    else
-      echo -e "${RED}→${NC} Sublime Text: ${YELLOW}missing${NC} → ${GREEN}create symlink${NC}"
-    fi
-  else
-    echo -e "${YELLOW}✓${NC} Sublime Text not installed, skipping"
-  fi
+  echo -e "${BLUE}→${NC} Symlink Sublime Text prefs: $SOURCE_FILE → $PREFS_FILE"
 else
-  if [[ -d "$SUBLIME_PREFS_DIR" ]]; then
-    echo "Configuring Sublime Text preferences"
-    rm -f "$PREFS_FILE" || true
-    ln -sf "$SOURCE_FILE" "$PREFS_FILE"
-    echo "✓ Sublime Text preferences symlinked"
-  else
-    echo "Sublime Text directory not found, skipping configuration"
-  fi
+  mkdir -p "$(dirname "$PREFS_FILE")"
+  rm -f "$PREFS_FILE" || true
+  ln -sf "$SOURCE_FILE" "$PREFS_FILE"
+  echo "✓ Sublime Text prefs symlinked"
 fi
 
 # restart affected apps
-echo -e "${GREEN}=== Restarting Affected Apps ===${NC}"
+echo -e "${GREEN}=== Applying changes ===${NC}"
 
 if [[ "$DRY_RUN" == "true" ]]; then
-  echo -e "${RED}→${NC} Would restart: ${YELLOW}${RESTART_APPS[*]}${NC}"
-  echo -e "${YELLOW}=== DRY RUN COMPLETE ===${NC}"
-  echo "Re-run without -n or --dry-run to apply changes."
+  printf -v apps_list '%s, ' "${RESTART_APPS[@]}"
+  echo -e "${RED}→${NC} Apps to restart: ${YELLOW}${apps_list%, }${NC}"
 else
-  echo "Restarting apps to apply changes..."
   for app in "${RESTART_APPS[@]}"; do
     echo "Restarting $app..."
     killall "${app}" &> /dev/null || true
