@@ -2,143 +2,344 @@
 
 set -euo pipefail
 
-# inspired by: https://mths.be/macos
-# `defaults find` is good at finding some set preferences.
+# validate we're running on macOS
+if [[ "$(uname)" != "Darwin" ]]; then
+  echo "❌ This script is only for macOS"
+  exit 1
+fi
 
-# close System Settings to prevent overriding settings
-osascript -e 'tell application "System Settings" to quit'
+# parse command line arguments
+DRY_RUN=false
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    -n|--dry-run)
+      DRY_RUN=true
+      shift
+      ;;
+    -h|--help)
+      echo "Usage: $0 [-n|--dry-run] [-h|--help]"
+      echo "  -n, --dry-run  Show what would be changed without making changes"
+      echo "  -h, --help     Show this help message"
+      exit 0
+      ;;
+    *)
+      echo "Unknown option: $1"
+      echo "Use -h or --help for usage information"
+      exit 1
+      ;;
+  esac
+done
 
-# ask for the administrator password upfront
-sudo -v
+# constants and configuration
+readonly RED='\033[0;31m'
+readonly GREEN='\033[0;32m'
+readonly YELLOW='\033[1;33m'
+readonly BLUE='\033[0;34m'
+readonly NC='\033[0m' # No Color
 
-# keep-alive: update existing `sudo` time stamp until `prefs.sh` has finished
-while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
+# applications that need to be restarted after preference changes
+readonly RESTART_APPS=("Activity Monitor" "Dock" "Finder" "Mail" "SystemUIServer" "TextEdit")
+
+# normalize boolean values for comparison (1/0 vs true/false)
+normalize_bool() {
+  local value="$1"
+  case "$value" in
+    "1") echo "true" ;;
+    "0") echo "false" ;;
+    *) echo "$value" ;;
+  esac
+}
+
+# set a defaults preference with dry-run support
+setting() {
+  local domain="$1"
+  local key="$2"
+  local type="$3"
+  local value="$4"
+
+  local current_value
+  current_value=$(defaults read "$domain" "$key" 2>/dev/null || echo "NOT SET")
+
+  # normalize for comparison if boolean
+  local normalized_current="$current_value"
+  local normalized_new="$value"
+  if [[ "$type" == "bool" ]]; then
+    normalized_current=$(normalize_bool "$current_value")
+    normalized_new=$(normalize_bool "$value")
+  fi
+
+  if [[ "$DRY_RUN" == "true" ]]; then
+    if [[ "$normalized_current" == "$normalized_new" ]]; then
+      echo -e "${GREEN}✓${NC} $domain.$key = ${YELLOW}$current_value${NC} (no change)"
+    else
+      echo -e "${RED}→${NC} $domain.$key: ${YELLOW}$current_value${NC} → ${GREEN}$value${NC} ($type)"
+    fi
+  else
+    if [[ "$normalized_current" != "$normalized_new" ]]; then
+      echo "Setting $domain $key to $value"
+      defaults write "$domain" "$key" "-$type" "$value"
+    else
+      echo "✓ $domain $key already set to $value"
+    fi
+  fi
+}
+
+# set a dictionary value with dry-run support
+dict_setting() {
+  local domain="$1"
+  local key="$2"
+  local dict_key="$3"
+  local dict_value="$4"
+
+  if [[ "$DRY_RUN" == "true" ]]; then
+    echo -e "${BLUE}→${NC} $domain.$key -dict-add $dict_key $dict_value"
+  else
+    echo "Setting $domain $key -dict-add $dict_key $dict_value"
+    defaults write "$domain" "$key" -dict-add "$dict_key" "$dict_value"
+  fi
+}
+
+# execute a command with dry-run support
+cmd() {
+  local description="$1"
+  local command="$2"
+
+  if [[ "$DRY_RUN" == "true" ]]; then
+    echo -e "${BLUE}→${NC} $description"
+  else
+    echo "$description"
+    eval "$command"
+  fi
+}
+
+# set multiple dictionary values at once
+dict_batch() {
+  local domain="$1"
+  local key="$2"
+  local description="$3"
+  shift 3
+
+  if [[ "$DRY_RUN" == "true" ]]; then
+    echo -e "${BLUE}→${NC} $description"
+  else
+    echo "$description"
+    defaults write "$domain" "$key" -dict "$@"
+  fi
+}
+
+# show/hide file or folder
+toggle_visibility() {
+  local path="$1"
+  local name="$2"
+
+  if [[ "$DRY_RUN" == "true" ]]; then
+    if [[ $(ls -dlO "$path" 2>/dev/null | awk '{print $5}') == *"hidden"* ]]; then
+      echo -e "${RED}→${NC} $name: ${YELLOW}hidden${NC} → ${GREEN}visible${NC}"
+    else
+      echo -e "${GREEN}✓${NC} $name already visible"
+    fi
+  else
+    echo "Making $name folder visible"
+    chflags nohidden "$path"
+  fi
+}
+
+# check for trackpad (built-in or external)
+has_trackpad() {
+  command ioreg | command grep -q "AppleMultitouchTrackpad" || \
+  command system_profiler SPBluetoothDataType | command grep -iq "trackpad\|magic trackpad" || \
+  command system_profiler SPUSBDataType | command grep -iq "magic trackpad"
+}
+
+# determine script location for relative paths
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOTFILES_ROOT="$(dirname "$SCRIPT_DIR")"
+
+if [[ "$DRY_RUN" == "true" ]]; then
+  echo -e "${YELLOW}=== DRY RUN MODE - NO CHANGES WILL BE MADE ===${NC}"
+fi
+
+# close System Settings
+cmd "Close System Settings" 'osascript -e '\''tell application "System Settings" to quit'\'''
 
 ### finder
+echo -e "${GREEN}=== Configuring Finder ===${NC}"
+
 # show status bar
-defaults write com.apple.finder ShowStatusBar -bool true
+setting "com.apple.finder" "ShowStatusBar" "bool" "true"
 
 # show path bar
-defaults write com.apple.finder ShowPathbar -bool true
+setting "com.apple.finder" "ShowPathbar" "bool" "true"
 
 # set sidebar icon size to small
-defaults write Apple Global Domain NSTableViewDefaultSizeMode -int 1
+setting "Apple Global Domain" "NSTableViewDefaultSizeMode" "int" "1"
 
 # search the current folder by default
-defaults write com.apple.finder FXDefaultSearchScope -string "SCcf"
+setting "com.apple.finder" "FXDefaultSearchScope" "string" "SCcf"
 
 # set home as the default location for new windows
-defaults write com.apple.finder NewWindowTarget -string 'PfHm'
+setting "com.apple.finder" "NewWindowTarget" "string" "PfHm"
 
 # enable snap-to-grid for icons on the desktop and other icon views
-defaults write com.apple.finder DesktopViewSettings -dict-add IconViewSettings -dict arrangeBy grid
-defaults write com.apple.finder FK_StandardViewSettings -dict-add IconViewSettings -dict arrangeBy grid
-defaults write com.apple.finder StandardViewSettings -dict-add IconViewSettings -dict arrangeBy grid
+dict_setting "com.apple.finder" "DesktopViewSettings" "IconViewSettings" "-dict arrangeBy grid"
+dict_setting "com.apple.finder" "FK_StandardViewSettings" "IconViewSettings" "-dict arrangeBy grid"
+dict_setting "com.apple.finder" "StandardViewSettings" "IconViewSettings" "-dict arrangeBy grid"
 
 # use list view in all finder windows by default
-defaults write com.apple.finder FXPreferredViewStyle -string "Nlsv"
+setting "com.apple.finder" "FXPreferredViewStyle" "string" "Nlsv"
 
-# show the ~/Library & /Volumes folders
-chflags nohidden ~/Library
-sudo chflags nohidden /Volumes
+# show the ~/Library folder
+toggle_visibility "$HOME/Library" "~/Library"
 
 # expand file info panes
-defaults write com.apple.finder FXInfoPanesExpanded -dict \
+dict_batch "com.apple.finder" "FXInfoPanesExpanded" "Expand Finder info panes" \
   General -bool true \
   MetaData -bool true \
   OpenWith -bool true \
   Privileges -bool true
 
 ### desktop / dock
+echo -e "${GREEN}=== Configuring Desktop & Dock ===${NC}"
+
 # dark mode
-defaults write Apple Global Domain AppearancePreference -string Dark
+setting "Apple Global Domain" "AppleInterfaceStyle" "string" "Dark"
 
 # position the dock on the left
-defaults write com.apple.dock orientation -string "left"
+setting "com.apple.dock" "orientation" "string" "left"
 
 # set the icon size of Dock items to 32 pixels
-defaults write com.apple.dock tilesize -int 32
+setting "com.apple.dock" "tilesize" "int" "32"
 
 # minimize windows into their application's icon
-defaults write com.apple.dock minimize-to-application -bool true
+setting "com.apple.dock" "minimize-to-application" "bool" "true"
 
 # enable app exposé gesture (swipe down with 3 fingers)
-defaults write com.apple.dock showAppExposeGestureEnabled -bool true
+setting "com.apple.dock" "showAppExposeGestureEnabled" "bool" "true"
 
 # remove the auto-hiding Dock delay
-defaults write com.apple.dock autohide-delay -float 0
+setting "com.apple.dock" "autohide-delay" "float" "0"
 
 # speed up animation when hiding/showing the Dock
-defaults write com.apple.dock autohide-time-modifier -float .5
+setting "com.apple.dock" "autohide-time-modifier" "float" "0.5"
 
 # automatically hide and show the Dock
-defaults write com.apple.dock autohide -bool true
+setting "com.apple.dock" "autohide" "bool" "true"
 
 ### input
-# check for trackpad before applying settings
-if system_profiler SPBluetoothDataType | grep -q "Apple Trackpad"; then
-  defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadRightClick -bool true
-  defaults -currentHost write NSGlobalDomain com.apple.trackpad.enableSecondaryClick -bool true
+echo -e "${GREEN}=== Configuring Input ===${NC}"
+
+# trackpad settings (if available)
+if has_trackpad; then
+  if [[ "$DRY_RUN" == "true" ]]; then
+    echo -e "${BLUE}→${NC} Trackpad detected: enable right-click & secondary click"
+  else
+    echo "Trackpad detected, configuring trackpad settings"
+    defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadRightClick -bool true
+    defaults -currentHost write NSGlobalDomain com.apple.trackpad.enableSecondaryClick -bool true
+  fi
+else
+  echo "No trackpad detected, skipping trackpad settings"
 fi
 
 # use keyboard navigation to move focus between controls
-defaults write Apple Global Domain AppleKeyboardUIMode -int 2
+setting "Apple Global Domain" "AppleKeyboardUIMode" "int" "2"
 
 # set keyboard repeat rate
-defaults write Apple Global Domain KeyRepeat -int 2
-defaults write Apple Global Domain InitialKeyRepeat -int 25
+setting "Apple Global Domain" "KeyRepeat" "int" "2"
+setting "Apple Global Domain" "InitialKeyRepeat" "int" "25"
 
 # disable auto-capitalization
-defaults write Apple Global Domain NSAutomaticCapitalizationEnabled -bool false
+setting "Apple Global Domain" "NSAutomaticCapitalizationEnabled" "bool" "false"
 
 # disable auto-correct
-defaults write Apple Global Domain NSAutomaticSpellingCorrectionEnabled -bool false
+setting "Apple Global Domain" "NSAutomaticSpellingCorrectionEnabled" "bool" "false"
 
 ### misc
+echo -e "${GREEN}=== Configuring Misc Settings ===${NC}"
+
 # disable shadow in screenshots
-defaults write com.apple.screencapture disable-shadow -bool true
+setting "com.apple.screencapture" "disable-shadow" "bool" "true"
 
 # expand save panel by default
-defaults write Apple Global Domain NSNavPanelExpandedStateForSaveMode -bool true
-defaults write Apple Global Domain NSNavPanelExpandedStateForSaveMode2 -bool true
+setting "Apple Global Domain" "NSNavPanelExpandedStateForSaveMode" "bool" "true"
+setting "Apple Global Domain" "NSNavPanelExpandedStateForSaveMode2" "bool" "true"
 
 # increase window resize speed for Cocoa applications
-defaults write Apple Global Domain NSWindowResizeTime -float 0.001
+setting "Apple Global Domain" "NSWindowResizeTime" "float" "0.001"
 
 ### activity monitor
+echo -e "${GREEN}=== Configuring Activity Monitor ===${NC}"
+
 # show the main window when launching Activity Monitor
-defaults write com.apple.ActivityMonitor OpenMainWindow -bool true
+setting "com.apple.ActivityMonitor" "OpenMainWindow" "bool" "true"
 
 # visualize CPU usage in the Activity Monitor Dock icon
-defaults write com.apple.ActivityMonitor IconType -int 5
+setting "com.apple.ActivityMonitor" "IconType" "int" "5"
 
 # show all processes in Activity Monitor
-defaults write com.apple.ActivityMonitor ShowCategory -int 107
+setting "com.apple.ActivityMonitor" "ShowCategory" "int" "107"
 
 ### mail
+echo -e "${GREEN}=== Configuring Mail ===${NC}"
+
 # copy email addresses without names
-defaults write com.apple.mail AddressesIncludeNameOnPasteboard -bool false
+setting "com.apple.mail" "AddressesIncludeNameOnPasteboard" "bool" "false"
 
 # add ⌘ + Enter to send email
-defaults write com.apple.mail NSUserKeyEquivalents -dict-add "Send" "@\U21a9"
+dict_setting "com.apple.mail" "NSUserKeyEquivalents" "Send" "@\U21a9"
 
 ### text edit
+echo -e "${GREEN}=== Configuring TextEdit ===${NC}"
+
 # use plain text mode for new documents
-defaults write com.apple.TextEdit RichText -int 0
+setting "com.apple.TextEdit" "RichText" "int" "0"
 
 # open and save files as UTF-8
-defaults write com.apple.TextEdit PlainTextEncoding -int 4
-defaults write com.apple.TextEdit PlainTextEncodingForWrite -int 4
+setting "com.apple.TextEdit" "PlainTextEncoding" "int" "4"
+setting "com.apple.TextEdit" "PlainTextEncodingForWrite" "int" "4"
 
 ### sublime text
+echo -e "${GREEN}=== Configuring Sublime Text ===${NC}"
+
 SUBLIME_PREFS_DIR="$HOME/Library/Application Support/Sublime Text/Packages/User"
-if [[ -d "$SUBLIME_PREFS_DIR" ]]; then
-  PREFS_FILE="$SUBLIME_PREFS_DIR/Preferences.sublime-settings"
-  rm -f "$PREFS_FILE" || true
-  ln -sf "$HOME/.dotfiles/prefs/sublime-prefs.json" "$PREFS_FILE"
+PREFS_FILE="$SUBLIME_PREFS_DIR/Preferences.sublime-settings"
+SOURCE_FILE="$DOTFILES_ROOT/prefs/sublime-prefs.json"
+
+if [[ "$DRY_RUN" == "true" ]]; then
+  if [[ -d "$SUBLIME_PREFS_DIR" ]]; then
+    if [[ -L "$PREFS_FILE" ]] && [[ "$(readlink "$PREFS_FILE")" == "$SOURCE_FILE" ]]; then
+      echo -e "${GREEN}✓${NC} Sublime Text preferences already symlinked"
+    elif [[ -f "$PREFS_FILE" ]]; then
+      echo -e "${RED}→${NC} Sublime Text: ${YELLOW}regular file${NC} → ${GREEN}symlink to dotfiles${NC}"
+    else
+      echo -e "${RED}→${NC} Sublime Text: ${YELLOW}missing${NC} → ${GREEN}create symlink${NC}"
+    fi
+  else
+    echo -e "${YELLOW}✓${NC} Sublime Text not installed, skipping"
+  fi
+else
+  if [[ -d "$SUBLIME_PREFS_DIR" ]]; then
+    echo "Configuring Sublime Text preferences"
+    rm -f "$PREFS_FILE" || true
+    ln -sf "$SOURCE_FILE" "$PREFS_FILE"
+    echo "✓ Sublime Text preferences symlinked"
+  else
+    echo "Sublime Text directory not found, skipping configuration"
+  fi
 fi
 
 # restart affected apps
-for app in "Activity Monitor" "Mail" "TextEdit" "Finder" "Dock" "SystemUIServer" "Terminal"; do
-  killall "${app}" &> /dev/null || true
-done
+echo -e "${GREEN}=== Restarting Affected Apps ===${NC}"
+
+if [[ "$DRY_RUN" == "true" ]]; then
+  echo -e "${RED}→${NC} Would restart: ${YELLOW}${RESTART_APPS[*]}${NC}"
+  echo -e "${YELLOW}=== DRY RUN COMPLETE ===${NC}"
+  echo "Re-run without -n or --dry-run to apply changes."
+else
+  echo "Restarting apps to apply changes..."
+  for app in "${RESTART_APPS[@]}"; do
+    echo "Restarting $app..."
+    killall "${app}" &> /dev/null || true
+  done
+  echo -e "${GREEN}✓ Configuration complete!${NC}"
+fi
