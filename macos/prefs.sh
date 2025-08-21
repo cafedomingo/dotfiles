@@ -42,8 +42,9 @@ defaults write com.apple.frameworks.diskimages auto-open-rw-root -bool true
 defaults write com.apple.finder OpenWindowForNewRemovableDisk -bool true
 
 # enable snap-to-grid for icons on the desktop and other icon views
-/usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:arrangeBy grid" ~/Library/Preferences/com.apple.finder.plist
-/usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:arrangeBy grid" ~/Library/Preferences/com.apple.finder.plist
+defaults write com.apple.finder DesktopViewSettings -dict-add IconViewSettings -dict arrangeBy grid
+defaults write com.apple.finder FK_StandardViewSettings -dict-add IconViewSettings -dict arrangeBy grid
+defaults write com.apple.finder StandardViewSettings -dict-add IconViewSettings -dict arrangeBy grid
 
 # use list view in all finder windows by default
 defaults write com.apple.finder FXPreferredViewStyle -string "Nlsv"
@@ -105,10 +106,6 @@ defaults write Apple Global Domain NSAutomaticCapitalizationEnabled -bool false
 defaults write Apple Global Domain NSAutomaticSpellingCorrectionEnabled -bool false
 
 ### misc
-# avoid creating .DS_Store files on network or usb volumes
-defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
-defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true
-
 # disable shadow in screenshots
 defaults write com.apple.screencapture disable-shadow -bool true
 
@@ -118,9 +115,6 @@ defaults write Apple Global Domain NSNavPanelExpandedStateForSaveMode2 -bool tru
 
 # increase window resize speed for Cocoa applications
 defaults write Apple Global Domain NSWindowResizeTime -float 0.001
-
-# disable font smoothing
-defaults -currentHost write -g AppleFontSmoothing -int 0
 
 ### activity monitor
 # show the main window when launching Activity Monitor
