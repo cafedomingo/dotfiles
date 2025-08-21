@@ -130,14 +130,6 @@ defaults write com.apple.TextEdit RichText -int 0
 defaults write com.apple.TextEdit PlainTextEncoding -int 4
 defaults write com.apple.TextEdit PlainTextEncodingForWrite -int 4
 
-### terminal
-# enable Secure Keyboard Entry in terminal
-# https://security.stackexchange.com/a/47786/8918
-defaults write com.apple.terminal SecureKeyboardEntry -bool true
-
-# disable prompt line marks
-defaults write com.apple.Terminal AutoMarkPromptLines -int 0
-
 ### sublime text
 SUBLIME_PREFS_DIR="$HOME/Library/Application Support/Sublime Text/Packages/User"
 if [[ -d "$SUBLIME_PREFS_DIR" ]]; then
