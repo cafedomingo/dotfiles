@@ -28,6 +28,9 @@ unsetopt menu_complete    # do notautoselect first completion
 # prompt
 setopt prompt_subst       # enable command substitution in prompt. needed for the suggestion plugins
 
+# keybindings
+bindkey -e                # use emacs keybindings (Ctrl+A, Ctrl+E, etc.)
+
 # Set tab title to current directory
 autoload -U add-zsh-hook
 
