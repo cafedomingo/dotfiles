@@ -30,17 +30,6 @@ defaults write com.apple.finder FXDefaultSearchScope -string "SCcf"
 # set home as the default location for new windows
 defaults write com.apple.finder NewWindowTarget -string 'PfHm'
 
-# show icons for hard drives, servers, and removable media on the desktop
-defaults write com.apple.finder ShowExternalHardDrivesOnDesktop -bool true
-defaults write com.apple.finder ShowHardDrivesOnDesktop -bool true
-defaults write com.apple.finder ShowMountedServersOnDesktop -bool true
-defaults write com.apple.finder ShowRemovableMediaOnDesktop -bool true
-
-# automatically open a new finder window when a volume is mounted
-defaults write com.apple.frameworks.diskimages auto-open-ro-root -bool true
-defaults write com.apple.frameworks.diskimages auto-open-rw-root -bool true
-defaults write com.apple.finder OpenWindowForNewRemovableDisk -bool true
-
 # enable snap-to-grid for icons on the desktop and other icon views
 defaults write com.apple.finder DesktopViewSettings -dict-add IconViewSettings -dict arrangeBy grid
 defaults write com.apple.finder FK_StandardViewSettings -dict-add IconViewSettings -dict arrangeBy grid
