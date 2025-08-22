@@ -359,7 +359,7 @@
 		</dict>
 	</dict>
 	<key>Default Bookmark Guid</key>
-	<string>0BE6D12F-46C9-4284-9F0F-08DFBDAE0526</string>
+	<string>C5C7E8C1-7E57-49A7-A158-EAA60960D1BF</string>
 	<key>GlobalKeyMap</key>
 	<dict>
 		<key>0x19-0x60000</key>
@@ -465,11 +465,15 @@
 	<false/>
 	<key>HotkeyMigratedFromSingleToMulti</key>
 	<true/>
+	<key>IRMemory</key>
+	<integer>4</integer>
 	<key>New Bookmarks</key>
 	<array>
 		<dict>
 			<key>ASCII Anti Aliased</key>
 			<true/>
+			<key>ASCII Ligatures</key>
+			<false/>
 			<key>Ambiguous Double Width</key>
 			<false/>
 			<key>Animate Movement</key>
@@ -1402,7 +1406,7 @@
 				<real>0.98813849687576294</real>
 			</dict>
 			<key>Guid</key>
-			<string>0BE6D12F-46C9-4284-9F0F-08DFBDAE0526</string>
+			<string>C5C7E8C1-7E57-49A7-A158-EAA60960D1BF</string>
 			<key>Horizontal Spacing</key>
 			<real>1</real>
 			<key>Idle Code</key>
@@ -1555,7 +1559,7 @@
 			<key>Right Option Key Sends</key>
 			<integer>0</integer>
 			<key>Rows</key>
-			<integer>50</integer>
+			<integer>25</integer>
 			<key>Screen</key>
 			<integer>-1</integer>
 			<key>Scrollback Lines</key>

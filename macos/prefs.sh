@@ -38,7 +38,7 @@ readonly BLUE='\033[0;34m'
 readonly NC='\033[0m' # No Color
 
 # applications that need to be restarted after preference changes
-readonly RESTART_APPS=("Activity Monitor" "Dock" "Finder" "iTerm2" "SystemUIServer" "TextEdit")
+readonly RESTART_APPS=("Activity Monitor" "Dock" "Finder" "SystemUIServer" "TextEdit")
 
 # normalize boolean values for comparison (1/0 vs true/false)
 normalize_bool() {
@@ -150,13 +150,22 @@ symlink_prefs() {
   local source_file="$2"
   local target_file="$3"
 
-  if [[ "$DRY_RUN" == "true" ]]; then
-    echo -e "${BLUE}→${NC} Symlink $app_name prefs: $source_file → $target_file"
+  # check if symlink already exists and is correct
+  if [[ -L "$target_file" ]] && [[ "$(readlink "$target_file")" == "$source_file" ]]; then
+    if [[ "$DRY_RUN" == "true" ]]; then
+      echo -e "${GREEN}✓${NC} $app_name prefs already symlinked correctly"
+    else
+      echo "✓ $app_name prefs already symlinked correctly"
+    fi
   else
-    mkdir -p "$(dirname "$target_file")"
-    rm -f "$target_file" || true
-    ln -sf "$source_file" "$target_file"
-    echo "✓ $app_name prefs symlinked"
+    if [[ "$DRY_RUN" == "true" ]]; then
+      echo -e "${BLUE}→${NC} Symlink $app_name prefs: $source_file → $target_file"
+    else
+      mkdir -p "$(dirname "$target_file")"
+      rm -f "$target_file" || true
+      ln -sf "$source_file" "$target_file"
+      echo "✓ $app_name prefs symlinked"
+    fi
   fi
 }
 
@@ -315,17 +324,22 @@ symlink_prefs "Sublime Text" \
 ### iterm2
 echo -e "${GREEN}=== Configuring iTerm2 ===${NC}"
 
-symlink_prefs "iTerm2" \
-  "$DOTFILES_ROOT/prefs/iterm2-prefs.plist" \
-  "$HOME/Library/Preferences/com.googlecode.iterm2.plist"
+# Configure iTerm2 to load preferences from our dotfiles directory
+setting "com.googlecode.iterm2" "PrefsCustomFolder" "string" "$DOTFILES_ROOT/prefs"
+setting "com.googlecode.iterm2" "LoadPrefsFromCustomFolder" "bool" "true"
 
 # restart affected apps
 echo -e "${GREEN}=== Applying changes ===${NC}"
 
 if [[ "$DRY_RUN" == "true" ]]; then
+  echo -e "${BLUE}→${NC} Refresh preferences daemon (killall cfprefsd)"
   printf -v apps_list '%s, ' "${RESTART_APPS[@]}"
   echo -e "${RED}→${NC} Apps to restart: ${YELLOW}${apps_list%, }${NC}"
 else
+  # force preferences daemon to refresh cached preferences
+  echo "Refreshing preferences daemon..."
+  killall cfprefsd 2>/dev/null || true
+
   for app in "${RESTART_APPS[@]}"; do
     echo "Restarting $app..."
     killall "${app}" &> /dev/null || true
