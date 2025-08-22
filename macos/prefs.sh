@@ -38,7 +38,7 @@ readonly BLUE='\033[0;34m'
 readonly NC='\033[0m' # No Color
 
 # applications that need to be restarted after preference changes
-readonly RESTART_APPS=("Activity Monitor" "Dock" "Finder" "Mail" "SystemUIServer" "TextEdit")
+readonly RESTART_APPS=("Activity Monitor" "Dock" "Finder" "iTerm2" "Mail" "SystemUIServer" "TextEdit")
 
 # normalize boolean values for comparison (1/0 vs true/false)
 normalize_bool() {
@@ -141,6 +141,22 @@ toggle_visibility() {
   else
     echo "Making $name folder visible"
     chflags nohidden "$path"
+  fi
+}
+
+# create symlink for application preferences
+symlink_prefs() {
+  local app_name="$1"
+  local source_file="$2"
+  local target_file="$3"
+
+  if [[ "$DRY_RUN" == "true" ]]; then
+    echo -e "${BLUE}→${NC} Symlink $app_name prefs: $source_file → $target_file"
+  else
+    mkdir -p "$(dirname "$target_file")"
+    rm -f "$target_file" || true
+    ln -sf "$source_file" "$target_file"
+    echo "✓ $app_name prefs symlinked"
   fi
 }
 
@@ -301,17 +317,16 @@ setting "com.apple.TextEdit" "PlainTextEncodingForWrite" "int" "4"
 ### sublime text
 echo -e "${GREEN}=== Configuring Sublime Text ===${NC}"
 
-SOURCE_FILE="$DOTFILES_ROOT/prefs/sublime-prefs.json"
-PREFS_FILE="$HOME/Library/Application Support/Sublime Text/Packages/User/Preferences.sublime-settings"
+symlink_prefs "Sublime Text" \
+  "$DOTFILES_ROOT/prefs/sublime-prefs.json" \
+  "$HOME/Library/Application Support/Sublime Text/Packages/User/Preferences.sublime-settings"
 
-if [[ "$DRY_RUN" == "true" ]]; then
-  echo -e "${BLUE}→${NC} Symlink Sublime Text prefs: $SOURCE_FILE → $PREFS_FILE"
-else
-  mkdir -p "$(dirname "$PREFS_FILE")"
-  rm -f "$PREFS_FILE" || true
-  ln -sf "$SOURCE_FILE" "$PREFS_FILE"
-  echo "✓ Sublime Text prefs symlinked"
-fi
+### iterm2
+echo -e "${GREEN}=== Configuring iTerm2 ===${NC}"
+
+symlink_prefs "iTerm2" \
+  "$DOTFILES_ROOT/prefs/iterm2-prefs.plist" \
+  "$HOME/Library/Preferences/com.googlecode.iterm2.plist"
 
 # restart affected apps
 echo -e "${GREEN}=== Applying changes ===${NC}"
