@@ -1,2 +1,7 @@
 # normalize line endings for all text-based files
 * text=auto
+
+# shell scripts must have LF line endings
+*.bash text eol=lf
+*.sh text eol=lf
+*.zsh text eol=lf
