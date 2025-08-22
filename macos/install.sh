@@ -57,6 +57,9 @@ done
 readonly DRY_RUN
 [[ "$DRY_RUN" == "true" ]] && echo "=== DRY RUN MODE - NO CHANGES WILL BE MADE ==="
 
+# determine script location for relative paths
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 # xcode cli tools: https://developer.apple.com/download/more/
 check_or_show "Xcode CLI tools" "command -v gcc" '
   touch /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress;
@@ -85,7 +88,7 @@ fi
 if [[ "$DRY_RUN" == "true" ]]; then
   if [[ -x "$BREW_CMD" ]] && "$BREW_CMD" --version &> /dev/null; then
     echo "Checking Brewfile dependencies..."
-    if "$BREW_CMD" bundle check --file="./Brewfile" --verbose; then
+    if "$BREW_CMD" bundle check --file="$SCRIPT_DIR/Brewfile" --verbose; then
       echo "✓ All Brewfile dependencies are installed"
     else
       echo "→ Would install missing packages from Brewfile"
@@ -94,12 +97,12 @@ if [[ "$DRY_RUN" == "true" ]]; then
     echo "→ Would install packages from Brewfile (after Homebrew installation)"
   fi
 else
-  run_or_show "install packages from Brewfile" "\"$BREW_CMD\" bundle --file=\"./Brewfile\""
+  run_or_show "install packages from Brewfile" "\"$BREW_CMD\" bundle --file=\"$SCRIPT_DIR/Brewfile\""
   run_or_show "clean up Homebrew" "\"$BREW_CMD\" cleanup"
 fi
 
 # configure macOS preferences
-run_or_show "configure macOS preferences" "./prefs.sh ${DRY_RUN:+--dry-run}"
+"$SCRIPT_DIR/prefs.sh" ${DRY_RUN:+--dry-run}
 
 # completion message
 echo ""
