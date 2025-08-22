@@ -38,7 +38,7 @@ readonly BLUE='\033[0;34m'
 readonly NC='\033[0m' # No Color
 
 # applications that need to be restarted after preference changes
-readonly RESTART_APPS=("Activity Monitor" "Dock" "Finder" "iTerm2" "Mail" "SystemUIServer" "TextEdit")
+readonly RESTART_APPS=("Activity Monitor" "Dock" "Finder" "iTerm2" "SystemUIServer" "TextEdit")
 
 # normalize boolean values for comparison (1/0 vs true/false)
 normalize_bool() {
@@ -294,15 +294,6 @@ setting "com.apple.ActivityMonitor" "IconType" "int" "5"
 
 # show all processes in Activity Monitor
 setting "com.apple.ActivityMonitor" "ShowCategory" "int" "107"
-
-### mail
-echo -e "${GREEN}=== Configuring Mail ===${NC}"
-
-# copy email addresses without names
-setting "com.apple.mail" "AddressesIncludeNameOnPasteboard" "bool" "false"
-
-# add ⌘ + Enter to send email
-dict_setting "com.apple.mail" "NSUserKeyEquivalents" "Send" "@\U21a9"
 
 ### text edit
 echo -e "${GREEN}=== Configuring TextEdit ===${NC}"
