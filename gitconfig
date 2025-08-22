@@ -73,7 +73,7 @@
   autocrlf = input
   safecrlf = warn
   # https://github.com/dandavison/delta
-  pager = "if command -v delta >/dev/null 2>&1; then delta; else less -R; fi"
+  pager = "if command -v delta >/dev/null 2>&1; then delta --pager=less; else less -R; fi"
   # prevent showing files whose names contain non-ASCII symbols as unversioned.
   # http://michael-kuehnel.de/git/2014/11/21/git-mac-osx-and-german-umlaute.html
   precomposeunicode = false
