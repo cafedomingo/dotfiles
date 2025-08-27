@@ -68,7 +68,7 @@ link:
 .PHONY: starship
 starship:
 	@echo -e "$(INFO)🚀 Installing starship prompt$(RESET)"
-	@cmd="curl -fsSL https://starship.rs/install.sh | sh -s -- --bin-dir=\"$(HOME)/bin\" --yes"; \
+	@cmd="curl -fsSL https://starship.rs/install.sh | sh -s -- --bin-dir=\"$(HOME)/bin\" --yes 2>&1 | sed '/Please follow the steps/,\$$d'"; \
 	$(if $(DRY_RUN),echo "[DRY-RUN] $$cmd",sh -c "$$cmd")
 
 # remove all symlinks (follows make convention)
