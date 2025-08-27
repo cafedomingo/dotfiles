@@ -1,8 +1,15 @@
 # 💀 dotfiles
 
-Installation via [Dotbot](https://github.com/anishathalye/dotbot)
+## Installation
 
-**Resources**
-* [Hyperpolyglot: Unix shells syntax](http://hyperpolyglot.org/unix-shells)
-* [Zsh/Bash startup files loading order](https://shreevatsa.wordpress.com/2008/03/30/zshbash-startup-files-loading-order-bashrc-zshrc-etc/)
-* [Awesome dotfiles](https://github.com/webpro/awesome-dotfiles)
+```bash
+make install
+```
+
+## Removal
+
+```bash
+make clean
+```
+
+Uses [Starship](https://starship.rs/) cross-shell prompt and [zsh-users](https://github.com/zsh-users) plugins for enhanced shell experience.
