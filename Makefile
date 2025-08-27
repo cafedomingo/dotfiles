@@ -10,8 +10,8 @@ LINKS := \
 	zshrc \
 	bin \
 	sh \
-	sh/starship.toml:.config/starship.toml \
-	ssh.config:.ssh/config
+	sh/config/starship.toml:.config/starship.toml \
+	sh/config/ssh.config:.ssh/config
 
 # directories to manage
 DIRECTORIES := \
