@@ -17,7 +17,6 @@ brew 'pigz'
 brew 'ripgrep'
 brew 'tldr'
 brew 'wget'
-brew 'z'
 
 # apps
 cask '1password'

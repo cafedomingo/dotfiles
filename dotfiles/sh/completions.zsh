@@ -33,13 +33,6 @@ zstyle ':completion::complete:*' cache-path $ZSH_CACHE_DIR
 zstyle ':completion:*' list-colors ''
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#) ([0-9a-z-]#)*=01;34=0=01'
 
-# z (smart directory jumping)
-if command -v brew >/dev/null 2>&1 && [[ -r "$(brew --prefix)/etc/profile.d/z.sh" ]]; then
-  source "$(brew --prefix)/etc/profile.d/z.sh"
-elif [[ -r "/usr/share/z/z.sh" ]]; then
-  source "/usr/share/z/z.sh"
-fi
-
 # fzf completions and key bindings
 if command -v fzf >/dev/null 2>&1; then
   source <(fzf --zsh)
