@@ -20,7 +20,7 @@ DIRECTORIES := \
 	.ssh
 
 SHELL := /bin/bash
-DOTFILES_DIR := $(shell pwd)
+DOTFILES_DIR := $(shell pwd)/dotfiles
 
 # enable dry-run mode with DRY_RUN=1
 RUN := $(if $(DRY_RUN),echo "[DRY-RUN]",)
