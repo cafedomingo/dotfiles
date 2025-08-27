@@ -2,7 +2,6 @@
 # one package per line
 
 # shells
-bash-completion
 zsh
 
 # tools

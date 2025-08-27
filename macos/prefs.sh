@@ -177,7 +177,7 @@ has_trackpad() {
 }
 
 # determine script location for relative paths
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="$(dirname "$0")"
 DOTFILES_ROOT="$(dirname "$SCRIPT_DIR")"
 
 if [[ "$DRY_RUN" == "true" ]]; then
