@@ -324,7 +324,18 @@ symlink_prefs "Sublime Text" \
 ### iterm2
 echo -e "${GREEN}=== Configuring iTerm2 ===${NC}"
 
-# Configure iTerm2 to load preferences from our dotfiles directory
+# kill process and clear cached preferences
+if pgrep -x "iTerm2" > /dev/null; then
+    if [[ "$DRY_RUN" == "true" ]]; then
+        echo -e "${BLUE}→${NC} Would quit iTerm2 and clear preferences cache"
+    else
+        killall "iTerm2" 2>/dev/null || true
+        sleep 1
+        defaults delete com.googlecode.iterm2 2>/dev/null || true
+    fi
+fi
+
+# load preferences from prefs directory
 setting "com.googlecode.iterm2" "PrefsCustomFolder" "string" "$DOTFILES_ROOT/prefs"
 setting "com.googlecode.iterm2" "LoadPrefsFromCustomFolder" "bool" "true"
 
