@@ -1,9 +1,12 @@
+# detect macOS
+IS_MACOS := $(shell [ "$$(uname -s)" = "Darwin" ] && echo 1)
+
 # all symlinks to create (source:target or source for ~/.<source>)
 LINKS := \
 	curlrc \
 	gitconfig \
 	gitignore \
-	hushlogin \
+	$(if $(IS_MACOS),hushlogin) \
 	nanorc \
 	vimrc \
 	zprofile \
