@@ -5,13 +5,13 @@ SHELL := /bin/bash
 DOTFILES_DIR := $(shell pwd)/dotfiles
 
 # auto-discover link targets
-LINKS := $(shell find $(DOTFILES_DIR) -maxdepth 1 \( -type f -o -type d \) -not -path "$(DOTFILES_DIR)" | sed 's|^$(DOTFILES_DIR)/||' | sort)
+LINKS := $(shell find $(DOTFILES_DIR) -maxdepth 1 \( -type f -o -type d \) -not -path "$(DOTFILES_DIR)" -not -name "_config" | sed 's|^$(DOTFILES_DIR)/||' | sort)
 
 # config files with explicit paths
 CONFIG_FILES := \
-	sh/_config/starship.toml:.config/starship.toml \
-	sh/_config/ssh.config:.ssh/config \
-	$(if $(IS_MACOS),sh/_config/hushlogin:.hushlogin)
+	_config/starship.toml:.config/starship.toml \
+	_config/ssh.config:.ssh/config \
+	$(if $(IS_MACOS),_config/hushlogin:.hushlogin)
 
 # directories to manage
 DIRECTORIES := \
