@@ -1,29 +1,23 @@
 # detect macOS
 IS_MACOS := $(shell [ "$$(uname -s)" = "Darwin" ] && echo 1)
 
-# all symlinks to create (source:target or source for ~/.<source>)
-LINKS := \
-	curlrc \
-	gitconfig \
-	gitignore \
-	$(if $(IS_MACOS),hushlogin) \
-	nanorc \
-	vimrc \
-	zprofile \
-	zshrc \
-	bin \
-	sh \
-	sh/config/starship.toml:.config/starship.toml \
-	sh/config/ssh.config:.ssh/config
+SHELL := /bin/bash
+DOTFILES_DIR := $(shell pwd)/dotfiles
+
+# auto-discover link targets
+LINKS := $(shell find $(DOTFILES_DIR) -maxdepth 1 \( -type f -o -type d \) -not -path "$(DOTFILES_DIR)" | sed 's|^$(DOTFILES_DIR)/||' | sort)
+
+# config files with explicit paths
+CONFIG_FILES := \
+	sh/_config/starship.toml:.config/starship.toml \
+	sh/_config/ssh.config:.ssh/config \
+	$(if $(IS_MACOS),sh/_config/hushlogin:.hushlogin)
 
 # directories to manage
 DIRECTORIES := \
 	bin \
 	.config \
 	.ssh
-
-SHELL := /bin/bash
-DOTFILES_DIR := $(shell pwd)/dotfiles
 
 # enable dry-run mode with DRY_RUN=1
 RUN := $(if $(DRY_RUN),echo "[DRY-RUN]",)
@@ -58,12 +52,11 @@ link:
 		$(RUN) mkdir -pv $(HOME)/$(dir);)
 	@echo -e "$(INFO)🔗 Creating symbolic links$(RESET)"
 	@$(foreach link,$(LINKS), \
-		$(if $(findstring :,$(link)), \
-			$(eval source := $(word 1,$(subst :, ,$(link)))) \
-			$(eval target := $(word 2,$(subst :, ,$(link)))) \
-			$(RUN) ln -sfhv $(DOTFILES_DIR)/$(source) $(HOME)/$(target), \
-			$(RUN) ln -sfhv $(DOTFILES_DIR)/$(link) $(HOME)/.$(link) \
-		);)
+		$(RUN) ln -sfhv $(DOTFILES_DIR)/$(link) $(HOME)/.$(link);)
+	@$(foreach link,$(CONFIG_FILES), \
+		$(eval source := $(word 1,$(subst :, ,$(link)))) \
+		$(eval target := $(word 2,$(subst :, ,$(link)))) \
+		$(RUN) ln -sfhv $(DOTFILES_DIR)/$(source) $(HOME)/$(target);)
 
 # install starship prompt
 .PHONY: starship
@@ -77,11 +70,10 @@ starship:
 clean:
 	@echo -e "$(INFO)🗑️ Removing dotfiles symlinks$(RESET)"
 	@$(foreach link,$(LINKS), \
-		$(if $(findstring :,$(link)), \
-			$(eval target := $(word 2,$(subst :, ,$(link)))) \
-			$(RUN) rm -fv $(HOME)/$(target), \
-			$(RUN) rm -fv $(HOME)/.$(link) \
-		);)
+		$(RUN) rm -fv $(HOME)/.$(link);)
+	@$(foreach link,$(CONFIG_FILES), \
+		$(eval target := $(word 2,$(subst :, ,$(link)))) \
+		$(RUN) rm -fv $(HOME)/$(target);)
 
 .PHONY: help
 help:
