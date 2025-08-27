@@ -58,7 +58,7 @@ readonly DRY_RUN
 [[ "$DRY_RUN" == "true" ]] && echo "=== DRY RUN MODE - NO CHANGES WILL BE MADE ==="
 
 # determine script location for relative paths
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="$(dirname "$0")"
 
 # xcode cli tools: https://developer.apple.com/download/more/
 check_or_show "Xcode CLI tools" "command -v gcc" '

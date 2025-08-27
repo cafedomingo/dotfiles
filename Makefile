@@ -1,7 +1,5 @@
 # all symlinks to create (source:target or source for ~/.<source>)
 LINKS := \
-	bash_profile \
-	bashrc \
 	curlrc \
 	gitconfig \
 	gitignore \
