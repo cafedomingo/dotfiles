@@ -10,7 +10,9 @@ export GPG_TTY=$(tty)
 
 # default editors
 export EDITOR='vi -e'
-export VISUAL='subl -w'
+if [[ "$OSTYPE" == darwin* ]]; then
+  export VISUAL='subl -w'
+fi
 
 # pager highlighting
 if less --use-color -Dk -F -X </dev/null >/dev/null 2>&1; then
@@ -39,12 +41,12 @@ fi
 
 # PATH
 paths=(
-  "$GEM_HOME/bin"                                         # gem
   "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin"            # android cmdline-tools
   "$npm_global_bin"                                       # npm global bin
   /opt/homebrew/opt/coreutils/libexec/gnubin              # homebrew GNU utilities (arm64)
   /opt/homebrew/bin /opt/homebrew/sbin                    # homebrew (arm64)
-  "$HOME/.bin" "$HOME/bin"                                # user
+  "$HOME/.local/bin"                                      # user-specific executable files
+  "$HOME/.bin" "$HOME/bin"                                # personal executables
 )
 
 for p in ${paths[@]}; do
