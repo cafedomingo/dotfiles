@@ -1,7 +1,6 @@
 !.gitignore
 *.local
 Brewfile*.lock.json
-dotbot-install
 
 # macOS
 *.DS_Store
@@ -22,3 +21,16 @@ Icon
 [._]s[a-v][a-z]
 [._]sw[a-p]
 Session.vim
+
+# vscode
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+.history/
+*.vsix
+
+# claude
+.claude/
