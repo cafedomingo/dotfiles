@@ -77,13 +77,33 @@ fi
 
 # fzf
 if command -v fzf >/dev/null 2>&1; then
-  alias fv='fzf --preview "bat --color=always --style=header,grid --line-range :300 {}" | xargs -r $EDITOR'
   alias fp='fzf --preview "bat --color=always --style=header,grid --line-range :300 {}"'
   alias fd='cd "$(find . -type d 2>/dev/null | fzf)"'
-  alias fgl='git log --oneline --color=always | fzf --ansi --preview "git show --color=always {1}" | cut -d" " -f1 | xargs -r git show'
-  alias fgb='git branch -a | grep -v HEAD | sed "s/.* //" | sed "s#remotes/[^/]*/##" | sort -u | fzf | xargs -r git checkout'
-  alias fkill='ps aux | fzf --header-lines=1 | awk "{print \$2}" | xargs -r kill'
-  alias frg='rg --line-number --no-heading --color=always --smart-case . | fzf --ansi --delimiter : --preview "bat --color=always --highlight-line {2} {1}" | cut -d: -f1 | xargs -r $EDITOR'
+  fv() {
+    local file
+    file=$(fzf --preview "bat --color=always --style=header,grid --line-range :300 {}")
+    [ -n "$file" ] && ${EDITOR} "$file"
+  }
+  fgl() {
+    local hash
+    hash=$(git log --oneline --color=always | fzf --ansi --preview "git show --color=always {1}" | cut -d" " -f1)
+    [ -n "$hash" ] && git show "$hash"
+  }
+  fgb() {
+    local branch
+    branch=$(git branch -a | grep -v HEAD | sed "s/.* //" | sed "s#remotes/[^/]*/##" | sort -u | fzf)
+    [ -n "$branch" ] && git checkout "$branch"
+  }
+  fkill() {
+    local pid
+    pid=$(ps aux | fzf --header-lines=1 | awk '{print $2}')
+    [ -n "$pid" ] && kill "$pid"
+  }
+  frg() {
+    local file
+    file=$(rg --line-number --no-heading --color=always --smart-case . | fzf --ansi --delimiter : --preview "bat --color=always --highlight-line {2} {1}" | cut -d: -f1)
+    [ -n "$file" ] && ${EDITOR} "$file"
+  }
 fi
 
 # bat
