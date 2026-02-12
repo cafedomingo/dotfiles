@@ -49,7 +49,7 @@ paths=(
   "$HOME/.bin" "$HOME/bin"                                # personal executables
 )
 
-for p in ${paths[@]}; do
+for p in "${paths[@]}"; do
   if [[ -d "$p" ]]; then
     case ":$PATH:" in
       *":$p:") ;;
@@ -66,7 +66,7 @@ manpaths=(
 )
 
 mp=""
-for p in ${manpaths[@]}; do
+for p in "${manpaths[@]}"; do
   [[ -d "$p" ]] && mp="${mp:+$mp:}$p"
 done
 
