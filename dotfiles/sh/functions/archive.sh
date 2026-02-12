@@ -47,18 +47,18 @@ Extract various archive formats including zip, tar, 7z, rar, etc."
   [ ! -f "$1" ] && echo "'$1' is not a valid file" && return 1
 
   case $1 in
+    *.tar.bz2|*.tbz2)  command tar -jxvf "$1" ;;
+    *.tar.gz|*.tgz)    if command -v unpigz >/dev/null 2>&1; then command tar --use-compress-program=unpigz -xvf "$1"; else command tar -zxvf "$1"; fi ;;
+    *.tar.lz|*.tlz)    command tar --lzip -xvf "$1" ;;
+    *.tar.xz|*.txz)    command tar -Jxvf "$1" ;;
+    *.tar.zst)         command tar --zstd -xvf "$1" ;;
+    *.tar)             command tar -xvf "$1" ;;
     *.7z)              command 7za x "$1"   ;;
     *.bz2)             command bunzip2 "$1"  ;;
     *.dmg)             hdiutil mount "$1" ;;
     *.gz)              if command -v unpigz >/dev/null 2>&1; then command unpigz "$1"; else command gunzip "$1"; fi ;;
     *.lz)              command lzip -d "$1" ;;
     *.rar)             command unrar x "$1" ;;
-    *.tar)             command tar -xvf "$1" ;;
-    *.tar.bz2|*.tbz2)  command tar -jxvf "$1" ;;
-    *.tar.gz|*.tgz)    if command -v unpigz >/dev/null 2>&1; then command tar --use-compress-program=unpigz -xvf "$1"; else command tar -zxvf "$1"; fi ;;
-    *.tar.lz|*.tlz)    command tar --lzip -xvf "$1" ;;
-    *.tar.xz|*.txz)    command tar -Jxvf "$1" ;;
-    *.tar.zst)         command tar --zstd -xvf "$1" ;;
     *.xz)              command unxz "$1" ;;
     *.zst)             command zstd -d "$1" ;;
     *.Z)               command uncompress "$1" ;;
