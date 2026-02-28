@@ -1,0 +1,200 @@
+schema_version: "1.0"
+
+metadata:
+  name: "Electric Ink"
+  slug: "electric-ink"
+  variant: "dark"
+  design:
+    background_lightness: 0.0
+    foreground_lightness: 100.0
+    accent_lightness_spread: 24.0
+    min_contrast_ratio: 4.5
+    normal_to_bright_step: "~+14 L*"
+
+palette:
+
+  # Backgrounds & Foregrounds
+  bg:
+    hex: "#000000"
+    rgb: [0, 0, 0]
+    lab: [0.0, 0.0, 0.0]
+
+  fg:
+    hex: "#FFFFFF"
+    rgb: [255, 255, 255]
+    lab: [100.0, 0.0, 0.0]
+
+  dim-bg:
+    hex: "#1F1F2A"
+    rgb: [31, 31, 42]
+    lab: [12.2, 3.1, -7.4]
+
+  dim-fg:
+    hex: "#A6A6BC"
+    rgb: [166, 166, 188]
+    lab: [68.8, 4.4, -11.3]
+
+  muted:
+    hex: "#74748F"
+    rgb: [116, 116, 143]
+    lab: [49.7, 6.0, -14.7]
+
+  bright-fg:
+    hex: "#E1E1E9"
+    rgb: [225, 225, 233]
+    lab: [89.7, 1.5, -3.9]
+
+  # Accent Colors — Normal
+  red:
+    hex: "#D8465B"
+    rgb: [216, 70, 91]
+    lab: [51.5, 58.2, 20.6]
+
+  green:
+    hex: "#388667"
+    rgb: [56, 134, 103]
+    lab: [50.5, -31.8, 9.6]
+
+  yellow:
+    hex: "#DEB222"
+    rgb: [222, 178, 34]
+    lab: [74.5, 3.4, 71.4]
+
+  blue:
+    hex: "#4B81FE"
+    rgb: [75, 129, 254]
+    lab: [56.4, 23.0, -67.5]
+
+  magenta:
+    hex: "#9857F2"
+    rgb: [152, 87, 242]
+    lab: [51.7, 57.3, -68.2]
+
+  cyan:
+    hex: "#3B98D2"
+    rgb: [59, 152, 210]
+    lab: [59.9, -8.3, -37.6]
+
+  # Accent Colors — Bright
+  bright-red:
+    hex: "#F07A88"
+    rgb: [240, 122, 136]
+    lab: [65.1, 46.6, 13.6]
+
+  bright-green:
+    hex: "#50AE8B"
+    rgb: [80, 174, 139]
+    lab: [64.8, -36.4, 9.6]
+
+  bright-yellow:
+    hex: "#F0D052"
+    rgb: [240, 208, 82]
+    lab: [84.1, -2.5, 64.4]
+
+  bright-blue:
+    hex: "#769AFF"
+    rgb: [118, 154, 255]
+    lab: [65.1, 15.7, -54.1]
+
+  bright-magenta:
+    hex: "#B787FB"
+    rgb: [183, 135, 251]
+    lab: [65.2, 41.2, -51.3]
+
+  bright-cyan:
+    hex: "#57AEE2"
+    rgb: [87, 174, 226]
+    lab: [67.9, -10.8, -34.0]
+
+  # UI Colors
+  cursor:
+    hex: "#FFFFFF"
+    rgb: [255, 255, 255]
+    lab: [100.0, 0.0, 0.0]
+
+  cursor-text:
+    hex: "#171720"
+    rgb: [23, 23, 32]
+    lab: [8.1, 2.6, -6.3]
+
+  selection:
+    hex: "#39394B"
+    rgb: [57, 57, 75]
+    lab: [24.7, 4.6, -11.0]
+
+  link:
+    hex: "#5E8CFF"
+    rgb: [94, 140, 255]
+    lab: [60.2, 19.5, -62.0]
+
+roles:
+
+  # UI surfaces
+  background:          bg
+  foreground:          fg
+  cursor:              cursor
+  cursor-text:         cursor-text
+  selection:           selection
+  selection-text:      fg
+  line-highlight:      dim-bg
+  find-match:          selection
+  border:              muted
+  badge:               magenta
+  link:                link
+
+  # Text hierarchy
+  text:                fg
+  text-emphasis:       bright-fg
+  text-muted:          muted
+  text-dim:            dim-fg
+
+  # Syntax highlighting
+  keyword:             magenta
+  string:              green
+  number:              bright-magenta
+  constant:            blue
+  type:                cyan
+  function:            bright-yellow
+  variable:            cyan
+  parameter:           red
+  property:            blue
+  operator:            fg
+  punctuation:         dim-fg
+  comment:             muted
+  doc-comment:         muted
+  tag:                 red
+  attribute:           yellow
+  decorator:           yellow
+  regexp:              bright-red
+
+  # Diagnostics
+  error:               red
+  warning:             yellow
+  info:                blue
+  hint:                cyan
+  success:             green
+
+  # Diff / VCS
+  added:               green
+  modified:            yellow
+  deleted:             red
+  renamed:             blue
+
+  # Terminal ANSI
+  ansi:
+    black:             dim-bg
+    red:               red
+    green:             green
+    yellow:            yellow
+    blue:              blue
+    magenta:           magenta
+    cyan:              cyan
+    white:             dim-fg
+    bright-black:      muted
+    bright-red:        bright-red
+    bright-green:      bright-green
+    bright-yellow:     bright-yellow
+    bright-blue:       bright-blue
+    bright-magenta:    bright-magenta
+    bright-cyan:       bright-cyan
+    bright-white:      bright-fg
