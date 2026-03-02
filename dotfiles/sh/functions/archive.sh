@@ -85,7 +85,7 @@ _compress_all() {
   for file in ./*; do
     [ -e "$file" ] || continue
     case "$file" in
-      *.7z|*.bz2|*.gz|*.lz|*.rar|*.tar|*.tar.bz2|*.tar.gz|*.tar.lz|*.tar.xz|*.tar.zst|*.tbz2|*.tgz|*.tlz|*.txz|*.xz|*.zst|*.Z|*.zip)
+      *.7z|*.bz2|*.gz|*.lz|*.rar|*.tar|*.tbz2|*.tgz|*.tlz|*.txz|*.xz|*.zst|*.Z|*.zip)
         echo "Skipping already compressed: $(basename "$file")"
         ;;
       *)
