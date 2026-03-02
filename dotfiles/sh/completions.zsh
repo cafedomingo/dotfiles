@@ -2,11 +2,6 @@
   local -r completions="$(dirname "${(%):-%x}")"/plugins
   local -a fpaths=("$completions/zsh-completions")
 
-  # completions for homebrew packages
-  if command -v brew &>/dev/null; then
-    fpaths=( "$(brew --prefix)/share/zsh/site-functions" $fpaths)
-  fi
-
   for search_path in "${fpaths[@]}"; do
     [[ -d $search_path ]] \
     && (( ! ${fpath[(I)$search_path]} )) \
