@@ -30,19 +30,9 @@ if command -v /usr/libexec/java_home >/dev/null 2>&1; then
   fi
 fi
 
-# node
-npm_global_bin=""
-if command -v npm >/dev/null 2>&1; then
-  npm_prefix="$(npm config get prefix 2>/dev/null)"
-  if [[ -n $npm_prefix && -d "$npm_prefix/bin" ]]; then
-    npm_global_bin="$npm_prefix/bin"
-  fi
-fi
-
 # PATH
 paths=(
   "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin"            # android cmdline-tools
-  "$npm_global_bin"                                       # npm global bin
   /opt/homebrew/opt/coreutils/libexec/gnubin              # homebrew GNU utilities (arm64)
   /opt/homebrew/bin /opt/homebrew/sbin                    # homebrew (arm64)
   "$HOME/.local/bin"                                      # user-specific executable files
@@ -91,4 +81,4 @@ if command -v fzf >/dev/null 2>&1; then
 fi
 
 # cleanup
-unset paths manpaths p mp java_home_path npm_global_bin npm_prefix
+unset paths manpaths p mp java_home_path
