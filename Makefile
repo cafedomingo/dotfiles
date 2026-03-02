@@ -65,6 +65,26 @@ starship:
 	@cmd="curl -fsSL https://starship.rs/install.sh | sh -s -- --bin-dir=\"$(HOME)/bin\" --yes 2>&1 | sed '/Please follow the steps/,\$$d'"; \
 	$(if $(DRY_RUN),echo "[DRY-RUN] $$cmd",sh -c "$$cmd")
 
+# update submodules to their latest tagged version
+.PHONY: update-submodules
+update-submodules:
+	@echo -e "$(INFO)📦 Updating submodules to latest tags$(RESET)"
+	@git submodule foreach --quiet ' \
+		git fetch --tags --quiet && \
+		latest=$$(git tag --sort=-v:refname | grep -v -E "[-](alpha|beta|rc|pre|dev)" | head -1) && \
+		[ -z "$$latest" ] && latest=$$(git tag --sort=-v:refname | head -1); \
+		if [ -n "$$latest" ]; then \
+			current=$$(git describe --tags --exact-match 2>/dev/null || echo "untagged"); \
+			if [ "$$current" = "$$latest" ]; then \
+				echo "  $$name: already at $$latest"; \
+			else \
+				git checkout --quiet "$$latest" && \
+				echo "  $$name: $$current -> $$latest"; \
+			fi; \
+		else \
+			echo "  $$name: no tags found, skipping"; \
+		fi'
+
 # remove all symlinks (follows make convention)
 .PHONY: clean
 clean:
@@ -81,12 +101,13 @@ help:
 	@echo "  make [target] [DRY_RUN=1]"
 	@echo ""
 	@echo "Targets:"
-	@echo "  install    Full installation (default)"
-	@echo "  cleanup    Clean broken symlinks"
-	@echo "  link       Create directories and symbolic links"
-	@echo "  starship   Install starship prompt"
-	@echo "  clean      Remove all symlinks"
-	@echo "  help       Show this help"
+	@echo "  install            Full installation (default)"
+	@echo "  cleanup            Clean broken symlinks"
+	@echo "  link               Create directories and symbolic links"
+	@echo "  starship           Install starship prompt"
+	@echo "  update-submodules  Update submodules to latest tags"
+	@echo "  clean              Remove all symlinks"
+	@echo "  help               Show this help"
 	@echo ""
 	@echo "Options:"
 	@echo "  DRY_RUN=1  Show what would be done without making changes"
