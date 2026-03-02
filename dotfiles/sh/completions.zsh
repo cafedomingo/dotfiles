@@ -9,7 +9,7 @@
 
   for search_path in "${fpaths[@]}"; do
     [[ -d $search_path ]] \
-    && [[ $fpath != *$search_path* ]] \
+    && (( ! ${fpath[(I)$search_path]} )) \
     && fpath=( $search_path $fpath )
   done
 
@@ -26,6 +26,7 @@ zstyle ':completion:*' matcher-list 'm:{a-zA-Z-_}={A-Za-z_-}' 'r:|=*' 'l:|=* r:|
 zstyle ':completion:*' special-dirs true
 
 # use cache
+: ${ZSH_CACHE_DIR:=${XDG_CACHE_HOME:-$HOME/.cache}/zsh}
 zstyle ':completion::complete:*' use-cache 1
 zstyle ':completion::complete:*' cache-path $ZSH_CACHE_DIR
 

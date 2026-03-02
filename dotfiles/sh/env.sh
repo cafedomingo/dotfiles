@@ -9,7 +9,7 @@ esac
 export GPG_TTY=$(tty)
 
 # default editors
-export EDITOR='vi -e'
+export EDITOR='vi'
 if [[ "$OSTYPE" == darwin* ]]; then
   export VISUAL='subl -w'
 fi
@@ -52,7 +52,7 @@ paths=(
 for p in "${paths[@]}"; do
   if [[ -d "$p" ]]; then
     case ":$PATH:" in
-      *":$p:") ;;
+      *":$p:"*) ;;
       *) PATH="$p:$PATH" ;;
     esac
   fi

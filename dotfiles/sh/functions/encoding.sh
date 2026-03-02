@@ -38,7 +38,9 @@ dec2hex() {
 }
 
 hex2dec() {
-  printf '%d\n' "$((16#${1:-$(cat)}))"
+  local val="${1:-$(cat)}"
+  val="${val//[[:space:]]/}"
+  printf '%d\n' "$((16#$val))"
 }
 
 # numeric base conversion (decimal ⟷ binary)
@@ -47,5 +49,7 @@ dec2bin() {
 }
 
 bin2dec() {
-  printf '%d\n' "$((2#${1:-$(cat)}))"
+  local val="${1:-$(cat)}"
+  val="${val//[[:space:]]/}"
+  printf '%d\n' "$((2#$val))"
 }
