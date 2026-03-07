@@ -32,5 +32,8 @@ Session.vim
 .history/
 *.vsix
 
+# private assets (downloaded from releases)
+private/
+
 # claude
 .claude/

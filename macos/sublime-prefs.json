@@ -48,6 +48,7 @@
 	"highlight_line": true,
 	"ignored_packages":
 	[
+		"Theme - Spacegray",
 		"Vintage"
 	],
 	"index_exclude_patterns":
