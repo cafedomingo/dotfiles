@@ -1,72 +1,99 @@
-# detect macOS
 IS_MACOS := $(shell [ "$$(uname -s)" = "Darwin" ] && echo 1)
-
 SHELL := /bin/bash
-DOTFILES_DIR := $(shell pwd)/dotfiles
+REPO_DIR := $(shell pwd)
 
-# auto-discover link targets
-LINKS := $(shell find $(DOTFILES_DIR) -maxdepth 1 \( -type f -o -type d \) -not -path "$(DOTFILES_DIR)" -not -name "_config" | sed 's|^$(DOTFILES_DIR)/||' | sort)
+# root dotfiles: auto-discover non-hidden items without file extensions
+# hidden items (.*) and items with extensions (README.md) are excluded by convention
+EXCLUDE := Makefile LICENSE macos linux prefs config ssh private
+LINKS := $(shell ls -1 | grep -v '^\.' | grep -v '\.' \
+    | grep -v -E '^($(shell echo $(EXCLUDE) | sed "s/ /|/g"))$$')
 
-# config files with explicit paths
-CONFIG_FILES := \
-	_config/starship.toml:.config/starship.toml \
-	_config/ssh.config:.ssh/config \
-	$(if $(IS_MACOS),_config/hushlogin:.hushlogin)
+# mirror directories: <dirname> → ~/.<dirname>/ (files symlinked, dirs created)
+MIRROR_DIRS := config ssh
 
-# directories to manage
-DIRECTORIES := \
-	bin \
-	.config \
-	.ssh
+# directories to scan for broken symlinks during cleanup
+CLEANUP_DIRS := $(HOME) $(HOME)/bin $(HOME)/.config $(HOME)/.config/ghostty $(HOME)/.ssh
 
-# enable dry-run mode with DRY_RUN=1
+# private repo
+PRIVATE_REPO := cafedomingo/dotfiles-private
+PRIVATE_DIR := $(REPO_DIR)/private
+
+# dry-run support
 RUN := $(if $(DRY_RUN),echo "[DRY-RUN]",)
 
-# colors for output
 SUCCESS := \033[1;92m
 INFO := \033[1;94m
 RESET := \033[0m
 
-# default target
-.PHONY: all
+.PHONY: all install cleanup link starship private clean update-submodules help
+
 all: install
 
-# full installation
-.PHONY: install
-install: cleanup link starship
+install: cleanup link starship private
 	@echo -e "$(SUCCESS)⚡️ Installation complete$(RESET)"
 
-# clean broken symlinks
-.PHONY: cleanup
 cleanup:
 	@echo -e "$(INFO)🧹 Cleaning broken symbolic links$(RESET)"
-	@$(RUN) find $(HOME) -maxdepth 1 -type l ! -exec test -e {} \; -exec rm -v {} \; 2>/dev/null || true
-	@$(foreach dir,$(DIRECTORIES), \
-		$(RUN) find $(HOME)/$(dir) -maxdepth 1 -type l ! -exec test -e {} \; -exec rm -v {} \; 2>/dev/null || true;)
+	@$(foreach dir,$(CLEANUP_DIRS), \
+		$(RUN) find $(dir) -maxdepth 1 -type l ! -exec test -e {} \; -exec rm -v {} \; 2>/dev/null || true;)
 
-# create directories and symbolic links
-.PHONY: link
 link:
-	@echo -e "$(INFO)📂 Creating directories$(RESET)"
-	@$(foreach dir,$(DIRECTORIES), \
-		$(RUN) mkdir -pv $(HOME)/$(dir);)
-	@echo -e "$(INFO)🔗 Creating symbolic links$(RESET)"
+	@echo -e "$(INFO)🔗 Linking dotfiles$(RESET)"
 	@$(foreach link,$(LINKS), \
-		$(RUN) ln -sfhv $(DOTFILES_DIR)/$(link) $(HOME)/.$(link);)
-	@$(foreach link,$(CONFIG_FILES), \
-		$(eval source := $(word 1,$(subst :, ,$(link)))) \
-		$(eval target := $(word 2,$(subst :, ,$(link)))) \
-		$(RUN) ln -sfhv $(DOTFILES_DIR)/$(source) $(HOME)/$(target);)
+		$(RUN) ln -sfhv $(REPO_DIR)/$(link) $(HOME)/.$(link);)
+	@echo -e "$(INFO)🔗 Linking config files$(RESET)"
+	@$(foreach dir,$(MIRROR_DIRS), \
+		$(foreach file,$(shell find $(REPO_DIR)/$(dir) -type f 2>/dev/null | sed 's|^$(REPO_DIR)/$(dir)/||'), \
+			$(RUN) mkdir -p "$(HOME)/.$(dir)/$(dir $(file))"; \
+			$(RUN) ln -sfhv "$(REPO_DIR)/$(dir)/$(file)" "$(HOME)/.$(dir)/$(file)";))
+ifdef IS_MACOS
+	@echo -e "$(INFO)🔗 Linking macOS app preferences$(RESET)"
+	@$(RUN) mkdir -p "$(HOME)/Library/Application Support/Sublime Text/Packages/User"
+	@$(RUN) ln -sfhv "$(REPO_DIR)/macos/sublime-prefs.json" \
+		"$(HOME)/Library/Application Support/Sublime Text/Packages/User/Preferences.sublime-settings"
+endif
 
-# install starship prompt
-.PHONY: starship
 starship:
 	@echo -e "$(INFO)🚀 Installing starship prompt$(RESET)"
 	@cmd="curl -fsSL https://starship.rs/install.sh | sh -s -- --bin-dir=\"$(HOME)/bin\" --yes 2>&1 | sed '/Please follow the steps/,\$$d'"; \
 	$(if $(DRY_RUN),echo "[DRY-RUN] $$cmd",sh -c "$$cmd")
 
-# update submodules to their latest tagged version
-.PHONY: update-submodules
+private:
+	@if ! command -v gh >/dev/null 2>&1; then \
+		echo "Skipping private assets (gh not installed)"; \
+	elif ! gh auth status >/dev/null 2>&1; then \
+		echo "Skipping private assets (gh not authenticated)"; \
+	else \
+		latest=$$(gh release view --repo $(PRIVATE_REPO) --json tagName -q .tagName 2>/dev/null) || true; \
+		if [ -z "$$latest" ]; then \
+			echo "Skipping private assets (no releases found)"; \
+		elif [ -f "$(PRIVATE_DIR)/.version" ] && [ "$$(cat $(PRIVATE_DIR)/.version)" = "$$latest" ]; then \
+			echo "Private assets up to date ($$latest)"; \
+		else \
+			echo "Installing private assets $$latest..."; \
+			mkdir -p $(PRIVATE_DIR); \
+			gh release download "$$latest" --repo $(PRIVATE_REPO) \
+				--pattern 'dotfiles-private-*.tar.gz' \
+				--dir $(PRIVATE_DIR) --clobber; \
+			tar xzf $(PRIVATE_DIR)/dotfiles-private-*.tar.gz \
+				-C $(PRIVATE_DIR) --strip-components=1; \
+			$(PRIVATE_DIR)/install.sh; \
+			rm -f $(PRIVATE_DIR)/dotfiles-private-*.tar.gz; \
+			echo "$$latest" > $(PRIVATE_DIR)/.version; \
+		fi; \
+	fi
+
+clean:
+	@echo -e "$(INFO)🗑️ Removing dotfiles symlinks$(RESET)"
+	@$(foreach link,$(LINKS), \
+		$(RUN) rm -fv $(HOME)/.$(link);)
+	@$(foreach dir,$(MIRROR_DIRS), \
+		$(foreach file,$(shell find $(REPO_DIR)/$(dir) -type f 2>/dev/null | sed 's|^$(REPO_DIR)/$(dir)/||'), \
+			$(RUN) rm -fv "$(HOME)/.$(dir)/$(file)";))
+ifdef IS_MACOS
+	@$(RUN) rm -fv "$(HOME)/Library/Application Support/Sublime Text/Packages/User/Preferences.sublime-settings"
+endif
+
 update-submodules:
 	@echo -e "$(INFO)📦 Updating submodules to latest tags$(RESET)"
 	@git submodule foreach --quiet ' \
@@ -85,17 +112,6 @@ update-submodules:
 			echo "  $$name: no tags found, skipping"; \
 		fi'
 
-# remove all symlinks (follows make convention)
-.PHONY: clean
-clean:
-	@echo -e "$(INFO)🗑️ Removing dotfiles symlinks$(RESET)"
-	@$(foreach link,$(LINKS), \
-		$(RUN) rm -fv $(HOME)/.$(link);)
-	@$(foreach link,$(CONFIG_FILES), \
-		$(eval target := $(word 2,$(subst :, ,$(link)))) \
-		$(RUN) rm -fv $(HOME)/$(target);)
-
-.PHONY: help
 help:
 	@echo "Usage:"
 	@echo "  make [target] [DRY_RUN=1]"
@@ -103,15 +119,12 @@ help:
 	@echo "Targets:"
 	@echo "  install            Full installation (default)"
 	@echo "  cleanup            Clean broken symlinks"
-	@echo "  link               Create directories and symbolic links"
+	@echo "  link               Create symbolic links"
 	@echo "  starship           Install starship prompt"
+	@echo "  private            Install private assets (themes, fonts)"
 	@echo "  update-submodules  Update submodules to latest tags"
 	@echo "  clean              Remove all symlinks"
 	@echo "  help               Show this help"
 	@echo ""
 	@echo "Options:"
 	@echo "  DRY_RUN=1  Show what would be done without making changes"
-	@echo ""
-	@echo "Examples:"
-	@echo "  make                 # Full installation"
-	@echo "  make DRY_RUN=1       # Dry run of full installation"
