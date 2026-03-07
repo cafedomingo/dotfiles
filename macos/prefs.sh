@@ -144,41 +144,12 @@ toggle_visibility() {
   fi
 }
 
-# create symlink for application preferences
-symlink_prefs() {
-  local app_name="$1"
-  local source_file="$2"
-  local target_file="$3"
-
-  # check if symlink already exists and is correct
-  if [[ -L "$target_file" ]] && [[ "$(readlink "$target_file")" == "$source_file" ]]; then
-    if [[ "$DRY_RUN" == "true" ]]; then
-      echo -e "${GREEN}✓${NC} $app_name prefs already symlinked correctly"
-    else
-      echo "✓ $app_name prefs already symlinked correctly"
-    fi
-  else
-    if [[ "$DRY_RUN" == "true" ]]; then
-      echo -e "${BLUE}→${NC} Symlink $app_name prefs: $source_file → $target_file"
-    else
-      mkdir -p "$(dirname "$target_file")"
-      rm -f "$target_file" || true
-      ln -sf "$source_file" "$target_file"
-      echo "✓ $app_name prefs symlinked"
-    fi
-  fi
-}
-
 # check for trackpad (built-in or external)
 has_trackpad() {
   command ioreg | command grep -q "AppleMultitouchTrackpad" || \
   command system_profiler SPBluetoothDataType | command grep -iq "trackpad\|magic trackpad" || \
   command system_profiler SPUSBDataType | command grep -iq "magic trackpad"
 }
-
-# determine script location for relative paths
-SCRIPT_DIR="$(dirname "$0")"
-DOTFILES_ROOT="$(dirname "$SCRIPT_DIR")"
 
 if [[ "$DRY_RUN" == "true" ]]; then
   echo -e "${YELLOW}=== DRY RUN MODE - NO CHANGES WILL BE MADE ===${NC}"
@@ -313,31 +284,6 @@ setting "com.apple.TextEdit" "RichText" "int" "0"
 # open and save files as UTF-8
 setting "com.apple.TextEdit" "PlainTextEncoding" "int" "4"
 setting "com.apple.TextEdit" "PlainTextEncodingForWrite" "int" "4"
-
-### sublime text
-echo -e "${GREEN}=== Configuring Sublime Text ===${NC}"
-
-symlink_prefs "Sublime Text" \
-  "$DOTFILES_ROOT/prefs/sublime-prefs.json" \
-  "$HOME/Library/Application Support/Sublime Text/Packages/User/Preferences.sublime-settings"
-
-### iterm2
-echo -e "${GREEN}=== Configuring iTerm2 ===${NC}"
-
-# kill process and clear cached preferences
-if pgrep -x "iTerm2" > /dev/null; then
-    if [[ "$DRY_RUN" == "true" ]]; then
-        echo -e "${BLUE}→${NC} Would quit iTerm2 and clear preferences cache"
-    else
-        killall "iTerm2" 2>/dev/null || true
-        sleep 1
-        defaults delete com.googlecode.iterm2 2>/dev/null || true
-    fi
-fi
-
-# load preferences from prefs directory
-setting "com.googlecode.iterm2" "PrefsCustomFolder" "string" "$DOTFILES_ROOT/prefs"
-setting "com.googlecode.iterm2" "LoadPrefsFromCustomFolder" "bool" "true"
 
 # restart affected apps
 echo -e "${GREEN}=== Applying changes ===${NC}"
