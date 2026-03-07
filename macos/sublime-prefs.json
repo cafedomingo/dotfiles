@@ -6,41 +6,12 @@
 	"ensure_newline_at_eof_on_save": true,
 	"file_exclude_patterns":
 	[
-		"*.a",
-		"*.class",
-		"*.db",
-		"*.dll",
-		"*.DS_Store",
-		"*.dylib",
-		"*.exe",
-		"*.idb",
-		"*.lib",
-		"*.ncb",
-		"*.o",
-		"*.obj",
-		"*.pdb",
-		"*.psd",
-		"*.pyc",
-		"*.pyo",
-		"*.sdf",
-		"*.so",
-		"*.sublime-workspace",
-		"*.suo",
 		"._*",
-		".directory",
-		".DS_Store",
-		".Spotlight-V100",
-		"desktop.ini"
+		".Spotlight-V100"
 	],
 	"folder_exclude_patterns":
 	[
-		"bazel-*",
-		"CVS",
-		".git",
-		".hg",
-		".svn",
-		".Trash",
-		".Trash-*"
+		"bazel-*"
 	],
 	"font_face": "MonoLisa, SF Mono, Menlo",
 	"font_size": 12,
