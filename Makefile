@@ -40,16 +40,16 @@ cleanup:
 link:
 	@echo -e "$(INFO)🔗 Linking dotfiles$(RESET)"
 	@$(foreach link,$(LINKS), \
-		$(RUN) ln -sfhv $(REPO_DIR)/$(link) $(HOME)/.$(link);)
+		$(RUN) ln -sfnv $(REPO_DIR)/$(link) $(HOME)/.$(link);)
 	@echo -e "$(INFO)🔗 Linking config files$(RESET)"
 	@$(foreach dir,$(MIRROR_DIRS), \
 		$(foreach file,$(shell find $(REPO_DIR)/$(dir) -type f 2>/dev/null | sed 's|^$(REPO_DIR)/$(dir)/||'), \
 			$(RUN) mkdir -p "$(HOME)/.$(dir)/$(dir $(file))"; \
-			$(RUN) ln -sfhv "$(REPO_DIR)/$(dir)/$(file)" "$(HOME)/.$(dir)/$(file)";))
+			$(RUN) ln -sfnv "$(REPO_DIR)/$(dir)/$(file)" "$(HOME)/.$(dir)/$(file)";))
 ifdef IS_MACOS
 	@echo -e "$(INFO)🔗 Linking macOS app preferences$(RESET)"
 	@$(RUN) mkdir -p "$(HOME)/Library/Application Support/Sublime Text/Packages/User"
-	@$(RUN) ln -sfhv "$(REPO_DIR)/macos/sublime-prefs.json" \
+	@$(RUN) ln -sfnv "$(REPO_DIR)/macos/sublime-prefs.json" \
 		"$(HOME)/Library/Application Support/Sublime Text/Packages/User/Preferences.sublime-settings"
 endif
 
