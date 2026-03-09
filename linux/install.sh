@@ -17,15 +17,16 @@ warn() {
 
 sudo apt update
 
+packages=()
 while IFS= read -r package; do
-    if [[ -n "$package" ]]; then
-        log "installing $package..."
-        if sudo apt install -y "$package"; then
-            log "✓ $package installed successfully"
-        else
-            warn "✗ $package not available or failed to install, continuing..."
-        fi
-    fi
+    [[ -n "$package" ]] && packages+=("$package")
 done < <(grep -v '^#' "$(dirname "$0")/packages.list" | grep -v '^\s*$')
+
+if [[ ${#packages[@]} -eq 0 ]]; then
+    warn "No packages to install"
+else
+    log "Installing ${#packages[@]} packages..."
+    sudo apt install -y "${packages[@]}" || warn "Some packages failed or were unavailable"
+fi
 
 sudo apt autoclean
