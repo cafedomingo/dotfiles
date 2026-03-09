@@ -1,8 +1,17 @@
 # locale
-export LANG='en_US.UTF-8'
 case "$OSTYPE" in
-  linux*)  export LANGUAGE='en_US:en' ;;    # gettext uses this
-  darwin*) export LC_CTYPE='en_US.UTF-8' ;; # fixes UTF-8 issues in some macOS terminals
+  linux*)
+    if locale -a 2>/dev/null | grep -q 'en_US.utf8'; then
+      export LANG='en_US.UTF-8'
+      export LANGUAGE='en_US:en'
+    else
+      export LANG='C.UTF-8'
+    fi
+    ;;
+  darwin*)
+    export LANG='en_US.UTF-8'
+    export LC_CTYPE='en_US.UTF-8'
+    ;;
 esac
 
 # gpg
