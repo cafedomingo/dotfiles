@@ -44,6 +44,7 @@ paths=(
   "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin"            # android cmdline-tools
   /opt/homebrew/opt/coreutils/libexec/gnubin              # homebrew GNU utilities (arm64)
   /opt/homebrew/bin /opt/homebrew/sbin                    # homebrew (arm64)
+  /usr/local/go/bin                                       # go
   "$HOME/.local/bin"                                      # user-specific executable files
   "$HOME/.bin" "$HOME/bin"                                # personal executables
 )
