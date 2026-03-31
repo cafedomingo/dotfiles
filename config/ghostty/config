@@ -61,7 +61,5 @@ window-theme = dark
 
 # Typeface
 font-family = "MonoLisa Nerd Font"
-font-family-bold = "MonoLisa Nerd Font Bold"
-font-family-italic = "MonoLisa Nerd Font Italic"
 font-size = 12
 font-thicken = true
