@@ -15,7 +15,8 @@ case "$OSTYPE" in
 esac
 
 # gpg
-export GPG_TTY=$(tty)
+GPG_TTY=$(tty)
+export GPG_TTY
 
 # default editors
 export EDITOR='vi'

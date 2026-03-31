@@ -133,7 +133,7 @@ toggle_visibility() {
   local name="$2"
 
   if [[ "$DRY_RUN" == "true" ]]; then
-    if [[ $(ls -dlO "$path" 2>/dev/null | awk '{print $5}') == *"hidden"* ]]; then
+    if [[ $(stat -f '%Sf' "$path" 2>/dev/null) == *"hidden"* ]]; then
       echo -e "${RED}→${NC} $name: ${YELLOW}hidden${NC} → ${GREEN}visible${NC}"
     else
       echo -e "${GREEN}✓${NC} $name already visible"
@@ -185,7 +185,7 @@ dict_setting "com.apple.finder" "StandardViewSettings" "IconViewSettings" "-dict
 setting "com.apple.finder" "FXPreferredViewStyle" "string" "Nlsv"
 
 # show the ~/Library folder
-toggle_visibility "$HOME/Library" "~/Library"
+toggle_visibility "$HOME/Library" '~/Library'
 
 # expand file info panes
 dict_batch "com.apple.finder" "FXInfoPanesExpanded" "Expand Finder info panes" \
