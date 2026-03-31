@@ -109,10 +109,13 @@ fi
 # bat
 if command -v bat >/dev/null 2>&1; then
   alias batn='bat --style=numbers'
-  alias cat='bat --paging=never'
-  alias ccat='bat --plain --paging=never'
+  alias bat='bat --paging=never --theme="Solar Flare"'
+  alias cat='bat --plain --paging=never'
   alias less='bat --paging=always'
 fi
+
+# claude
+alias cc='claude'
 
 # allow sudo to use aliases
 alias sudo='sudo '
