@@ -12,5 +12,6 @@ gi() {
         return 0
     fi
 
+    local IFS=,
     curl -sLw "\n" "https://www.gitignore.io/api/$*"
 }

@@ -44,26 +44,30 @@ Extract various archive formats including zip, tar, 7z, rar, etc."
     return 1
   fi
 
-  [ ! -f "$1" ] && echo "'$1' is not a valid file" && return 1
+  if [ ! -f "$1" ]; then
+    echo "'$1' is not a valid file" >&2
+    return 1
+  fi
 
-  case $1 in
-    *.tar.bz2|*.tbz2)  command tar -jxvf "$1" ;;
-    *.tar.gz|*.tgz)    if command -v unpigz >/dev/null 2>&1; then command tar --use-compress-program=unpigz -xvf "$1"; else command tar -zxvf "$1"; fi ;;
-    *.tar.lz|*.tlz)    command tar --lzip -xvf "$1" ;;
-    *.tar.xz|*.txz)    command tar -Jxvf "$1" ;;
-    *.tar.zst)         command tar --zstd -xvf "$1" ;;
-    *.tar)             command tar -xvf "$1" ;;
-    *.7z)              command 7za x "$1"   ;;
-    *.bz2)             command bunzip2 "$1"  ;;
-    *.dmg)             hdiutil mount "$1" ;;
-    *.gz)              if command -v unpigz >/dev/null 2>&1; then command unpigz "$1"; else command gunzip "$1"; fi ;;
-    *.lz)              command lzip -d "$1" ;;
-    *.rar)             command unrar x "$1" ;;
-    *.xz)              command unxz "$1" ;;
-    *.zst)             command zstd -d "$1" ;;
-    *.Z)               command uncompress "$1" ;;
-    *.zip|*.ZIP)       command unzip "$1"  ;;
-    *)                 echo "'$1' cannot be extracted/mounted" && return 1;;
+  local file="$1"
+  case "$file" in
+    *.tar.bz2|*.tbz|*.tbz2) command tar -jxvf "$file" ;;
+    *.tar.gz|*.tgz)    if command -v unpigz >/dev/null 2>&1; then command tar --use-compress-program=unpigz -xvf "$file"; else command tar -zxvf "$file"; fi ;;
+    *.tar.lz|*.tlz)    command tar --lzip -xvf "$file" ;;
+    *.tar.xz|*.txz)    command tar -Jxvf "$file" ;;
+    *.tar.zst)         command tar --zstd -xvf "$file" ;;
+    *.tar)             command tar -xvf "$file" ;;
+    *.7z)              command 7za x "$file"   ;;
+    *.bz2)             command bunzip2 "$file"  ;;
+    *.dmg)             hdiutil mount "$file" ;;
+    *.gz)              if command -v unpigz >/dev/null 2>&1; then command unpigz "$file"; else command gunzip "$file"; fi ;;
+    *.lz)              command lzip -d "$file" ;;
+    *.rar)             command unrar x "$file" ;;
+    *.xz)              command unxz "$file" ;;
+    *.zst)             command zstd -d "$file" ;;
+    *.Z)               command uncompress "$file" ;;
+    *.zip|*.ZIP)       command unzip "$file"  ;;
+    *)                 echo "'$file' cannot be extracted/mounted" >&2; return 1 ;;
   esac
 }
 
@@ -81,6 +85,9 @@ _compress_all() {
   local use_fast=false
   [ "$1" = "-f" ] && use_fast=true && shift
 
+  local has_pigz=false
+  command -v pigz >/dev/null 2>&1 && has_pigz=true
+
   local count=0
   for file in ./*; do
     [ -e "$file" ] || continue
@@ -91,10 +98,9 @@ _compress_all() {
       *)
         echo "Compressing $(basename "$file")..."
         if [ "$use_fast" = true ]; then
-          # use fast compression (leverages aliases)
           case "$format" in
             7z)      7za a -t7z "$(basename "$file").$format" "$file" ;;
-            tar.gz)  if command -v pigz >/dev/null 2>&1; then
+            tar.gz)  if [ "$has_pigz" = true ]; then
                        tar -cf - "$file" | pigz > "$(basename "$file").$format"
                      else
                        tar -cf - "$file" | gzip -6 > "$(basename "$file").$format"

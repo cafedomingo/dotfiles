@@ -1,17 +1,18 @@
 # base64 encoding/decoding
+if base64 --decode </dev/null >/dev/null 2>&1; then
+  _BASE64_DECODE_OPT='--decode'
+elif base64 -d </dev/null >/dev/null 2>&1; then
+  _BASE64_DECODE_OPT='-d'
+else
+  _BASE64_DECODE_OPT='-D'
+fi
+
 encode64() {
   printf '%s' "${1:-$(cat)}" | base64
 }
 
 decode64() {
-  if base64 --decode </dev/null >/dev/null 2>&1; then
-    opt='--decode'
-  elif base64 -d </dev/null >/dev/null 2>&1; then
-    opt='-d'
-  else
-    opt='-D'
-  fi
-  printf '%s' "${1:-$(cat)}" | base64 "$opt"
+  printf '%s' "${1:-$(cat)}" | base64 "$_BASE64_DECODE_OPT"
 }
 
 # url encoding/decoding
