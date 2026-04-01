@@ -44,8 +44,8 @@ readonly RESTART_APPS=("Activity Monitor" "Dock" "Finder" "SystemUIServer" "Text
 normalize_bool() {
   local value="$1"
   case "$value" in
-    "1") echo "true" ;;
-    "0") echo "false" ;;
+    "1"|"YES"|"yes") echo "true" ;;
+    "0"|"NO"|"no") echo "false" ;;
     *) echo "$value" ;;
   esac
 }
@@ -146,9 +146,8 @@ toggle_visibility() {
 
 # check for trackpad (built-in or external)
 has_trackpad() {
-  command ioreg | command grep -q "AppleMultitouchTrackpad" || \
-  command system_profiler SPBluetoothDataType | command grep -iq "trackpad\|magic trackpad" || \
-  command system_profiler SPUSBDataType | command grep -iq "magic trackpad"
+  ioreg -c AppleMultitouchTrackpad -r 2>/dev/null | grep -q "AppleMultitouchTrackpad" || \
+  system_profiler SPBluetoothDataType SPUSBDataType 2>/dev/null | grep -iq "magic trackpad"
 }
 
 if [[ "$DRY_RUN" == "true" ]]; then
@@ -226,11 +225,13 @@ echo -e "${GREEN}=== Configuring Input ===${NC}"
 
 # trackpad settings (if available)
 if has_trackpad; then
+  setting "com.apple.driver.AppleBluetoothMultitouch.trackpad" "TrackpadRightClick" "bool" "true"
+
+  # defaults -currentHost requires special handling (writes to ByHost plist)
   if [[ "$DRY_RUN" == "true" ]]; then
-    echo -e "${BLUE}→${NC} Trackpad detected: enable right-click & secondary click"
+    echo -e "${BLUE}→${NC} NSGlobalDomain com.apple.trackpad.enableSecondaryClick → true (-currentHost)"
   else
-    echo "Trackpad detected, configuring trackpad settings"
-    defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadRightClick -bool true
+    echo "Setting NSGlobalDomain com.apple.trackpad.enableSecondaryClick to true (-currentHost)"
     defaults -currentHost write NSGlobalDomain com.apple.trackpad.enableSecondaryClick -bool true
   fi
 else
