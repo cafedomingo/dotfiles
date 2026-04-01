@@ -1,4 +1,4 @@
-## docs: http://zsh.sourceforge.net/Doc/Release
+## docs: https://zsh.sourceforge.io/Doc/Release
 # history configuration
 export HISTSIZE=500000
 export SAVEHIST=100000
@@ -23,7 +23,7 @@ setopt pushd_to_home      # pushd with no arguments acts like ‘pushd $HOME’
 setopt always_to_end      # move cursor to end after completion
 setopt auto_menu          # show menu completion after multiple tabs
 setopt complete_in_word   # complete at the point of the cursor
-unsetopt menu_complete    # do notautoselect first completion
+unsetopt menu_complete    # do not autoselect first completion
 
 # prompt
 setopt prompt_subst       # enable command substitution in prompt. needed for the suggestion plugins
@@ -35,7 +35,7 @@ bindkey -e                # use emacs keybindings (Ctrl+A, Ctrl+E, etc.)
 autoload -U add-zsh-hook
 
 function set_tab_title() {
-  print -Pn "\e]1;%~\a"  # Set tab title to current directory
+  print -Pn "\e]1;%~\a"
 }
 
 add-zsh-hook precmd set_tab_title

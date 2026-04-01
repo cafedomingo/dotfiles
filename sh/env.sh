@@ -14,10 +14,6 @@ case "$OSTYPE" in
     ;;
 esac
 
-# gpg
-GPG_TTY=$(tty)
-export GPG_TTY
-
 # default editors
 export EDITOR='vi'
 if [[ "$OSTYPE" == darwin* ]]; then
@@ -33,11 +29,9 @@ fi
 
 ### conditional exports
 # java
-if command -v /usr/libexec/java_home >/dev/null 2>&1; then
-  java_home_path="$('/usr/libexec/java_home' 2>/dev/null)"
-  if [[ -n $java_home_path ]]; then
-    export JAVA_HOME="$java_home_path"
-  fi
+java_home_path="$(/usr/libexec/java_home 2>/dev/null)"
+if [[ -n $java_home_path ]]; then
+  export JAVA_HOME="$java_home_path"
 fi
 
 # PATH
@@ -66,18 +60,15 @@ manpaths=(
   /opt/homebrew/opt/findutils/share/man
 )
 
-mp=""
 for p in "${manpaths[@]}"; do
-  [[ -d "$p" ]] && mp="${mp:+$mp:}$p"
-done
-
-if [[ -n $mp ]]; then
-  if [[ -z ${MANPATH:-} ]]; then
-    export MANPATH="${mp}:"
-  else
-    export MANPATH="${mp}:${MANPATH}"
+  if [[ -d "$p" ]]; then
+    case ":${MANPATH:-}:" in
+      *":$p:"*) ;;
+      *) MANPATH="$p:${MANPATH:-}" ;;
+    esac
   fi
-fi
+done
+export MANPATH
 
 # fzf (fuzzy finder) - environment variables only
 if command -v fzf >/dev/null 2>&1; then
@@ -87,9 +78,9 @@ if command -v fzf >/dev/null 2>&1; then
   # Use ripgrep for file finding if available
   if command -v rg >/dev/null 2>&1; then
     export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git/*"'
-    export FZF_CTRL_T_COMMAND='rg --files --hidden --follow --glob "!.git/*"'
+    export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
   fi
 fi
 
 # cleanup
-unset paths manpaths p mp java_home_path
+unset paths manpaths p java_home_path
