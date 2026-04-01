@@ -1,12 +1,9 @@
 () {
-  local -r completions="$(dirname "${(%):-%x}")"/plugins
-  local -a fpaths=("$completions/zsh-completions")
+  local -r completions="$(dirname "${(%):-%x}")"/plugins/zsh-completions
 
-  for search_path in "${fpaths[@]}"; do
-    [[ -d $search_path ]] \
-    && (( ! ${fpath[(I)$search_path]} )) \
-    && fpath=( $search_path $fpath )
-  done
+  [[ -d $completions ]] \
+    && (( ! ${fpath[(I)$completions]} )) \
+    && fpath=( $completions $fpath )
 
   autoload -Uz compinit && compinit
 }
@@ -22,8 +19,9 @@ zstyle ':completion:*' special-dirs true
 
 # use cache
 : ${ZSH_CACHE_DIR:=${XDG_CACHE_HOME:-$HOME/.cache}/zsh}
+[[ -d $ZSH_CACHE_DIR ]] || mkdir -p "$ZSH_CACHE_DIR"
 zstyle ':completion::complete:*' use-cache 1
-zstyle ':completion::complete:*' cache-path $ZSH_CACHE_DIR
+zstyle ':completion::complete:*' cache-path "$ZSH_CACHE_DIR"
 
 # show colors on completion suggestions
 zstyle ':completion:*' list-colors ''

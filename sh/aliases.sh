@@ -59,10 +59,12 @@ alias sgrep='grep -R -n -H -C 5 --exclude-dir={.git,.svn,CVS}'
 
 # git
 alias g='git'
-alias gf='git fetch'
-alias grb='git rebase'
-alias gfrb='git fetch && git rebase'
 alias gco='git checkout'
+alias gf='git fetch'
+alias gfrb='git fetch && git rebase'
+alias grb='git rebase'
+alias gs='git status'
+
 
 # ripgrep (rg)
 if command -v rg >/dev/null 2>&1; then
