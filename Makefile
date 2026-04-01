@@ -1,22 +1,25 @@
 IS_MACOS := $(shell [ "$$(uname -s)" = "Darwin" ] && echo 1)
 SHELL := /bin/bash
-REPO_DIR := $(shell pwd)
+REPO_DIR := $(abspath .)
 
 # root dotfiles: auto-discover non-hidden items without file extensions
 # hidden items (.*) and items with extensions (README.md) are excluded by convention
 EXCLUDE := Makefile LICENSE macos linux prefs claude config ssh private
 LINKS := $(shell ls -1 | grep -v '^\.' | grep -v '\.' \
-    | grep -v -E '^($(shell echo $(EXCLUDE) | sed "s/ /|/g"))$$')
+    | grep -v -E '^($(subst $() ,|,$(EXCLUDE)))$$')
 
 # mirror directories: <dirname> → ~/.<dirname>/ (files symlinked, dirs created)
 MIRROR_DIRS := claude config ssh
 
 # directories to scan for broken symlinks during cleanup
-CLEANUP_DIRS := $(HOME) $(HOME)/bin $(HOME)/.claude $(HOME)/.config $(HOME)/.config/ghostty $(HOME)/.ssh
+CLEANUP_DIRS := $(HOME) $(HOME)/bin $(addprefix $(HOME)/.,$(MIRROR_DIRS))
 
 # private repo
 PRIVATE_REPO := cafedomingo/dotfiles-private
 PRIVATE_DIR := $(REPO_DIR)/private
+
+# list files in a mirror directory, relative to the directory root
+MIRROR_FILES = $(shell find $(REPO_DIR)/$(1) -type f 2>/dev/null | sed 's|^$(REPO_DIR)/$(1)/||')
 
 # dry-run support
 RUN := $(if $(DRY_RUN),echo "[DRY-RUN]",)
@@ -42,10 +45,10 @@ link:
 	@$(foreach link,$(LINKS), \
 		$(RUN) ln -sfnv $(REPO_DIR)/$(link) $(HOME)/.$(link);)
 	@echo -e "$(INFO)🔗 Linking config files$(RESET)"
-	@$(foreach dir,$(MIRROR_DIRS), \
-		$(foreach file,$(shell find $(REPO_DIR)/$(dir) -type f 2>/dev/null | sed 's|^$(REPO_DIR)/$(dir)/||'), \
-			$(RUN) mkdir -p "$(HOME)/.$(dir)/$(dir $(file))"; \
-			$(RUN) ln -sfnv "$(REPO_DIR)/$(dir)/$(file)" "$(HOME)/.$(dir)/$(file)";))
+	@$(foreach mdir,$(MIRROR_DIRS), \
+		$(foreach file,$(call MIRROR_FILES,$(mdir)), \
+			$(RUN) mkdir -p "$(HOME)/.$(mdir)/$(dir $(file))"; \
+			$(RUN) ln -sfnv "$(REPO_DIR)/$(mdir)/$(file)" "$(HOME)/.$(mdir)/$(file)";))
 ifdef IS_MACOS
 	@echo -e "$(INFO)🔗 Linking macOS app preferences$(RESET)"
 	@$(RUN) mkdir -p "$(HOME)/Library/Application Support/Sublime Text/Packages/User"
@@ -88,9 +91,9 @@ clean:
 	@echo -e "$(INFO)🗑️ Removing dotfiles symlinks$(RESET)"
 	@$(foreach link,$(LINKS), \
 		$(RUN) rm -fv $(HOME)/.$(link);)
-	@$(foreach dir,$(MIRROR_DIRS), \
-		$(foreach file,$(shell find $(REPO_DIR)/$(dir) -type f 2>/dev/null | sed 's|^$(REPO_DIR)/$(dir)/||'), \
-			$(RUN) rm -fv "$(HOME)/.$(dir)/$(file)";))
+	@$(foreach mdir,$(MIRROR_DIRS), \
+		$(foreach file,$(call MIRROR_FILES,$(mdir)), \
+			$(RUN) rm -fv "$(HOME)/.$(mdir)/$(file)";))
 ifdef IS_MACOS
 	@$(RUN) rm -fv "$(HOME)/Library/Application Support/Sublime Text/Packages/User/Preferences.sublime-settings"
 endif
