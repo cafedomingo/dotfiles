@@ -86,22 +86,26 @@
   whitespace = trailing-space,space-before-tab
 
 [delta]
-  # Better diff presentation
-  plus-style = "syntax #012800"
-  minus-style = "syntax #340001"
-  syntax-theme = Monokai Extended
-  navigate = true
+  # https://dandavison.github.io/delta/configuration.html
+  # highlight moved code blocks with zebra stripes
+  features = zebra-dark
+  # show line numbers in the diff
   line-numbers = true
+  # use n/N to navigate between diff sections
+  navigate = true
+  # show diffs in side-by-side layout
   side-by-side = true
+  syntax-theme = "Solar Flare"
 
 [diff]
   # use better diff algorithm
   algorithm = histogram
+  # color moved lines
+  colorMoved = default
   # detect copies as well as renames
   renames = copies
   # enable better word diff
   wordRegex = [A-Za-z0-9_]+|[^[:space:]]
-  colorMoved = default
 
 [fetch]
   # check object integrity
