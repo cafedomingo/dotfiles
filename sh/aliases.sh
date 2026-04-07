@@ -125,6 +125,17 @@ alias sudo='sudo '
 # generate a random number
 alias rand='od -An -N2 -i /dev/urandom | xargs'
 
+# DietPi
+if [[ -d '/boot/dietpi' ]]; then
+  for cmd in /boot/dietpi/dietpi-*; do
+    alias "$(basename "$cmd")"="$cmd"
+  done
+  for cmd in /boot/dietpi/func/dietpi-* /boot/dietpi/misc/dietpi-*; do
+    [[ -x "$cmd" ]] && alias "$(basename "$cmd")"="$cmd"
+  done
+  alias cpu='/boot/dietpi/dietpi-cpuinfo'
+fi
+
 # macOS
 if [[ "$(uname -s)" == "Darwin" ]]; then
   # brew
