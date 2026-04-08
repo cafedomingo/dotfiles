@@ -50,8 +50,13 @@
 
 shell-integration-features = cursor,sudo,title,ssh-env,ssh-terminfo,path
 
+# Clipboard
+clipboard-trim-trailing-spaces = true
+
 # Input settings
 keybind = global:ctrl+grave_accent=toggle_quick_terminal
+keybind = shift+enter=text:\x1b\r
+macos-option-as-alt = true
 mouse-hide-while-typing = true
 
 # Visual Settings
