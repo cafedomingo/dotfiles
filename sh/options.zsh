@@ -25,6 +25,10 @@ setopt auto_menu          # show menu completion after multiple tabs
 setopt complete_in_word   # complete at the point of the cursor
 unsetopt menu_complete    # do not autoselect first completion
 
+# correction
+setopt correct            # suggest corrections for mistyped commands
+SPROMPT="Correct '%R' to '%r'? [Yes/No/Edit/Abort] "
+
 # prompt
 setopt prompt_subst       # enable command substitution in prompt. needed for the suggestion plugins
 
