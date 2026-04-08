@@ -111,8 +111,7 @@ fi
 # bat
 if command -v bat >/dev/null 2>&1; then
   alias batn='bat --style=numbers'
-  alias bat='bat --paging=never --theme="Solar Flare"'
-  alias cat='bat --plain --paging=never'
+  alias cat='bat --plain'
   alias less='bat --paging=always'
 fi
 
@@ -149,6 +148,13 @@ if [[ "$(uname -s)" == "Darwin" ]]; then
 
   # install xcode command line tools
   alias xcinstall='xcode-select --install'
+
+  # quick look
+  ql() { qlmanage -p "$@" &>/dev/null; }
+
+  # volume
+  alias mute='osascript -e "set volume output muted true"'
+  alias unmute='osascript -e "set volume output muted false"'
 fi
 
 # zsh-specific aliases
