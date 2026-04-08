@@ -99,21 +99,18 @@ ifdef IS_MACOS
 endif
 
 update-submodules:
-	@echo -e "$(INFO)📦 Updating submodules to latest tags$(RESET)"
+	@echo -e "$(INFO)📦 Updating submodules to HEAD$(RESET)"
 	@git submodule foreach --quiet ' \
-		git fetch --tags --quiet && \
-		latest=$$(git tag --sort=-v:refname | grep -v -E "[-](alpha|beta|rc|pre|dev)" | head -1) && \
-		[ -z "$$latest" ] && latest=$$(git tag --sort=-v:refname | head -1); \
-		if [ -n "$$latest" ]; then \
-			current=$$(git describe --tags --exact-match 2>/dev/null || echo "untagged"); \
-			if [ "$$current" = "$$latest" ]; then \
-				echo "  $$name: already at $$latest"; \
-			else \
-				git checkout --quiet "$$latest" && \
-				echo "  $$name: $$current -> $$latest"; \
-			fi; \
+		git fetch --quiet && \
+		default=$$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed "s|refs/remotes/||") && \
+		[ -z "$$default" ] && default="origin/master"; \
+		head=$$(git rev-parse $$default 2>/dev/null) && \
+		current=$$(git rev-parse HEAD) && \
+		if [ "$$current" = "$$head" ]; then \
+			echo "  $$name: up to date"; \
 		else \
-			echo "  $$name: no tags found, skipping"; \
+			git checkout --quiet "$$head" && \
+			echo "  $$name: $$(echo $$current | head -c 7) -> $$(echo $$head | head -c 7)"; \
 		fi'
 
 help:
