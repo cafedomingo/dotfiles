@@ -37,11 +37,11 @@
   # contributor commit counts (bus factor, single points of failure)
   survey-bus      = shortlog -sn --no-merges
   # files repeatedly touched by fix/bug/broken commits (chronic problem areas)
-  survey-bugs     = "!git log -i -E --grep='fix|bug|broken' --name-only --format='' | sort | uniq -c | sort -nr | head -20"
+  survey-bugs     = "!git log -i -E --grep='fix|bug|broken|regression|crash' --name-only --format='' | sort | uniq -c | sort -nr | head -20"
   # commits per month across history (team momentum, departures, shipping cadence)
   survey-velocity = "!git log --format='%ad' --date=format:'%Y-%m' | sort | uniq -c"
   # emergency commits in the last year (firefighting frequency, deploy reliability)
-  survey-crises   = "!git log --oneline --since='1 year ago' | grep -iE 'revert|hotfix|emergency|rollback'"
+  survey-crises   = "!git log --oneline --since='1 year ago' | grep -iE 'revert|hotfix|emergency|rollback|incident|outage|\\bsev\\b'"
 
 [apply]
   whitespace = fix
