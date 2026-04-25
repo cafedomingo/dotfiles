@@ -30,6 +30,18 @@
   s = status -sb
   # undo last commit but keep changes
   undo = reset HEAD~1 --mixed
+  # code archaeology: quick repo survey before reading code
+  # https://piechowski.io/post/git-commands-before-reading-code/
+  # most-modified files in the last year (hotspots that keep getting patched)
+  survey-churn    = "!git log --format='' --name-only --since='1 year ago' | sort | uniq -c | sort -nr | head -20"
+  # contributor commit counts (bus factor, single points of failure)
+  survey-bus      = shortlog -sn --no-merges
+  # files repeatedly touched by fix/bug/broken commits (chronic problem areas)
+  survey-bugs     = "!git log -i -E --grep='fix|bug|broken' --name-only --format='' | sort | uniq -c | sort -nr | head -20"
+  # commits per month across history (team momentum, departures, shipping cadence)
+  survey-velocity = "!git log --format='%ad' --date=format:'%Y-%m' | sort | uniq -c"
+  # emergency commits in the last year (firefighting frequency, deploy reliability)
+  survey-crises   = "!git log --oneline --since='1 year ago' | grep -iE 'revert|hotfix|emergency|rollback'"
 
 [apply]
   whitespace = fix
