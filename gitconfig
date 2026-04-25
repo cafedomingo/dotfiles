@@ -42,6 +42,8 @@
   survey-velocity = "!git log --format='%ad' --date=format:'%Y-%m' | sort | uniq -c"
   # emergency commits in the last year (firefighting frequency, deploy reliability)
   survey-crises   = "!git log --oneline --since='1 year ago' | grep -iE 'revert|hotfix|emergency|rollback|incident|outage|\\bsev\\b'"
+  # last commit per top-level directory (stale or abandoned areas)
+  survey-stale    = "!for d in */; do out=$(git log -1 --format='%cs %h' -- \"$d\" 2>/dev/null); printf '%s\\t%s\\n' \"${out:-(no history) }\" \"$d\"; done | sort"
 
 [apply]
   whitespace = fix
