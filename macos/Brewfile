@@ -17,6 +17,7 @@ brew 'p7zip'
 brew 'pigz'
 brew 'ripgrep'
 brew 'tldr'
+brew 'tokei'
 brew 'wget'
 
 # apps
