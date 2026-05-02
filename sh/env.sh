@@ -20,13 +20,6 @@ if [[ "$OSTYPE" == darwin* ]]; then
   export VISUAL='subl -w'
 fi
 
-# pager highlighting
-if less --use-color -Dk -F -X </dev/null >/dev/null 2>&1; then
-  export MANPAGER="less -R -X -F --use-color -Dd+G -Du+B"
-else
-  export MANPAGER="less -R -X -F"
-fi
-
 ### conditional exports
 # java
 java_home_path="$(/usr/libexec/java_home 2>/dev/null)"
@@ -69,6 +62,17 @@ for p in "${manpaths[@]}"; do
   fi
 done
 export MANPATH
+
+# pagers
+export PAGER="less -RF"
+# bat with man syntax highlighting if available, otherwise less with color
+if command -v bat >/dev/null 2>&1; then
+  export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+elif less --use-color -Dk -F -X </dev/null >/dev/null 2>&1; then
+  export MANPAGER="less -R -X -F --use-color -Dd+G -Du+B"
+else
+  export MANPAGER="less -R -X -F"
+fi
 
 # fzf (fuzzy finder) - environment variables only
 if command -v fzf >/dev/null 2>&1; then
