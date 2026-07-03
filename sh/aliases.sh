@@ -128,7 +128,7 @@ alias rand='od -An -N2 -i /dev/urandom | xargs'
 if [[ "$(uname -s)" == "Darwin" ]]; then
   # brew
   if command -v brew >/dev/null 2>&1; then
-    alias bup='brew upgrade && brew cleanup'
+    alias bup='brew upgrade --yes && brew cleanup'
     alias brews='brew list'
     alias casks='brew list --cask'
   fi
