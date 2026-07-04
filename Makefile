@@ -75,14 +75,16 @@ private:
 			echo "Private assets up to date ($$latest)"; \
 		else \
 			echo "Installing private assets $$latest..."; \
-			mkdir -p $(PRIVATE_DIR); \
+			tmp=$$(mktemp -d); \
 			gh release download "$$latest" --repo $(PRIVATE_REPO) \
 				--pattern 'dotfiles-private-*.tar.gz' \
-				--dir $(PRIVATE_DIR) --clobber; \
-			tar xzf $(PRIVATE_DIR)/dotfiles-private-*.tar.gz \
+				--dir "$$tmp" --clobber; \
+			rm -rf $(PRIVATE_DIR); \
+			mkdir -p $(PRIVATE_DIR); \
+			tar xzf "$$tmp"/dotfiles-private-*.tar.gz \
 				-C $(PRIVATE_DIR) --strip-components=1; \
+			rm -rf "$$tmp"; \
 			$(PRIVATE_DIR)/install.sh; \
-			rm -f $(PRIVATE_DIR)/dotfiles-private-*.tar.gz; \
 			echo "$$latest" > $(PRIVATE_DIR)/.version; \
 		fi; \
 	fi
