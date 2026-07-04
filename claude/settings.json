@@ -106,7 +106,7 @@
       ]
     },
     "enabled": true,
-    "excludedCommands": ["git commit *", "git push *", "git pull *", "git clone *", "git fetch *"],
+    "excludedCommands": ["git commit *", "git push *", "git pull *", "git clone *", "git fetch *", "gh *"],
     "filesystem": {
       "allowRead": ["~/.ssh/*.pub", "~/.ssh/config", "~/.ssh/known_hosts"],
       "denyRead": ["~/.ssh"]
