@@ -71,7 +71,7 @@ private:
 		latest=$$(gh release view --repo $(PRIVATE_REPO) --json tagName -q .tagName 2>/dev/null) || true; \
 		if [ -z "$$latest" ]; then \
 			echo "Skipping private assets (no releases found)"; \
-		elif [ -f "$(PRIVATE_DIR)/.version" ] && [ "$$(cat $(PRIVATE_DIR)/.version)" = "$$latest" ]; then \
+		elif [ -z "$(FORCE)" ] && [ -f "$(PRIVATE_DIR)/.version" ] && [ "$$(cat $(PRIVATE_DIR)/.version)" = "$$latest" ]; then \
 			echo "Private assets up to date ($$latest)"; \
 		else \
 			echo "Installing private assets $$latest..."; \
@@ -131,3 +131,4 @@ help:
 	@echo ""
 	@echo "Options:"
 	@echo "  DRY_RUN=1  Show what would be done without making changes"
+	@echo "  FORCE=1    Reinstall private assets even if up to date"
