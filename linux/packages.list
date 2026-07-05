@@ -6,6 +6,7 @@ zsh
 
 # tools
 bat
+bubblewrap
 exif
 fzf
 gh
@@ -18,4 +19,5 @@ nano
 p7zip-full
 pigz
 ripgrep
+socat
 wget

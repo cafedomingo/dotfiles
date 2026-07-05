@@ -9,10 +9,10 @@ LINKS := $(shell ls -1 | grep -v '^\.' | grep -v '\.' \
     | grep -v -E '^($(subst $() ,|,$(EXCLUDE)))$$')
 
 # mirror directories: <dirname> → ~/.<dirname>/ (files symlinked, dirs created)
-MIRROR_DIRS := claude config ssh cursor codex
+MIRROR_DIRS := claude config ssh codex
 
 # directories to scan for broken symlinks during cleanup
-CLEANUP_DIRS := $(HOME) $(HOME)/bin $(addprefix $(HOME)/.,$(MIRROR_DIRS))
+CLEANUP_DIRS := $(HOME) $(HOME)/bin $(HOME)/.cursor $(addprefix $(HOME)/.,$(MIRROR_DIRS))
 
 # private repo
 PRIVATE_REPO := cafedomingo/dotfiles-private
@@ -53,6 +53,21 @@ link:
 	@$(RUN) mkdir -p "$(HOME)/.codex"
 	@$(RUN) ln -sfnv "$(REPO_DIR)/agents/AGENTS.md" "$(HOME)/.claude/CLAUDE.md"
 	@$(RUN) ln -sfnv "$(REPO_DIR)/agents/AGENTS.md" "$(HOME)/.codex/AGENTS.md"
+	@echo -e "$(INFO)🔗 Merging Cursor CLI permissions$(RESET)"
+	@$(RUN) mkdir -p "$(HOME)/.cursor"
+	@if [ -n "$(DRY_RUN)" ]; then \
+		echo "[DRY-RUN] merge $(REPO_DIR)/cursor/permissions.json into $(HOME)/.cursor/cli-config.json"; \
+	else \
+		tmp=$$(mktemp) && \
+		if [ -f "$(HOME)/.cursor/cli-config.json" ]; then \
+			jq --slurpfile perms "$(REPO_DIR)/cursor/permissions.json" \
+				'.permissions = $$perms[0]' "$(HOME)/.cursor/cli-config.json" > "$$tmp"; \
+		else \
+			jq -n --slurpfile perms "$(REPO_DIR)/cursor/permissions.json" \
+				'{permissions: $$perms[0]}' > "$$tmp"; \
+		fi && \
+		mv "$$tmp" "$(HOME)/.cursor/cli-config.json"; \
+	fi
 ifdef IS_MACOS
 	@echo -e "$(INFO)🔗 Linking macOS app preferences$(RESET)"
 	@$(RUN) mkdir -p "$(HOME)/Library/Application Support/Sublime Text/Packages/User"

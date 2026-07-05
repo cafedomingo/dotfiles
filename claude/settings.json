@@ -1,4 +1,8 @@
 {
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
   "permissions": {
     "allow": [
       "Bash(basename *)",
@@ -37,6 +41,29 @@
       "WebFetch(domain:github.com)",
       "WebSearch"
     ],
+    "deny": [
+      "Bash(dd if=*)",
+      "Bash(mkfs.*)",
+      "Bash(rm -rf --no-preserve-root /)",
+      "Bash(rm -rf --no-preserve-root / *)",
+      "Bash(rm -rf /)",
+      "Bash(rm -rf / *)",
+      "Bash(su *)",
+      "Bash(sudo *)",
+      "Read(**/*.jks)",
+      "Read(**/*.key)",
+      "Read(**/*.p12)",
+      "Read(**/*.pem)",
+      "Read(**/*.pfx)",
+      "Read(**/.netrc)",
+      "Read(**/.npmrc)",
+      "Read(**/.pypirc)",
+      "Read(**/id_rsa*)",
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./secrets/**)",
+      "Read(~/.ssh/**)"
+    ],
     "ask": [
       "Bash(apt install *)",
       "Bash(apt-get install *)",
@@ -74,45 +101,12 @@
       "Bash(yarn add *)",
       "Bash(yum install *)"
     ],
-    "defaultMode": "acceptEdits",
-    "deny": [
-      "Bash(dd if=*)",
-      "Bash(mkfs.*)",
-      "Bash(rm -rf --no-preserve-root /)",
-      "Bash(rm -rf --no-preserve-root / *)",
-      "Bash(rm -rf /)",
-      "Bash(rm -rf / *)",
-      "Bash(su *)",
-      "Bash(sudo *)",
-      "Read(**/*.jks)",
-      "Read(**/*.key)",
-      "Read(**/*.p12)",
-      "Read(**/*.pem)",
-      "Read(**/*.pfx)",
-      "Read(**/.netrc)",
-      "Read(**/.npmrc)",
-      "Read(**/.pypirc)",
-      "Read(**/id_rsa*)",
-      "Read(./.env)",
-      "Read(./.env.*)",
-      "Read(./secrets/**)",
-      "Read(~/.ssh/**)"
-    ]
+    "defaultMode": "acceptEdits"
   },
-  "sandbox": {
-    "credentials": {
-      "files": [
-        { "mode": "deny", "path": "~/.aws/credentials" }
-      ]
-    },
-    "enabled": true,
-    "excludedCommands": ["git commit *", "git push *", "git pull *", "git clone *", "git fetch *", "gh *", "ssh *", "scp *", "rsync *", "make *"],
-    "filesystem": {
-      "allowRead": ["~/.ssh/*.pub", "~/.ssh/config", "~/.ssh/known_hosts"],
-      "denyRead": ["~/.ssh"]
-    }
+  "statusLine": {
+    "type": "command",
+    "command": "sh ~/.claude/statusline-command.sh"
   },
-
   "enabledPlugins": {
     "caveman@caveman": true,
     "code-review@claude-plugins-official": true,
@@ -127,23 +121,57 @@
   "extraKnownMarketplaces": {
     "caveman": {
       "source": {
-        "repo": "JuliusBrussee/caveman",
-        "source": "github"
+        "source": "github",
+        "repo": "JuliusBrussee/caveman"
       }
     }
   },
-
-  "alwaysThinkingEnabled": true,
-  "attribution": {
-    "commit": "",
-    "pr": ""
+  "sandbox": {
+    "enabled": true,
+    "filesystem": {
+      "denyRead": [
+        "~/.ssh"
+      ],
+      "allowRead": [
+        "~/.ssh/*.pub",
+        "~/.ssh/config",
+        "~/.ssh/known_hosts"
+      ]
+    },
+    "credentials": {
+      "files": [
+        {
+          "path": "~/.aws/credentials",
+          "mode": "deny"
+        }
+      ],
+      "envVars": [
+        { "name": "GITHUB_TOKEN", "mode": "deny" },
+        { "name": "GH_TOKEN", "mode": "deny" },
+        { "name": "NPM_TOKEN", "mode": "deny" },
+        { "name": "ANTHROPIC_API_KEY", "mode": "deny" },
+        { "name": "OPENAI_API_KEY", "mode": "deny" },
+        { "name": "AWS_ACCESS_KEY_ID", "mode": "deny" },
+        { "name": "AWS_SECRET_ACCESS_KEY", "mode": "deny" },
+        { "name": "AWS_SESSION_TOKEN", "mode": "deny" }
+      ]
+    },
+    "excludedCommands": [
+      "git commit *",
+      "git push *",
+      "git pull *",
+      "git clone *",
+      "git fetch *",
+      "gh *",
+      "ssh *",
+      "scp *",
+      "rsync *",
+      "make *"
+    ]
   },
+  "alwaysThinkingEnabled": true,
+  "tui": "fullscreen",
   "autoDreamEnabled": true,
   "skipAutoPermissionPrompt": true,
-
-  "statusLine": {
-    "command": "sh ~/.claude/statusline-command.sh",
-    "type": "command"
-  },
-  "tui": "fullscreen"
+  "model": "claude-fable-5[1m]"
 }
