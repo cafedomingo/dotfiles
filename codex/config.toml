@@ -1,0 +1,41 @@
+model = "gpt-5.5"
+model_reasoning_effort = "xhigh"
+sandbox_mode = "workspace-write"
+personality = "pragmatic"
+approvals_reviewer = "guardian_subagent"
+
+notify = ["/Users/pq/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
+
+[sandbox_workspace_write]
+network_access = false
+
+[features]
+memories = true
+js_repl = false
+
+[plugins."github@openai-curated"]
+enabled = true
+
+[plugins."documents@openai-primary-runtime"]
+enabled = true
+
+[plugins."spreadsheets@openai-primary-runtime"]
+enabled = true
+
+[plugins."presentations@openai-primary-runtime"]
+enabled = true
+
+[plugins."browser@openai-bundled"]
+enabled = true
+
+[plugins."pdf@openai-primary-runtime"]
+enabled = true
+
+[plugins."template-creator@openai-primary-runtime"]
+enabled = true
+
+[desktop]
+preventSleepWhileRunning = true
+keepRemoteControlAwakeWhilePluggedIn = true
+git-pull-request-merge-method = "squash"
+followUpQueueMode = "queue"

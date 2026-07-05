@@ -4,15 +4,15 @@ REPO_DIR := $(abspath .)
 
 # root dotfiles: auto-discover non-hidden items without file extensions
 # hidden items (.*) and items with extensions (README.md) are excluded by convention
-EXCLUDE := Makefile LICENSE macos linux prefs claude config ssh cursor agents private
+EXCLUDE := Makefile LICENSE macos linux claude config ssh cursor codex agents private
 LINKS := $(shell ls -1 | grep -v '^\.' | grep -v '\.' \
     | grep -v -E '^($(subst $() ,|,$(EXCLUDE)))$$')
 
 # mirror directories: <dirname> → ~/.<dirname>/ (files symlinked, dirs created)
-MIRROR_DIRS := claude config ssh cursor
+MIRROR_DIRS := claude config ssh cursor codex
 
 # directories to scan for broken symlinks during cleanup
-CLEANUP_DIRS := $(HOME) $(HOME)/bin $(HOME)/.codex $(addprefix $(HOME)/.,$(MIRROR_DIRS))
+CLEANUP_DIRS := $(HOME) $(HOME)/bin $(addprefix $(HOME)/.,$(MIRROR_DIRS))
 
 # private repo
 PRIVATE_REPO := cafedomingo/dotfiles-private
