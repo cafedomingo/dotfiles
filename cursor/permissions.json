@@ -1,0 +1,40 @@
+{
+  "terminalAllowlist": [
+    "ls",
+    "cat",
+    "grep",
+    "rg",
+    "find",
+    "head",
+    "tail",
+    "wc",
+    "which",
+    "sort",
+    "uniq",
+    "cut",
+    "tr",
+    "diff",
+    "jq",
+    "dirname",
+    "basename",
+    "realpath",
+    "stat",
+    "file",
+    "git status",
+    "git diff",
+    "git log",
+    "git show",
+    "git branch",
+    "git remote -v"
+  ],
+  "mcpAllowlist": [],
+  "autoRun": {
+    "allow_instructions": [
+      "Read-only file inspection, search, and git history commands may run without approval."
+    ],
+    "block_instructions": [
+      "Never run commands that read SSH keys, AWS credentials, .env files, or other secrets.",
+      "Never run destructive git commands (push --force, reset --hard, clean) or rm -rf without explicit approval."
+    ]
+  }
+}

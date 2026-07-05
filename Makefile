@@ -4,15 +4,15 @@ REPO_DIR := $(abspath .)
 
 # root dotfiles: auto-discover non-hidden items without file extensions
 # hidden items (.*) and items with extensions (README.md) are excluded by convention
-EXCLUDE := Makefile LICENSE macos linux prefs claude config ssh private
+EXCLUDE := Makefile LICENSE macos linux prefs claude config ssh cursor private
 LINKS := $(shell ls -1 | grep -v '^\.' | grep -v '\.' \
     | grep -v -E '^($(subst $() ,|,$(EXCLUDE)))$$')
 
 # mirror directories: <dirname> → ~/.<dirname>/ (files symlinked, dirs created)
-MIRROR_DIRS := claude config ssh
+MIRROR_DIRS := claude config ssh cursor
 
 # directories to scan for broken symlinks during cleanup
-CLEANUP_DIRS := $(HOME) $(HOME)/bin $(addprefix $(HOME)/.,$(MIRROR_DIRS))
+CLEANUP_DIRS := $(HOME) $(HOME)/bin $(HOME)/.codex $(addprefix $(HOME)/.,$(MIRROR_DIRS))
 
 # private repo
 PRIVATE_REPO := cafedomingo/dotfiles-private
@@ -49,6 +49,10 @@ link:
 		$(foreach file,$(call MIRROR_FILES,$(mdir)), \
 			$(RUN) mkdir -p "$(HOME)/.$(mdir)/$(dir $(file))"; \
 			$(RUN) ln -sfnv "$(REPO_DIR)/$(mdir)/$(file)" "$(HOME)/.$(mdir)/$(file)";))
+	@echo -e "$(INFO)🔗 Linking agent instructions$(RESET)"
+	@$(RUN) mkdir -p "$(HOME)/.codex"
+	@$(RUN) ln -sfnv "$(REPO_DIR)/AGENTS.md" "$(HOME)/.claude/CLAUDE.md"
+	@$(RUN) ln -sfnv "$(REPO_DIR)/AGENTS.md" "$(HOME)/.codex/AGENTS.md"
 ifdef IS_MACOS
 	@echo -e "$(INFO)🔗 Linking macOS app preferences$(RESET)"
 	@$(RUN) mkdir -p "$(HOME)/Library/Application Support/Sublime Text/Packages/User"
@@ -96,6 +100,8 @@ clean:
 	@$(foreach mdir,$(MIRROR_DIRS), \
 		$(foreach file,$(call MIRROR_FILES,$(mdir)), \
 			$(RUN) rm -fv "$(HOME)/.$(mdir)/$(file)";))
+	@$(RUN) rm -fv "$(HOME)/.claude/CLAUDE.md"
+	@$(RUN) rm -fv "$(HOME)/.codex/AGENTS.md"
 ifdef IS_MACOS
 	@$(RUN) rm -fv "$(HOME)/Library/Application Support/Sublime Text/Packages/User/Preferences.sublime-settings"
 endif
