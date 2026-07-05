@@ -4,7 +4,7 @@ REPO_DIR := $(abspath .)
 
 # root dotfiles: auto-discover non-hidden items without file extensions
 # hidden items (.*) and items with extensions (README.md) are excluded by convention
-EXCLUDE := Makefile LICENSE macos linux prefs claude config ssh cursor private
+EXCLUDE := Makefile LICENSE macos linux prefs claude config ssh cursor agents private
 LINKS := $(shell ls -1 | grep -v '^\.' | grep -v '\.' \
     | grep -v -E '^($(subst $() ,|,$(EXCLUDE)))$$')
 
@@ -51,8 +51,8 @@ link:
 			$(RUN) ln -sfnv "$(REPO_DIR)/$(mdir)/$(file)" "$(HOME)/.$(mdir)/$(file)";))
 	@echo -e "$(INFO)🔗 Linking agent instructions$(RESET)"
 	@$(RUN) mkdir -p "$(HOME)/.codex"
-	@$(RUN) ln -sfnv "$(REPO_DIR)/AGENTS.md" "$(HOME)/.claude/CLAUDE.md"
-	@$(RUN) ln -sfnv "$(REPO_DIR)/AGENTS.md" "$(HOME)/.codex/AGENTS.md"
+	@$(RUN) ln -sfnv "$(REPO_DIR)/agents/AGENTS.md" "$(HOME)/.claude/CLAUDE.md"
+	@$(RUN) ln -sfnv "$(REPO_DIR)/agents/AGENTS.md" "$(HOME)/.codex/AGENTS.md"
 ifdef IS_MACOS
 	@echo -e "$(INFO)🔗 Linking macOS app preferences$(RESET)"
 	@$(RUN) mkdir -p "$(HOME)/Library/Application Support/Sublime Text/Packages/User"
