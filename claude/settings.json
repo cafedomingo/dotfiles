@@ -165,8 +165,7 @@
       "gh *",
       "ssh *",
       "scp *",
-      "rsync *",
-      "make *"
+      "rsync *"
     ]
   },
   "alwaysThinkingEnabled": true,
