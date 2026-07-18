@@ -1,5 +1,4 @@
 --theme="Solar Flare"
---paging=never
 
 # syntax mappings for filetypes bat doesn't recognize
 --map-syntax="*.zsh:Bourne Again Shell (bash)"

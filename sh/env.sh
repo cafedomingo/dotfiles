@@ -65,10 +65,10 @@ export MANPATH
 
 # pagers
 export PAGER="less -RF"
-# bat with man syntax highlighting if available, otherwise less with color
-if command -v bat >/dev/null 2>&1; then
-  export MANPAGER="sh -c 'col -bx | bat -l man -p --paging=auto'"
-elif less --use-color -Dk -F -X </dev/null >/dev/null 2>&1; then
+if command -v groff >/dev/null 2>&1; then
+  export MANROFFOPT="-c"
+fi
+if less --use-color -Dk -F -X </dev/null >/dev/null 2>&1; then
   export MANPAGER="less -R -X -F --use-color -Dd+G -Du+B"
 else
   export MANPAGER="less -R -X -F"
