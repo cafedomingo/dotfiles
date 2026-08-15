@@ -4,8 +4,10 @@ case "$OSTYPE" in
     if locale -a 2>/dev/null | grep -q 'en_US.utf8'; then
       export LANG='en_US.UTF-8'
       export LANGUAGE='en_US:en'
+      export LC_CTYPE='en_US.UTF-8'
     else
       export LANG='C.UTF-8'
+      export LC_CTYPE='C.UTF-8'
     fi
     ;;
   darwin*)
