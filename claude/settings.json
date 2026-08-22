@@ -107,5 +107,11 @@
     "skill-creator@claude-plugins-official": true,
     "superpowers@claude-plugins-official": true
   },
-  "autoDreamEnabled": true
+  "autoDreamEnabled": true,
+  "outputStyle": "Concise",
+  "attribution": {
+    "commit": "",
+    "sessionUrl": false,
+    "pr": ""
+  }
 }
