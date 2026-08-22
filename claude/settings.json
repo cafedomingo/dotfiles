@@ -1,4 +1,23 @@
 {
+  "agentPushNotifEnabled": true,
+  "attribution": {
+    "commit": "",
+    "pr": "",
+    "sessionUrl": false
+  },
+  "autoDreamEnabled": true,
+  "enabledPlugins": {
+    "code-review@claude-plugins-official": true,
+    "code-simplifier@claude-plugins-official": true,
+    "commit-commands@claude-plugins-official": true,
+    "context7@claude-plugins-official": false,
+    "github@claude-plugins-official": true,
+    "pr-review-toolkit@claude-plugins-official": true,
+    "skill-creator@claude-plugins-official": false,
+    "superpowers@claude-plugins-official": true
+  },
+  "model": "opus[1m]",
+  "outputStyle": "Concise",
   "permissions": {
     "allow": [
       "WebSearch",
@@ -31,29 +50,6 @@
       "Bash(realpath *)",
       "Bash(stat *)",
       "Bash(file *)"
-    ],
-    "deny": [
-      "Read(./.env)",
-      "Read(./.env.*)",
-      "Read(./secrets/**)",
-      "Read(**/*.key)",
-      "Read(**/*.pem)",
-      "Read(**/*.p12)",
-      "Read(**/*.pfx)",
-      "Read(**/*.jks)",
-      "Read(**/id_rsa*)",
-      "Read(**/.netrc)",
-      "Read(**/.npmrc)",
-      "Read(**/.pypirc)",
-      "Read(~/.ssh/**)",
-      "Bash(sudo *)",
-      "Bash(su *)",
-      "Bash(rm -rf /)",
-      "Bash(rm -rf / *)",
-      "Bash(rm -rf --no-preserve-root /)",
-      "Bash(rm -rf --no-preserve-root / *)",
-      "Bash(mkfs.*)",
-      "Bash(dd if=*)"
     ],
     "ask": [
       "Bash(git pull *)",
@@ -90,28 +86,35 @@
       "Bash(pnpm install *)",
       "Bash(yarn add *)"
     ],
-    "defaultMode": "default"
+    "defaultMode": "auto",
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./secrets/**)",
+      "Read(**/*.key)",
+      "Read(**/*.pem)",
+      "Read(**/*.p12)",
+      "Read(**/*.pfx)",
+      "Read(**/*.jks)",
+      "Read(**/id_rsa*)",
+      "Read(**/.netrc)",
+      "Read(**/.npmrc)",
+      "Read(**/.pypirc)",
+      "Read(~/.ssh/**)",
+      "Bash(sudo *)",
+      "Bash(su *)",
+      "Bash(rm -rf /)",
+      "Bash(rm -rf / *)",
+      "Bash(rm -rf --no-preserve-root /)",
+      "Bash(rm -rf --no-preserve-root / *)",
+      "Bash(mkfs.*)",
+      "Bash(dd if=*)"
+    ]
   },
   "statusLine": {
-    "type": "command",
     "command": "sh ~/.claude/statusline-command.sh",
-    "refreshInterval": 10000
+    "refreshInterval": 10000,
+    "type": "command"
   },
-  "enabledPlugins": {
-    "code-review@claude-plugins-official": true,
-    "code-simplifier@claude-plugins-official": true,
-    "commit-commands@claude-plugins-official": true,
-    "context7@claude-plugins-official": true,
-    "github@claude-plugins-official": true,
-    "pr-review-toolkit@claude-plugins-official": true,
-    "skill-creator@claude-plugins-official": true,
-    "superpowers@claude-plugins-official": true
-  },
-  "autoDreamEnabled": true,
-  "outputStyle": "Concise",
-  "attribution": {
-    "commit": "",
-    "sessionUrl": false,
-    "pr": ""
-  }
+  "tui": "fullscreen"
 }
