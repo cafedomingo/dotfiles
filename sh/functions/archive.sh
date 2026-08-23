@@ -1,3 +1,12 @@
+_7z=''
+for _cmd in 7zz 7z 7za; do
+  if command -v "$_cmd" >/dev/null 2>&1; then
+    _7z="$_cmd"
+    break
+  fi
+done
+unset _cmd
+
 # list archive contents
 als() {
   local file="$1"
@@ -20,9 +29,9 @@ als() {
     *.tar.lz|*.tlz)     command tar --lzip -tf "$file" ;;
     *.tar.Z|*.taz)      command tar -tZf "$file" ;;
     *.tar)              command tar -tf "$file" ;;
-    *.7z)               command 7za l "$file" ;;
+    *.7z)               command "$_7z" l "$file" ;;
     *.zip|*.ZIP)        command unzip -l "$file" ;;
-    *.rar)              command unrar l "$file" ;;
+    *.rar)              command lsar -l "$file" ;;
     *.bz2)              command bzip2 -tv "$file" ;;
     *.gz)               command gzip -l "$file" ;;
     *.xz)               command xz -l "$file" ;;
@@ -57,12 +66,12 @@ Extract various archive formats including zip, tar, 7z, rar, etc."
     *.tar.xz|*.txz)    command tar -Jxvf "$file" ;;
     *.tar.zst)         command tar --zstd -xvf "$file" ;;
     *.tar)             command tar -xvf "$file" ;;
-    *.7z)              command 7za x "$file"   ;;
+    *.7z)              command "$_7z" x "$file" ;;
     *.bz2)             command bunzip2 "$file"  ;;
     *.dmg)             hdiutil mount "$file" ;;
     *.gz)              if command -v unpigz >/dev/null 2>&1; then command unpigz "$file"; else command gunzip "$file"; fi ;;
     *.lz)              command lzip -d "$file" ;;
-    *.rar)             command unrar x "$file" ;;
+    *.rar)             command unar "$file" ;;
     *.xz)              command unxz "$file" ;;
     *.zst)             command zstd -d "$file" ;;
     *.Z)               command uncompress "$file" ;;
@@ -73,7 +82,7 @@ Extract various archive formats including zip, tar, 7z, rar, etc."
 
 # helper function for bulk compression
 _compress_all() {
-  local format="$1"        # zip, 7z, rar, tar.xz
+  local format="$1"        # zip, 7z, tar.xz
   shift
 
   # auto-detect command names based on format
@@ -99,7 +108,7 @@ _compress_all() {
         echo "Compressing $(basename "$file")..."
         if [ "$use_fast" = true ]; then
           case "$format" in
-            7z)      7za a -t7z "$(basename "$file").$format" "$file" ;;
+            7z)      command "$_7z" a -t7z -mmt "$(basename "$file").$format" "$file" ;;
             tar.gz)  if [ "$has_pigz" = true ]; then
                        tar -cf - "$file" | pigz > "$(basename "$file").$format"
                      else
@@ -121,9 +130,10 @@ _compress_all() {
 }
 
 # fast compression with multi-threading by default
-if command -v 7za >/dev/null 2>&1; then
-  alias 7za='7za -mmt -mx=6 -md=16m -ms=on'
-  function 7z-max() { command 7za a -t7z -mx=9 -mfb=64 -md=32m -ms=on -mmt "$@"; }
+if [ -n "$_7z" ]; then
+  7z() { command "$_7z" -mmt -mx=6 -md=16m -ms=on "$@"; }
+  7za() { 7z "$@"; }
+  function 7z-max() { command "$_7z" a -t7z -mx=9 -mfb=64 -md=32m -ms=on -mmt "$@"; }
   function 7z-all() { _compress_all "7z" "$@"; }
 fi
 
