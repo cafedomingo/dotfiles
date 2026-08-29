@@ -19,20 +19,6 @@ run_or_show() {
   fi
 }
 
-check_or_show() {
-  local description="$1"
-  local check_command="$2"
-  local install_command="$3"
-
-  if eval "$check_command" &> /dev/null; then
-    echo "✓ $description already available"
-    return 0
-  else
-    run_or_show "$description" "$install_command"
-    return 1
-  fi
-}
-
 # parse command line arguments
 while [[ $# -gt 0 ]]; do
   case $1 in
@@ -60,18 +46,16 @@ readonly DRY_RUN
 # determine script location for relative paths
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# xcode cli tools: https://developer.apple.com/download/more/
-# check_or_show returns 1 when it had to install something, which only the
-# Homebrew caller below cares about. Ignore it here or set -e aborts the
-# bootstrap on exactly the fresh machine it exists to set up.
-check_or_show "Xcode CLI tools" "xcode-select -p" '
-  touch /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress;
-  PROD=$(softwareupdate -l | sed -n "s/^ *\* Label: //p" | grep "Command Line Tools" | head -n 1);
-  [[ -n "$PROD" ]] || { rm -f /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress; exit 1; };
-  sudo softwareupdate -i "$PROD" --verbose || { rm -f /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress; exit 1; };
-  rm -f /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress
-' || true
-
+# xcode cli tools
+if xcode-select -p &> /dev/null; then
+  echo "✓ Xcode CLI tools already available"
+elif [[ "$DRY_RUN" == "true" ]]; then
+  echo "→ Would install Xcode CLI tools"
+else
+  xcode-select --install
+  echo "Finish the install in the dialog that opened, then re-run this script."
+  exit 1
+fi
 
 # homebrew: http://brew.sh
 # set BREW_CMD based on architecture
@@ -82,10 +66,11 @@ else
 fi
 readonly BREW_CMD
 
-if ! check_or_show "Homebrew" \
-    "[[ -x \"$BREW_CMD\" ]] && \"$BREW_CMD\" --version" \
-    "/bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""; then
+if [[ -x "$BREW_CMD" ]]; then
   run_or_show "update and upgrade Homebrew" "\"$BREW_CMD\" update && \"$BREW_CMD\" upgrade"
+else
+  run_or_show "install Homebrew" \
+    "/bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""
 fi
 
 # install packages
