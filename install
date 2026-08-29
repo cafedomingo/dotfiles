@@ -69,9 +69,18 @@ darwin() {
 
 symlink() {
   case $MODE in
-    install) run mkdir -p "$(dirname "$2")"; run ln -sfn "$1" "$2" ;;
-    remove)  if [[ -L $2 ]]; then run rm -f "$2"; fi ;;
+    install)
+      # ln would quietly create "$2/$(basename "$1")" inside an existing
+      # directory rather than replacing it.
+      [[ -d $2 && ! -L $2 ]] && die "$2 is a real directory, move it aside first"
+      run mkdir -p "$(dirname "$2")"
+      run ln -sfn "$1" "$2"
+      ;;
+    remove)
+      [[ "$(readlink "$2" 2>/dev/null)" == "$REPO"/* ]] && run rm -f "$2"
+      ;;
   esac
+  return 0
 }
 
 # --- helpers ---------------------------------------------------------------
