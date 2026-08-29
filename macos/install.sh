@@ -9,27 +9,13 @@ BREW_CMD=""
 # helper functions
 run_or_show() {
   local description="$1"
-  local command="$2"
+  shift
 
   if [[ "$DRY_RUN" == "true" ]]; then
     echo "→ Would $description"
   else
     echo "$description..."
-    eval "$command" || { echo "❌ Failed to $description"; exit 1; }
-  fi
-}
-
-check_or_show() {
-  local description="$1"
-  local check_command="$2"
-  local install_command="$3"
-
-  if eval "$check_command" &> /dev/null; then
-    echo "✓ $description already available"
-    return 0
-  else
-    run_or_show "$description" "$install_command"
-    return 1
+    "$@" || { echo "❌ Failed to $description"; exit 1; }
   fi
 }
 
@@ -60,14 +46,16 @@ readonly DRY_RUN
 # determine script location for relative paths
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# xcode cli tools: https://developer.apple.com/download/more/
-check_or_show "Xcode CLI tools" "command -v gcc" '
-  touch /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress;
-  PROD=$(softwareupdate -l | grep "Command Line Tools" | head -n 1 | sed "s/^[^:]*: *//" | sed "s/-.*//" | tr -d "\n");
-  [[ -n "$PROD" ]] || { rm /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress; exit 1; };
-  softwareupdate -i "$PROD" --verbose;
-  rm /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress
-'
+# xcode cli tools
+if xcode-select -p &> /dev/null; then
+  echo "✓ Xcode CLI tools already available"
+elif [[ "$DRY_RUN" == "true" ]]; then
+  echo "→ Would install Xcode CLI tools"
+else
+  xcode-select --install
+  echo "Finish the install in the dialog that opened, then re-run this script."
+  exit 1
+fi
 
 # homebrew: http://brew.sh
 # set BREW_CMD based on architecture
@@ -78,10 +66,16 @@ else
 fi
 readonly BREW_CMD
 
-if ! check_or_show "Homebrew" \
-    "[[ -x \"$BREW_CMD\" ]] && \"$BREW_CMD\" --version" \
-    "/bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""; then
-  run_or_show "update and upgrade Homebrew" "\"$BREW_CMD\" update && \"$BREW_CMD\" upgrade"
+if [[ -x "$BREW_CMD" ]]; then
+  run_or_show "update Homebrew"  "$BREW_CMD" update
+  run_or_show "upgrade Homebrew" "$BREW_CMD" upgrade
+elif [[ "$DRY_RUN" == "true" ]]; then
+  echo "→ Would install Homebrew"
+else
+  # keep the installer on stdin-free bash -c, as brew.sh documents, so its
+  # prompts still work
+  echo "Installing Homebrew..."
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 fi
 
 # install packages
@@ -97,12 +91,16 @@ if [[ "$DRY_RUN" == "true" ]]; then
     echo "→ Would install packages from Brewfile (after Homebrew installation)"
   fi
 else
-  run_or_show "install packages from Brewfile" "\"$BREW_CMD\" bundle --file=\"$SCRIPT_DIR/Brewfile\""
-  run_or_show "clean up Homebrew" "\"$BREW_CMD\" cleanup"
+  run_or_show "install packages from Brewfile" "$BREW_CMD" bundle --file="$SCRIPT_DIR/Brewfile"
+  run_or_show "clean up Homebrew" "$BREW_CMD" cleanup
 fi
 
 # configure macOS preferences
-"$SCRIPT_DIR/prefs.sh" ${DRY_RUN:+--dry-run}
+if [[ "$DRY_RUN" == "true" ]]; then
+  "$SCRIPT_DIR/prefs.sh" --dry-run
+else
+  "$SCRIPT_DIR/prefs.sh"
+fi
 
 # completion message
 echo ""
