@@ -198,16 +198,19 @@ EOF
 
 # --- main ------------------------------------------------------------------
 
-cmd=install
+cmd=""
 while [[ $# -gt 0 ]]; do
   case $1 in
     -n|--dry-run) DRY_RUN=true ;;
     -f|--force)   FORCE=true ;;
-    -h|--help)    cmd=help ;;
-    *)            cmd=$1 ;;
+    -h|--help)    cmd_help; exit 0 ;;
+    -*)           die "unknown option: $1" ;;
+    *)            [[ -z $cmd ]] || die "only one command at a time, got '$cmd' and '$1'"
+                  cmd=$1 ;;
   esac
   shift
 done
+cmd="${cmd:-install}"
 
 [[ $DRY_RUN == true ]] && info "=== DRY RUN, NO CHANGES WILL BE MADE ==="
 
