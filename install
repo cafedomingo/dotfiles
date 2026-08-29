@@ -1,0 +1,397 @@
+#!/usr/bin/env bash
+#
+# dotfiles installer.
+#
+# Every path this script manages is declared in MANIFEST below. Nothing is
+# auto-discovered, and `check` refuses to run if the manifest and the repo
+# have drifted apart in either direction, so adding a directory without
+# declaring it fails loudly instead of being linked somewhere unintended.
+
+set -euo pipefail
+
+# --- manifest --------------------------------------------------------------
+#
+#   verb   | source (in repo)  | destination (relative to $HOME) | os
+#
+#   link     symlink the source as-is, whether it is a file or a directory.
+#   mirror   walk the source and symlink each file individually, beneath real
+#            directories. Use this wherever the application also writes its own
+#            state into that directory, so its state does not land in the repo.
+#
+#   The os field is optional and restricts an entry to darwin or linux.
+
+MANIFEST='
+link   | bin                      | .bin
+link   | sh                       | .sh
+link   | curlrc                   | .curlrc
+link   | gitconfig                | .gitconfig
+link   | gitignore                | .gitignore
+link   | hushlogin                | .hushlogin
+link   | nanorc                   | .nanorc
+link   | vimrc                    | .vimrc
+link   | zprofile                 | .zprofile
+link   | zshrc                    | .zshrc
+
+mirror | claude                   | .claude
+mirror | config                   | .config
+mirror | ssh                      | .ssh
+
+link   | macos/sublime-prefs.json | Library/Application Support/Sublime Text/Packages/User/Preferences.sublime-settings | darwin
+'
+
+# Top-level entries that are deliberately not installed into $HOME. Listing one
+# here is how you tell the completeness check you meant to leave it out.
+SKIP="macos linux private install LICENSE README.md"
+
+PRIVATE_REPO="cafedomingo/dotfiles-private"
+
+# --- setup -----------------------------------------------------------------
+
+REPO="${DOTFILES_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
+PRIVATE_DIR="$REPO/private"
+
+DRY_RUN=false
+FORCE=false
+
+case "$(uname -s)" in
+  Darwin) OS=darwin ;;
+  Linux)  OS=linux ;;
+  *)      OS=unknown ;;
+esac
+
+if [[ -t 1 ]]; then
+  C_INFO=$'\033[1;94m'; C_OK=$'\033[1;92m'; C_ERR=$'\033[1;91m'; C_OFF=$'\033[0m'
+else
+  C_INFO=""; C_OK=""; C_ERR=""; C_OFF=""
+fi
+
+info()    { printf '%s%s%s\n' "$C_INFO" "$1" "$C_OFF"; }
+success() { printf '%s%s%s\n' "$C_OK" "$1" "$C_OFF"; }
+err()     { printf '%s%s%s\n' "$C_ERR" "$1" "$C_OFF" >&2; }
+die()     { err "$1"; exit 1; }
+
+# Run a command, or describe it under --dry-run.
+run() {
+  if [[ "$DRY_RUN" == true ]]; then
+    printf '  [dry-run] %s\n' "$*"
+  else
+    "$@"
+  fi
+}
+
+trim() {
+  local s="$1"
+  s="${s#"${s%%[![:space:]]*}"}"
+  s="${s%"${s##*[![:space:]]}"}"
+  printf '%s' "$s"
+}
+
+# Emit each manifest entry as: verb<TAB>source<TAB>dest<TAB>os
+entries() {
+  local line verb src dest os
+  while IFS= read -r line; do
+    line="$(trim "$line")"
+    [[ -z "$line" || "${line:0:1}" == "#" ]] && continue
+    IFS='|' read -r verb src dest os <<< "$line"
+    verb="$(trim "${verb:-}")"
+    src="$(trim "${src:-}")"
+    dest="$(trim "${dest:-}")"
+    os="$(trim "${os:-}")"
+    [[ -z "$verb" || -z "$src" || -z "$dest" ]] && die "malformed manifest line: $line"
+    printf '%s\t%s\t%s\t%s\n' "$verb" "$src" "$dest" "$os"
+  done <<< "$MANIFEST"
+}
+
+# Entries that apply to the machine we are running on.
+entries_for_os() {
+  local verb src dest os
+  while IFS=$'\t' read -r verb src dest os; do
+    [[ -n "$os" && "$os" != "$OS" ]] && continue
+    printf '%s\t%s\t%s\t%s\n' "$verb" "$src" "$dest" "$os"
+  done < <(entries)
+}
+
+# Files a mirror entry covers, as: source<TAB>destination (both absolute).
+mirror_pairs() {
+  local src="$1" dest="$2" file rel
+  while IFS= read -r file; do
+    [[ -z "$file" ]] && continue
+    rel="${file#"$REPO/$src/"}"
+    printf '%s\t%s\n' "$file" "$HOME/$dest/$rel"
+  done < <(find "$REPO/$src" -type f | sort)
+}
+
+# Directories this script creates and therefore owns cleanup of.
+managed_dirs() {
+  local verb src dest os target
+  {
+    printf '%s\n' "$HOME" "$HOME/bin"
+    while IFS=$'\t' read -r verb src dest os; do
+      [[ "$verb" == mirror ]] || continue
+      printf '%s\n' "$HOME/$dest"
+      while IFS=$'\t' read -r _ target; do
+        printf '%s\n' "$(dirname "$target")"
+      done < <(mirror_pairs "$src" "$dest")
+    done < <(entries_for_os)
+  } | sort -u
+}
+
+# --- commands --------------------------------------------------------------
+
+# Top-level entries the manifest is responsible for. In a git checkout this is
+# the tracked content, so scratch files lying around the repo do not block an
+# install; anything actually committed still has to be declared. Dot-prefixed
+# entries are repo metadata (.gitignore, .editorconfig) rather than things to
+# install, and are never claimed. Note that the repo's own .gitignore is
+# distinct from the tracked 'gitignore' that gets linked to ~/.gitignore.
+top_level_entries() {
+  local toplevel top
+  toplevel="$(git -C "$REPO" rev-parse --show-toplevel 2>/dev/null)" || toplevel=""
+  if [[ -n "$toplevel" && "$(cd "$toplevel" && pwd -P)" == "$(cd "$REPO" && pwd -P)" ]]; then
+    git -C "$REPO" ls-files | sed 's|/.*||'
+  else
+    for top in "$REPO"/*; do
+      [[ -e "$top" || -L "$top" ]] && basename "$top"
+    done
+  fi | grep -v '^\.' | sort -u
+}
+
+cmd_check() {
+  local verb src dest os base claimed problems=""
+
+  # Every declared source must still exist.
+  while IFS=$'\t' read -r verb src dest os; do
+    [[ -e "$REPO/$src" ]] || problems+="  manifest declares '$src', which does not exist in the repo"$'\n'
+  done < <(entries)
+
+  # Every top-level entry must be claimed by the manifest or by SKIP.
+  claimed=" $SKIP "
+  while IFS=$'\t' read -r verb src dest os; do
+    claimed+="${src%%/*} "
+  done < <(entries)
+
+  while IFS= read -r base; do
+    [[ -z "$base" ]] && continue
+    case "$claimed" in
+      *" $base "*) ;;
+      *) problems+="  '$base' is not accounted for: add a manifest entry or add it to SKIP"$'\n' ;;
+    esac
+  done < <(top_level_entries)
+
+  if [[ -n "$problems" ]]; then
+    err "manifest is out of sync with the repo:"
+    printf '%s' "$problems" >&2
+    exit 1
+  fi
+}
+
+cmd_link() {
+  cmd_check
+  local verb src dest os source target
+
+  info "🔗 Linking dotfiles"
+  while IFS=$'\t' read -r verb src dest os; do
+    case "$verb" in
+      link)
+        run mkdir -p "$(dirname "$HOME/$dest")"
+        run ln -sfn "$REPO/$src" "$HOME/$dest"
+        ;;
+      mirror)
+        while IFS=$'\t' read -r source target; do
+          run mkdir -p "$(dirname "$target")"
+          run ln -sfn "$source" "$target"
+        done < <(mirror_pairs "$src" "$dest")
+        ;;
+      *)
+        die "unknown manifest verb '$verb' for '$src'"
+        ;;
+    esac
+  done < <(entries_for_os)
+}
+
+cmd_clean() {
+  local verb src dest os target
+
+  info "🗑️  Removing dotfiles symlinks"
+  while IFS=$'\t' read -r verb src dest os; do
+    case "$verb" in
+      link)
+        [[ -L "$HOME/$dest" ]] && run rm -f "$HOME/$dest"
+        ;;
+      mirror)
+        while IFS=$'\t' read -r _ target; do
+          [[ -L "$target" ]] && run rm -f "$target"
+        done < <(mirror_pairs "$src" "$dest")
+        ;;
+    esac
+  done < <(entries_for_os)
+  return 0
+}
+
+cmd_cleanup() {
+  local dir link
+
+  info "🧹 Cleaning broken symbolic links"
+  while IFS= read -r dir; do
+    [[ -d "$dir" ]] || continue
+    while IFS= read -r link; do
+      [[ -z "$link" ]] && continue
+      [[ -e "$link" ]] || run rm -f "$link"
+    done < <(find "$dir" -maxdepth 1 -type l 2>/dev/null)
+  done < <(managed_dirs)
+  return 0
+}
+
+cmd_starship() {
+  info "🚀 Installing starship prompt"
+  run mkdir -p "$HOME/bin"
+  if [[ "$DRY_RUN" == true ]]; then
+    printf '  [dry-run] install starship into %s/bin\n' "$HOME"
+    return 0
+  fi
+  curl -fsSL https://starship.rs/install.sh \
+    | sh -s -- --bin-dir="$HOME/bin" --yes 2>&1 \
+    | sed '/Please follow the steps/,$d'
+}
+
+cmd_private() {
+  local latest tmp
+
+  if ! command -v gh >/dev/null 2>&1; then
+    info "Skipping private assets (gh not installed)"; return 0
+  fi
+  if ! gh auth status >/dev/null 2>&1; then
+    info "Skipping private assets (gh not authenticated)"; return 0
+  fi
+
+  latest="$(gh release view --repo "$PRIVATE_REPO" --json tagName -q .tagName 2>/dev/null || true)"
+  if [[ -z "$latest" ]]; then
+    info "Skipping private assets (no releases found)"; return 0
+  fi
+  if [[ "$FORCE" != true && -f "$PRIVATE_DIR/.version" && "$(cat "$PRIVATE_DIR/.version")" == "$latest" ]]; then
+    info "Private assets up to date ($latest)"; return 0
+  fi
+
+  info "📦 Installing private assets $latest"
+  if [[ "$DRY_RUN" == true ]]; then
+    printf '  [dry-run] download and install %s from %s\n' "$latest" "$PRIVATE_REPO"
+    return 0
+  fi
+
+  tmp="$(mktemp -d)"
+  gh release download "$latest" --repo "$PRIVATE_REPO" \
+    --pattern 'dotfiles-private-*.tar.gz' --dir "$tmp" --clobber
+  rm -rf "$PRIVATE_DIR"
+  mkdir -p "$PRIVATE_DIR"
+  tar xzf "$tmp"/dotfiles-private-*.tar.gz -C "$PRIVATE_DIR" --strip-components=1
+  rm -rf "$tmp"
+  "$PRIVATE_DIR/install.sh"
+  printf '%s\n' "$latest" > "$PRIVATE_DIR/.version"
+}
+
+# The bootstrap script for this platform. The directory is named for the
+# platform as people refer to it, which is not what uname reports.
+bootstrap_script() {
+  case "$OS" in
+    darwin) printf '%s' "$REPO/macos/install.sh" ;;
+    linux)  printf '%s' "$REPO/linux/install.sh" ;;
+    *)      return 1 ;;
+  esac
+}
+
+cmd_bootstrap() {
+  local script
+  script="$(bootstrap_script)" || die "no bootstrap script for this platform ($(uname -s))"
+  [[ -x "$script" ]] || die "bootstrap script is missing or not executable: $script"
+  info "🧰 Bootstrapping packages for $OS"
+  if [[ "$DRY_RUN" == true ]]; then
+    "$script" --dry-run
+  else
+    "$script"
+  fi
+}
+
+cmd_update_submodules() {
+  info "📦 Updating submodules to upstream HEAD"
+  if [[ "$DRY_RUN" == true ]]; then
+    printf '  [dry-run] fetch each submodule and check out its upstream HEAD\n'
+    return 0
+  fi
+  git -C "$REPO" submodule foreach --quiet '
+    git fetch --quiet
+    default="$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed "s|refs/remotes/||")"
+    [ -n "$default" ] || default="origin/master"
+    head="$(git rev-parse "$default")"
+    current="$(git rev-parse HEAD)"
+    if [ "$current" = "$head" ]; then
+      echo "  $name: up to date"
+    else
+      git checkout --quiet "$head"
+      echo "  $name: $(echo "$current" | cut -c1-7) -> $(echo "$head" | cut -c1-7)"
+    fi'
+}
+
+cmd_install() {
+  cmd_cleanup
+  cmd_link
+  cmd_starship
+  cmd_private
+  success "⚡️ Installation complete"
+}
+
+cmd_help() {
+  cat <<'EOF'
+Usage:
+  ./install [options] [command]
+
+Commands:
+  install            Clean up, link, install starship and private assets (default)
+  link               Create symbolic links
+  clean              Remove symlinks this script created
+  cleanup            Remove broken symbolic links from managed directories
+  check              Verify the manifest and the repo agree
+  starship           Install the starship prompt
+  private            Install private assets (themes, fonts)
+  bootstrap          Install system packages (Homebrew on macOS, apt on Linux)
+  update-submodules  Update submodules to upstream HEAD
+  help               Show this help
+
+Options:
+  -n, --dry-run  Show what would be done without making changes
+  -f, --force    Reinstall private assets even if up to date
+EOF
+}
+
+# --- main ------------------------------------------------------------------
+
+main() {
+  local cmd=""
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      -n|--dry-run) DRY_RUN=true; shift ;;
+      -f|--force)   FORCE=true; shift ;;
+      -h|--help)    cmd_help; exit 0 ;;
+      -*)           die "unknown option: $1" ;;
+      *)            [[ -n "$cmd" ]] && die "unexpected argument: $1"; cmd="$1"; shift ;;
+    esac
+  done
+
+  [[ "$DRY_RUN" == true ]] && info "=== DRY RUN, NO CHANGES WILL BE MADE ==="
+
+  case "${cmd:-install}" in
+    install)           cmd_install ;;
+    link)              cmd_link ;;
+    clean)             cmd_clean ;;
+    cleanup)           cmd_cleanup ;;
+    check)             cmd_check ;;
+    starship)          cmd_starship ;;
+    private)           cmd_private ;;
+    bootstrap)         cmd_bootstrap ;;
+    update-submodules) cmd_update_submodules ;;
+    help)              cmd_help ;;
+    *)                 die "unknown command: $cmd (try './install help')" ;;
+  esac
+}
+
+main "$@"
