@@ -61,7 +61,10 @@ mirror() {
 }
 
 darwin() {
-  if [[ $OS == darwin ]]; then "$@"; fi
+  case $MODE in
+    verify|claim) "$@" ;;
+    *)            if [[ $OS == darwin ]]; then "$@"; fi ;;
+  esac
 }
 
 symlink() {
@@ -83,18 +86,21 @@ run() {
 
 # Tracked top-level entries, so scratch files in the repo root are ignored.
 top_level() {
-  if [[ -d "$REPO/.git" ]]; then
+  if git -C "$REPO" rev-parse --git-dir >/dev/null 2>&1; then
     git -C "$REPO" ls-files | sed 's|/.*||'
   else
     ls "$REPO"
   fi | grep -v '^\.' | sort -u
 }
 
+# Only links this repo created, so a broken link left by anything else is
+# left alone.
 remove_broken_links() {
   local link
   [[ -d $1 ]] || return 0
   while read -r link; do
-    [[ -e $link ]] || run rm -f "$link"
+    [[ -e $link ]] && continue
+    [[ "$(readlink "$link")" == "$REPO"/* ]] && run rm -f "$link"
   done < <(find "$1" -maxdepth "$2" -type l)
 }
 
@@ -139,7 +145,7 @@ cmd_starship() {
 }
 
 cmd_private() {
-  local latest
+  local latest tmp
   command -v gh >/dev/null || { info "Skipping private assets (gh not installed)"; return 0; }
   gh auth status >/dev/null 2>&1 || { info "Skipping private assets (gh not authenticated)"; return 0; }
 
@@ -151,10 +157,12 @@ cmd_private() {
 
   info "📦 Installing private assets $latest"
   if [[ $DRY_RUN == true ]]; then return 0; fi
-  rm -rf "$PRIVATE_DIR" && mkdir -p "$PRIVATE_DIR"
+  tmp="$(mktemp -d)"
   gh release download "$latest" --repo "$PRIVATE_REPO" \
     --pattern 'dotfiles-private-*.tar.gz' -O - \
-    | tar xz -C "$PRIVATE_DIR" --strip-components=1
+    | tar xz -C "$tmp" --strip-components=1
+  rm -rf "$PRIVATE_DIR"
+  mv "$tmp" "$PRIVATE_DIR"
   "$PRIVATE_DIR/install.sh"
   printf '%s\n' "$latest" > "$PRIVATE_DIR/.version"
 }
@@ -168,7 +176,7 @@ cmd_bootstrap() {
 
 cmd_update_submodules() {
   info "📦 Updating submodules to upstream HEAD"
-  git -C "$REPO" submodule update --remote
+  run git -C "$REPO" submodule update --remote
 }
 
 cmd_help() {
