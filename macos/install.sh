@@ -68,8 +68,8 @@ check_or_show "Xcode CLI tools" "xcode-select -p" '
   touch /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress;
   PROD=$(softwareupdate -l | grep "Command Line Tools" | head -n 1 | sed "s/^[^:]*: *//" | sed "s/-.*//" | tr -d "\n");
   [[ -n "$PROD" ]] || { rm /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress; exit 1; };
-  softwareupdate -i "$PROD" --verbose;
-  rm /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress
+  softwareupdate -i "$PROD" --verbose || { rm -f /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress; exit 1; };
+  rm -f /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress
 ' || true
 
 
