@@ -61,13 +61,17 @@ readonly DRY_RUN
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # xcode cli tools: https://developer.apple.com/download/more/
+# check_or_show returns 1 when it had to install something, which only the
+# Homebrew caller below cares about. Ignore it here or set -e aborts the
+# bootstrap on exactly the fresh machine it exists to set up.
 check_or_show "Xcode CLI tools" "command -v gcc" '
   touch /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress;
   PROD=$(softwareupdate -l | grep "Command Line Tools" | head -n 1 | sed "s/^[^:]*: *//" | sed "s/-.*//" | tr -d "\n");
   [[ -n "$PROD" ]] || { rm /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress; exit 1; };
   softwareupdate -i "$PROD" --verbose;
   rm /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress
-'
+' || true
+
 
 # homebrew: http://brew.sh
 # set BREW_CMD based on architecture

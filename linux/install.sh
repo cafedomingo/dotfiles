@@ -63,11 +63,18 @@ fi
 
 sudo apt update || { err "apt update failed"; exit 1; }
 
+status=0
 if [[ ${#packages[@]} -eq 0 ]]; then
     warn "No packages to install"
 else
     log "Installing ${#packages[@]} packages..."
-    sudo apt install -y "${packages[@]}" || warn "Some packages failed or were unavailable"
+    sudo apt install -y "${packages[@]}" || {
+        warn "Some packages failed or were unavailable"
+        status=1
+    }
 fi
 
 sudo apt autoclean
+
+# Keep going past unavailable packages, but do not report success for them.
+exit "$status"
