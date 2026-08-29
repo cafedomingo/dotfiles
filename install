@@ -99,7 +99,7 @@ top_level() {
     git -C "$REPO" ls-files | sed 's|/.*||'
   else
     ls "$REPO"
-  fi | grep -v '^\.' | sort -u
+  fi | sed '/^\./d' | sort -u
 }
 
 # Only links this repo created, so a broken link left by anything else is
@@ -111,6 +111,7 @@ remove_broken_links() {
     [[ -e $link ]] && continue
     [[ "$(readlink "$link")" == "$REPO"/* ]] && run rm -f "$link"
   done < <(find "$1" -maxdepth "$2" -type l)
+  return 0
 }
 
 # --- commands --------------------------------------------------------------
