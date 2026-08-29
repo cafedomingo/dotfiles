@@ -9,13 +9,13 @@ BREW_CMD=""
 # helper functions
 run_or_show() {
   local description="$1"
-  local command="$2"
+  shift
 
   if [[ "$DRY_RUN" == "true" ]]; then
     echo "→ Would $description"
   else
     echo "$description..."
-    eval "$command" || { echo "❌ Failed to $description"; exit 1; }
+    "$@" || { echo "❌ Failed to $description"; exit 1; }
   fi
 }
 
@@ -67,10 +67,15 @@ fi
 readonly BREW_CMD
 
 if [[ -x "$BREW_CMD" ]]; then
-  run_or_show "update and upgrade Homebrew" "\"$BREW_CMD\" update && \"$BREW_CMD\" upgrade"
+  run_or_show "update Homebrew"  "$BREW_CMD" update
+  run_or_show "upgrade Homebrew" "$BREW_CMD" upgrade
+elif [[ "$DRY_RUN" == "true" ]]; then
+  echo "→ Would install Homebrew"
 else
-  run_or_show "install Homebrew" \
-    "/bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""
+  # keep the installer on stdin-free bash -c, as brew.sh documents, so its
+  # prompts still work
+  echo "Installing Homebrew..."
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 fi
 
 # install packages
@@ -86,8 +91,8 @@ if [[ "$DRY_RUN" == "true" ]]; then
     echo "→ Would install packages from Brewfile (after Homebrew installation)"
   fi
 else
-  run_or_show "install packages from Brewfile" "\"$BREW_CMD\" bundle --file=\"$SCRIPT_DIR/Brewfile\""
-  run_or_show "clean up Homebrew" "\"$BREW_CMD\" cleanup"
+  run_or_show "install packages from Brewfile" "$BREW_CMD" bundle --file="$SCRIPT_DIR/Brewfile"
+  run_or_show "clean up Homebrew" "$BREW_CMD" cleanup
 fi
 
 # configure macOS preferences
