@@ -102,7 +102,11 @@ else
 fi
 
 # configure macOS preferences
-"$SCRIPT_DIR/prefs.sh" ${DRY_RUN:+--dry-run}
+if [[ "$DRY_RUN" == "true" ]]; then
+  "$SCRIPT_DIR/prefs.sh" --dry-run
+else
+  "$SCRIPT_DIR/prefs.sh"
+fi
 
 # completion message
 echo ""
