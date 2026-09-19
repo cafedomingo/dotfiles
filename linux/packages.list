@@ -5,7 +5,6 @@
 zsh
 
 # tools
-7zip
 bat
 exif
 fzf
@@ -16,7 +15,13 @@ htop
 jq
 lsd
 nano
-pigz
 ripgrep
-unar
 wget
+
+# archive tools
+7zip
+lzip
+pigz
+unar
+xz-utils
+zstd
