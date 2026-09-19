@@ -13,13 +13,18 @@ brew 'htop'
 brew 'jq'
 brew 'lsd'
 brew 'nano'
-brew 'pigz'
 brew 'ripgrep'
-brew 'sevenzip'
 brew 'tlrc'
 brew 'tokei'
-brew 'unar'
 brew 'wget'
+
+# archive tools
+brew 'lzip'
+brew 'pigz'
+brew 'sevenzip'
+brew 'unar'
+brew 'xz'
+brew 'zstd'
 
 # apps
 cask '1password'
