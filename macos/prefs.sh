@@ -286,6 +286,13 @@ setting "com.apple.TextEdit" "RichText" "int" "0"
 setting "com.apple.TextEdit" "PlainTextEncoding" "int" "4"
 setting "com.apple.TextEdit" "PlainTextEncodingForWrite" "int" "4"
 
+### optical discs
+echo -e "${GREEN}=== Configuring Optical Discs ===${NC}"
+
+# don't auto-launch players for video discs
+dict_batch "com.apple.digihub" "com.apple.digihub.dvd.video.appeared" "Ignore video DVDs on insert" action -int 1
+dict_batch "com.apple.digihub" "com.apple.digihub.bd.video.appeared" "Ignore blu-rays on insert" action -int 1
+
 # restart affected apps
 echo -e "${GREEN}=== Applying changes ===${NC}"
 
