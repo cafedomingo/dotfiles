@@ -12,15 +12,17 @@ alias ltime='ls -ltm'
 alias ldot='ls -ld .*'
 alias lsize='ls -1Ss'
 
-# lsd
-if command -v lsd >/dev/null 2>&1; then
-  alias lsd='lsd -l --icon never --group-dirs first'
-  alias ls='lsd'
-  alias lsize='lsd --sizesort'
+# eza
+if command -v eza >/dev/null 2>&1; then
+  alias ll='eza -l --group-directories-first --color-scale=age,size'
+  alias ls='ll'
+  alias lsize='eza -l -s size -r --color-scale=size'  # -r keeps largest first
+  alias lr='eza -R -s age'
+  alias ltime='eza -l -s age --color-scale=age'
   if command -v tree >/dev/null 2>&1; then
     alias lt='tree'
   else
-    alias tree='lsd --tree'
+    alias tree='eza -T'
     alias lt='tree'
   fi
 fi
