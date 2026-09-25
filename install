@@ -1,0 +1,240 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+REPO="${DOTFILES_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
+PRIVATE_REPO="cafedomingo/dotfiles-private"
+PRIVATE_DIR="$REPO/private"
+
+SKIP="macos linux private install LICENSE README.md"
+
+DRY_RUN=false
+FORCE=false
+MODE=""
+
+case "$(uname -s)" in
+  Darwin) OS=darwin;  PKGDIR=macos ;;
+  Linux)  OS=linux;   PKGDIR=linux ;;
+  *)      OS=unknown; PKGDIR="" ;;
+esac
+
+# Destinations are relative to $HOME. Use mirror where the app also writes its
+# own state into the directory, so that state stays out of the repo.
+manifest() {
+  link   bin       .bin
+  link   sh        .sh
+  link   curlrc    .curlrc
+  link   gitconfig .gitconfig
+  link   gitignore .gitignore
+  link   hushlogin .hushlogin
+  link   nanorc    .nanorc
+  link   vimrc     .vimrc
+  link   zprofile  .zprofile
+  link   zshrc     .zshrc
+  mirror claude    .claude
+  mirror config    .config
+  mirror ssh       .ssh
+  darwin link macos/sublime-prefs.json "Library/Application Support/Sublime Text/Packages/User/Preferences.sublime-settings"
+}
+
+# --- manifest verbs, each doing whatever MODE currently asks for ------------
+
+link() {
+  case $MODE in
+    verify) [[ -e "$REPO/$1" ]] || die "manifest lists '$1', which does not exist" ;;
+    claim)  printf '%s\n' "${1%%/*}" ;;
+    dirs)   ;;
+    *)      symlink "$REPO/$1" "$HOME/$2" ;;
+  esac
+}
+
+mirror() {
+  local file
+  case $MODE in
+    verify) [[ -d "$REPO/$1" ]] || die "manifest lists '$1', which does not exist" ;;
+    claim)  printf '%s\n' "${1%%/*}" ;;
+    dirs)   printf '%s\n' "$HOME/$2" ;;
+    *)      while read -r file; do
+              symlink "$file" "$HOME/$2/${file#"$REPO/$1/"}"
+            done < <(find "$REPO/$1" -type f | sort) ;;
+  esac
+}
+
+darwin() {
+  case $MODE in
+    verify|claim) "$@" ;;
+    *)            if [[ $OS == darwin ]]; then "$@"; fi ;;
+  esac
+}
+
+symlink() {
+  case $MODE in
+    install)
+      # ln would quietly create "$2/$(basename "$1")" inside an existing
+      # directory rather than replacing it.
+      [[ -d $2 && ! -L $2 ]] && die "$2 is a real directory, move it aside first"
+      run mkdir -p "$(dirname "$2")"
+      run ln -sfn "$1" "$2"
+      ;;
+    remove)
+      [[ "$(readlink "$2" 2>/dev/null)" == "$REPO"/* ]] && run rm -f "$2"
+      ;;
+  esac
+  return 0
+}
+
+# --- helpers ---------------------------------------------------------------
+
+info()    { printf '\033[1;94m%s\033[0m\n' "$1"; }
+success() { printf '\033[1;92m%s\033[0m\n' "$1"; }
+die()     { printf '\033[1;91m%s\033[0m\n' "$1" >&2; exit 1; }
+
+run() {
+  if [[ $DRY_RUN == true ]]; then printf '  [dry-run] %s\n' "$*"; else "$@"; fi
+}
+
+# Tracked top-level entries, so scratch files in the repo root are ignored.
+top_level() {
+  if git -C "$REPO" rev-parse --git-dir >/dev/null 2>&1; then
+    git -C "$REPO" ls-files | sed 's|/.*||'
+  else
+    ls "$REPO"
+  fi | sed '/^\./d' | sort -u
+}
+
+# Only links this repo created, so a broken link left by anything else is
+# left alone.
+remove_broken_links() {
+  local link
+  [[ -d $1 ]] || return 0
+  while read -r link; do
+    [[ -e $link ]] && continue
+    [[ "$(readlink "$link")" == "$REPO"/* ]] && run rm -f "$link"
+  done < <(find "$1" -maxdepth "$2" -type l)
+  return 0
+}
+
+# --- commands --------------------------------------------------------------
+
+cmd_check() {
+  local claimed base
+  MODE=verify; manifest
+  MODE=claim;  claimed=" $SKIP $(manifest | tr '\n' ' ') "
+  while read -r base; do
+    [[ $claimed == *" $base "* ]] || die "'$base' is in the repo but not in the manifest or SKIP"
+  done < <(top_level)
+}
+
+cmd_link() {
+  cmd_check
+  info "🔗 Linking dotfiles"
+  MODE=install; manifest
+}
+
+cmd_clean() {
+  info "🗑️  Removing dotfiles symlinks"
+  MODE=remove; manifest
+}
+
+cmd_cleanup() {
+  local dir
+  info "🧹 Cleaning broken symbolic links"
+  remove_broken_links "$HOME" 1
+  remove_broken_links "$HOME/bin" 1
+  MODE=dirs
+  while read -r dir; do remove_broken_links "$dir" 5; done < <(manifest)
+}
+
+cmd_starship() {
+  info "🚀 Installing starship prompt"
+  run mkdir -p "$HOME/bin"
+  if [[ $DRY_RUN == true ]]; then return 0; fi
+  curl -fsSL https://starship.rs/install.sh \
+    | sh -s -- --bin-dir="$HOME/bin" --yes 2>&1 \
+    | sed '/Please follow the steps/,$d'
+}
+
+cmd_private() {
+  local latest tmp
+  command -v gh >/dev/null || { info "Skipping private assets (gh not installed)"; return 0; }
+  gh auth status >/dev/null 2>&1 || { info "Skipping private assets (gh not authenticated)"; return 0; }
+
+  latest="$(gh release view --repo "$PRIVATE_REPO" --json tagName -q .tagName 2>/dev/null || true)"
+  [[ -n $latest ]] || { info "Skipping private assets (no releases found)"; return 0; }
+  if [[ $FORCE != true && "$(cat "$PRIVATE_DIR/.version" 2>/dev/null)" == "$latest" ]]; then
+    info "Private assets up to date ($latest)"; return 0
+  fi
+
+  info "📦 Installing private assets $latest"
+  if [[ $DRY_RUN == true ]]; then return 0; fi
+  tmp="$(mktemp -d)"
+  gh release download "$latest" --repo "$PRIVATE_REPO" \
+    --pattern 'dotfiles-private-*.tar.gz' -O - \
+    | tar xz -C "$tmp" --strip-components=1
+  rm -rf "$PRIVATE_DIR"
+  mv "$tmp" "$PRIVATE_DIR"
+  "$PRIVATE_DIR/install.sh"
+  printf '%s\n' "$latest" > "$PRIVATE_DIR/.version"
+}
+
+cmd_bootstrap() {
+  local script="$REPO/$PKGDIR/install.sh"
+  [[ -n $PKGDIR && -x $script ]] || die "no usable bootstrap script for $(uname -s)"
+  info "🧰 Bootstrapping packages for $OS"
+  if [[ $DRY_RUN == true ]]; then "$script" --dry-run; else "$script"; fi
+}
+
+cmd_update_submodules() {
+  info "📦 Updating submodules to upstream HEAD"
+  run git -C "$REPO" submodule update --remote
+}
+
+cmd_help() {
+  cat <<'EOF'
+Usage: ./install [-n|--dry-run] [-f|--force] [command]
+
+  install            Clean up, link, install starship and private assets (default)
+  link               Create symbolic links
+  clean              Remove symlinks this script created
+  cleanup            Remove broken symbolic links
+  check              Verify the manifest matches the repo
+  starship           Install the starship prompt
+  private            Install private assets (themes, fonts)
+  bootstrap          Install system packages (Homebrew on macOS, apt on Linux)
+  update-submodules  Update submodules to upstream HEAD
+  help               Show this help
+EOF
+}
+
+# --- main ------------------------------------------------------------------
+
+cmd=""
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    -n|--dry-run) DRY_RUN=true ;;
+    -f|--force)   FORCE=true ;;
+    -h|--help)    cmd_help; exit 0 ;;
+    -*)           die "unknown option: $1" ;;
+    *)            [[ -z $cmd ]] || die "only one command at a time, got '$cmd' and '$1'"
+                  cmd=$1 ;;
+  esac
+  shift
+done
+cmd="${cmd:-install}"
+
+[[ $DRY_RUN == true ]] && info "=== DRY RUN, NO CHANGES WILL BE MADE ==="
+
+case $cmd in
+  install)           cmd_cleanup; cmd_link; cmd_starship; cmd_private
+                     success "⚡️ Installation complete" ;;
+  link)              cmd_link ;;
+  clean)             cmd_clean ;;
+  cleanup)           cmd_cleanup ;;
+  check)             cmd_check ;;
+  starship)          cmd_starship ;;
+  private)           cmd_private ;;
+  bootstrap)         cmd_bootstrap ;;
+  update-submodules) cmd_update_submodules ;;
+  help)              cmd_help ;;
+  *)                 die "unknown command: $cmd" ;;
+esac
