@@ -65,6 +65,9 @@ for p in "${manpaths[@]}"; do
 done
 export MANPATH
 
+# eza defaults to ~/Library/Application Support on macOS
+export EZA_CONFIG_DIR="$HOME/.config/eza"
+
 # pagers
 export PAGER="less -RF"
 if command -v groff >/dev/null 2>&1; then
