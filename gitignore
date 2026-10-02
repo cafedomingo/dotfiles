@@ -30,5 +30,8 @@ Icon[!a-zA-Z0-9]
 # sublime
 *.sublime-workspace
 
+# vscode
+.vscode/
+
 # claude
 **/.claude/settings.local.json
