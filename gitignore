@@ -30,7 +30,7 @@ Icon[!a-zA-Z0-9]
 # sublime
 *.sublime-workspace
 
-# vscode / cursor
+# vscode
 .vscode/
 
 # claude
