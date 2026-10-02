@@ -1,7 +1,3 @@
 *.local
-
-# private assets (downloaded from releases)
-private/
-
-# claude
 .claude/
+private/
