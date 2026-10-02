@@ -5,6 +5,8 @@
 .AppleDouble
 .LSOverride
 ._*
+# finder custom-icon file, named "Icon\r"
+Icon[!a-zA-Z0-9]
 *.icloud
 .DocumentRevisions-V100
 .fseventsd
