@@ -22,14 +22,6 @@ Icon[!a-zA-Z0-9]
 .nfs*
 .Trash-*
 
-# windows (files copied from shares)
-Thumbs.db
-Thumbs.db:encryptable
-ehthumbs.db
-ehthumbs_vista.db
-[Dd]esktop.ini
-$RECYCLE.BIN/
-
 # vim
 [._]*.sw[a-p]
 [._]sw[a-p]
