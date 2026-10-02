@@ -1,5 +1,4 @@
 *.local
-Brewfile*.lock.json
 
 # private assets (downloaded from releases)
 private/
