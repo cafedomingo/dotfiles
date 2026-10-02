@@ -1,6 +1,5 @@
 *.local
 Brewfile*.lock.json
-.vscode/
 
 # private assets (downloaded from releases)
 private/
