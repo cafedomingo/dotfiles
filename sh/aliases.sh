@@ -14,7 +14,7 @@ alias lsize='ls -1Ss'
 
 # eza
 if command -v eza >/dev/null 2>&1; then
-  alias ll='eza -l --group-directories-first --color-scale=age,size'
+  alias ll='eza -l --git --group-directories-first --color-scale=age,size'
   alias ls='ll'
   alias lsize='eza -l -s size -r --color-scale=size'  # -r keeps largest first
   alias lr='eza -R -s age'
