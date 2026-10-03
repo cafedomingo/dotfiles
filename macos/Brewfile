@@ -4,6 +4,7 @@ brew 'zsh'
 # tools
 brew 'bat'
 brew 'chafa'
+brew 'exif'
 brew 'eza'
 brew 'fzf'
 brew 'gh'

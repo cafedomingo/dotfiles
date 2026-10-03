@@ -80,6 +80,7 @@
   tag = auto
 
 [core]
+  attributesfile = ~/.gitattributes
   excludesfile = ~/.gitignore
   # handle windows line endings
   # https://help.github.com/articles/dealing-with-line-endings/
@@ -183,6 +184,11 @@
 
 [user]
   signingkey = ~/.ssh/id_ed25519.pub
+
+[diff "exif"]
+  # show jpeg metadata in diffs (mapped in gitattributes); fall back to a hash
+  # so files without exif data still show as changed instead of failing
+  textconv = sh -c 'exif -m \"$1\" 2>/dev/null || echo \"no EXIF data, sha256 $(shasum -a 256 < \"$1\" | cut -c1-16)\"' --
 
 [include]
   # use separate file for user info, etc.
