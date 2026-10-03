@@ -192,9 +192,6 @@
 [diff "exif"]
   textconv = exif
 
-[github]
-  user = cafedomingo
-
 [include]
   # use separate file for user info, etc.
   path = ~/.gitconfig.local

@@ -8,10 +8,10 @@ gi() {
     fi
 
     if [ "$1" = "list" ]; then
-        curl -sL https://www.gitignore.io/api/list
+        curl -sL https://www.toptal.com/developers/gitignore/api/list
         return 0
     fi
 
     local IFS=,
-    curl -sLw "\n" "https://www.gitignore.io/api/$*"
+    curl -sLw "\n" "https://www.toptal.com/developers/gitignore/api/$*"
 }
