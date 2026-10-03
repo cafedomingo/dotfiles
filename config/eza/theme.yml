@@ -1,4 +1,24 @@
+date:
+  foreground: LightGreen
 file_type:
   build:
     is_bold: false
     is_underline: false
+perms:
+  user_execute_file: {is_bold: false}
+  user_execute_other: {is_bold: false}
+  user_read: {is_bold: false}
+  user_write: {is_bold: false}
+size:
+  number_byte: {foreground: LightMagenta, is_bold: false}
+  number_kilo: {foreground: LightMagenta, is_bold: false}
+  number_mega: {foreground: LightMagenta, is_bold: false}
+  number_giga: {foreground: LightMagenta, is_bold: false}
+  number_huge: {foreground: LightMagenta, is_bold: false}
+  unit_byte: {foreground: LightMagenta, is_bold: false}
+  unit_kilo: {foreground: LightMagenta, is_bold: false}
+  unit_mega: {foreground: LightMagenta, is_bold: false}
+  unit_giga: {foreground: LightMagenta, is_bold: false}
+  unit_huge: {foreground: LightMagenta, is_bold: false}
+users:
+  user_you: {foreground: White, is_bold: false}
