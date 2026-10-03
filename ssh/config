@@ -5,3 +5,4 @@ Host *
   HashKnownHosts yes
   ServerAliveCountMax 3
   ServerAliveInterval 60
+  UpdateHostKeys yes
