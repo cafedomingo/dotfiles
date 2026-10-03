@@ -21,19 +21,20 @@ esac
 # Destinations are relative to $HOME. Use mirror where the app also writes its
 # own state into the directory, so that state stays out of the repo.
 manifest() {
-  link   bin       .bin
-  link   sh        .sh
-  link   curlrc    .curlrc
-  link   gitconfig .gitconfig
-  link   gitignore .gitignore
-  link   hushlogin .hushlogin
-  link   nanorc    .nanorc
-  link   vimrc     .vimrc
-  link   zprofile  .zprofile
-  link   zshrc     .zshrc
-  mirror claude    .claude
-  mirror config    .config
-  mirror ssh       .ssh
+  link   bin           .bin
+  link   sh            .sh
+  link   curlrc        .curlrc
+  link   gitattributes .gitattributes
+  link   gitconfig     .gitconfig
+  link   gitignore     .gitignore
+  link   hushlogin     .hushlogin
+  link   nanorc        .nanorc
+  link   vimrc         .vimrc
+  link   zprofile      .zprofile
+  link   zshrc         .zshrc
+  mirror claude        .claude
+  mirror config        .config
+  mirror ssh           .ssh
   darwin link macos/sublime-prefs.json "Library/Application Support/Sublime Text/Packages/User/Preferences.sublime-settings"
 }
 
