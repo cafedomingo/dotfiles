@@ -1,23 +1,9 @@
 {
-  "agentPushNotifEnabled": true,
   "attribution": {
     "commit": "",
     "pr": "",
     "sessionUrl": false
   },
-  "autoDreamEnabled": true,
-  "enabledPlugins": {
-    "code-review@claude-plugins-official": true,
-    "code-simplifier@claude-plugins-official": true,
-    "commit-commands@claude-plugins-official": true,
-    "context7@claude-plugins-official": false,
-    "github@claude-plugins-official": true,
-    "pr-review-toolkit@claude-plugins-official": true,
-    "skill-creator@claude-plugins-official": false,
-    "superpowers@claude-plugins-official": true
-  },
-  "model": "opus[1m]",
-  "outputStyle": "Concise",
   "permissions": {
     "allow": [
       "WebSearch",
@@ -35,10 +21,6 @@
       "Bash(realpath *)",
       "Bash(file *)"
     ],
-    "ask": [
-      "Bash(git push *)"
-    ],
-    "defaultMode": "auto",
     "deny": [
       "Read(./.env)",
       "Read(./.env.*)",
@@ -61,12 +43,32 @@
       "Bash(rm -rf --no-preserve-root / *)",
       "Bash(mkfs.*)",
       "Bash(dd if=*)"
-    ]
+    ],
+    "ask": [
+      "Bash(git push *)"
+    ],
+    "defaultMode": "auto"
   },
+  "model": "opus",
   "statusLine": {
+    "type": "command",
     "command": "sh ~/.claude/statusline-command.sh",
-    "refreshInterval": 10000,
-    "type": "command"
+    "refreshInterval": 10000
   },
-  "tui": "fullscreen"
+  "enabledPlugins": {
+    "code-review@claude-plugins-official": true,
+    "code-simplifier@claude-plugins-official": true,
+    "commit-commands@claude-plugins-official": true,
+    "context7@claude-plugins-official": false,
+    "github@claude-plugins-official": true,
+    "pr-review-toolkit@claude-plugins-official": true,
+    "skill-creator@claude-plugins-official": false,
+    "superpowers@claude-plugins-official": true,
+    "cc-plugin-you-should-know@builtin": true,
+    "cc-plugin-telemetry@builtin": false
+  },
+  "outputStyle": "Concise",
+  "tui": "fullscreen",
+  "autoDreamEnabled": true,
+  "agentPushNotifEnabled": true
 }
