@@ -7,13 +7,13 @@ zsh
 # tools
 bat
 exif
+eza
 fzf
 gh
 git
 git-delta
 htop
 jq
-lsd
 nano
 ripgrep
 wget
