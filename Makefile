@@ -125,7 +125,7 @@ help:
 	@echo "  link               Create symbolic links"
 	@echo "  starship           Install starship prompt"
 	@echo "  private            Install private assets (themes, fonts)"
-	@echo "  update-submodules  Update submodules to latest tags"
+	@echo "  update-submodules  Update submodules to HEAD"
 	@echo "  clean              Remove all symlinks"
 	@echo "  help               Show this help"
 	@echo ""

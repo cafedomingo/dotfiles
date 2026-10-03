@@ -1,0 +1,8 @@
+*.heic diff=exif
+*.HEIC diff=exif
+*.jpeg diff=exif
+*.JPEG diff=exif
+*.jpg diff=exif
+*.JPG diff=exif
+*.png diff=exif
+*.PNG diff=exif

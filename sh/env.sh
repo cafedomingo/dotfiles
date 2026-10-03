@@ -31,8 +31,6 @@ fi
 
 # PATH
 paths=(
-  "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin"            # android cmdline-tools
-  /opt/homebrew/opt/coreutils/libexec/gnubin              # homebrew GNU utilities (arm64)
   /opt/homebrew/bin /opt/homebrew/sbin                    # homebrew (arm64)
   /usr/local/go/bin                                       # go
   "$HOME/.local/bin"                                      # user-specific executable files
@@ -48,22 +46,6 @@ for p in "${paths[@]}"; do
   fi
 done
 export PATH
-
-# MANPATH
-manpaths=(
-  /opt/homebrew/opt/coreutils/libexec/gnuman
-  /opt/homebrew/opt/findutils/share/man
-)
-
-for p in "${manpaths[@]}"; do
-  if [[ -d "$p" ]]; then
-    case ":${MANPATH:-}:" in
-      *":$p:"*) ;;
-      *) MANPATH="$p:${MANPATH:-}" ;;
-    esac
-  fi
-done
-export MANPATH
 
 # eza defaults to ~/Library/Application Support on macOS
 export EZA_CONFIG_DIR="$HOME/.config/eza"
@@ -92,4 +74,4 @@ if command -v fzf >/dev/null 2>&1; then
 fi
 
 # cleanup
-unset paths manpaths p java_home_path
+unset paths p java_home_path

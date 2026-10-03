@@ -2,6 +2,7 @@
 # history configuration
 export HISTSIZE=500000
 export SAVEHIST=100000
+HISTFILE=${ZDOTDIR:-$HOME}/.zsh_history  # macOS /etc/zshrc sets this, debian does not
 setopt append_history      # append history to the zsh_history file
 setopt extended_history    # add timestamps to history
 setopt hist_ignore_all_dups
