@@ -1,6 +1,6 @@
 # ls
 if ls --color &> /dev/null; then # GNU
-  alias ls='ls --color -Fh'
+  alias ls='ls --color=auto -Fh'
 else # macOS
   alias ls='ls -GFh'
 fi
