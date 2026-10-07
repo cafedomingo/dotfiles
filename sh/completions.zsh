@@ -32,6 +32,6 @@ zstyle ':completion:*' list-colors ''
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#) ([0-9a-z-]#)*=01;34=0=01'
 
 # fzf completions and key bindings
-if command -v fzf >/dev/null 2>&1; then
+if (( $+commands[fzf] )); then
   source <(fzf --zsh)
 fi

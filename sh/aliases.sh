@@ -1,5 +1,5 @@
 # ls
-if ls --color &> /dev/null; then # GNU
+if ls --color >/dev/null 2>&1; then # GNU
   alias ls='ls --color=auto -Fh'
 else # macOS
   alias ls='ls -GFh'
@@ -151,7 +151,7 @@ if [[ "$(uname -s)" == "Darwin" ]]; then
   alias xcinstall='xcode-select --install'
 
   # quick look
-  ql() { qlmanage -p "$@" &>/dev/null; }
+  ql() { qlmanage -p "$@" >/dev/null 2>&1; }
 
   # volume
   alias mute='osascript -e "set volume output muted true"'
