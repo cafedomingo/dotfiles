@@ -45,7 +45,6 @@ alias dud='du -d 1 -h'
 alias duf='du -sh *'
 
 # find
-alias fd='find . -type d -name '
 alias ff='find . -type f -name '
 
 # grep
