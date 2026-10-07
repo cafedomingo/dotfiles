@@ -35,7 +35,6 @@ alias mkdir="mkdir -p"
 
 # history
 alias h='history'
-alias hgrep='fc -El 0 | grep'
 
 # diff
 #alias diff='diff --color=auto'
