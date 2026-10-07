@@ -100,7 +100,7 @@ _compress_all() {
   local has_pigz=false
   command -v pigz >/dev/null 2>&1 && has_pigz=true
 
-  local count=0
+  local count=0 file
   for file in ./*; do
     [ -e "$file" ] || continue
     case "$file" in

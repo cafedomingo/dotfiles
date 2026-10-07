@@ -8,6 +8,7 @@
     ~/.zshrc.local
   )
 
+  local file
   for file in $files; do
     [[ -s $file ]] && source "$file"
   done

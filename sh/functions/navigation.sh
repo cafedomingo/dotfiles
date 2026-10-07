@@ -2,6 +2,7 @@
 up() {
   local d=""
   local limit="${1:-1}"
+  local i
 
   for ((i = 1; i <= limit; i++)); do
     d="../${d}"

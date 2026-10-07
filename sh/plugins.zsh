@@ -7,6 +7,7 @@
     z
   )
 
+  local plugin
   for plugin in ${plugins}; do
     source "$plugin_dir/$plugin/$plugin.zsh" 2>/dev/null || source "$plugin_dir/$plugin/$plugin.sh"
   done
