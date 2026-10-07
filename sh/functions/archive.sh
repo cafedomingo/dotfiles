@@ -141,29 +141,29 @@ _compress_all() {
 if [[ -n "$_7z" ]]; then
   [[ -o interactive ]] && 7z() { command "$_7z" -mmt -mx=6 -md=16m -ms=on "$@"; }
   [[ -o interactive ]] && 7za() { 7z "$@"; }
-  function 7z-max() { command "$_7z" a -t7z -mx=9 -mfb=64 -md=32m -ms=on -mmt "$@"; }
-  function 7z-all() { _compress_all "7z" "$@"; }
+  7z-max() { command "$_7z" a -t7z -mx=9 -mfb=64 -md=32m -ms=on -mmt "$@"; }
+  7z-all() { _compress_all "7z" "$@"; }
 fi
 
 if command -v pigz >/dev/null 2>&1; then
   [[ -o interactive ]] && alias pigz='pigz -R -6'
   alias gz='pigz -R -6'
-  function gz-max() { setopt local_options pipe_fail; tar -cf - "$1" | command pigz -9 -R > "$1.tar.gz"; }
-  function gz-all() { _compress_all "tar.gz" "$@"; }
+  gz-max() { setopt local_options pipe_fail; tar -cf - "$1" | command pigz -9 -R > "$1.tar.gz"; }
+  gz-all() { _compress_all "tar.gz" "$@"; }
 elif command -v gzip >/dev/null 2>&1; then
   alias gz='gzip -6'
-  function gz-max() { setopt local_options pipe_fail; tar -cf - "$1" | command gzip -9 > "$1.tar.gz"; }
-  function gz-all() { _compress_all "tar.gz" "$@"; }
+  gz-max() { setopt local_options pipe_fail; tar -cf - "$1" | command gzip -9 > "$1.tar.gz"; }
+  gz-all() { _compress_all "tar.gz" "$@"; }
 fi
 
 if command -v xz >/dev/null 2>&1; then
   [[ -o interactive ]] && alias xz='xz -T0 -6'
-  function xz-max() { setopt local_options pipe_fail; tar -cf - "$1" | command xz -9 -e -T0 > "$1.tar.xz"; }
-  function xz-all() { _compress_all "tar.xz" "$@"; }
+  xz-max() { setopt local_options pipe_fail; tar -cf - "$1" | command xz -9 -e -T0 > "$1.tar.xz"; }
+  xz-all() { _compress_all "tar.xz" "$@"; }
 fi
 
 if command -v zip >/dev/null 2>&1; then
   [[ -o interactive ]] && alias zip='zip -6 -r'
-  function zip-max() { command zip -9 -r "$@"; }
-  function zip-all() { _compress_all "zip" "$@"; }
+  zip-max() { command zip -9 -r "$@"; }
+  zip-all() { _compress_all "zip" "$@"; }
 fi

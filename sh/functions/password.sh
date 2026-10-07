@@ -1,6 +1,5 @@
 # generate a random string of letters, digits and optionally symbols; copy to clipboard if available
-password()
-{
+password() {
   local usage length=40 use_punct=1 charset opt OPTARG
   usage="Usage: password [-s] [-n NUM]
 Options:

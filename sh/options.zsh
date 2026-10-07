@@ -39,7 +39,7 @@ bindkey -e                # use emacs keybindings (Ctrl+A, Ctrl+E, etc.)
 # Set tab title to current directory
 autoload -U add-zsh-hook
 
-function set_tab_title() {
+set_tab_title() {
   print -Pn "\e]1;%~\a"
 }
 
