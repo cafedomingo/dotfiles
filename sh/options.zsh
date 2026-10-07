@@ -47,15 +47,15 @@ add-zsh-hook precmd set_tab_title
 
 # help system
 () {
-    local help_dirs=(
-        "/usr/share/zsh/$ZSH_VERSION/help/"
-        "${HOMEBREW_PREFIX:-/opt/homebrew}/share/zsh/$ZSH_VERSION/help/"
-    )
+  local help_dirs=(
+    "/usr/share/zsh/$ZSH_VERSION/help/"
+    "${HOMEBREW_PREFIX:-/opt/homebrew}/share/zsh/$ZSH_VERSION/help/"
+  )
 
-    for dir in $help_dirs; do
-        [[ -d $dir ]] && export HELPDIR=$dir && break
-    done
+  for dir in $help_dirs; do
+    [[ -d $dir ]] && export HELPDIR=$dir && break
+  done
 
-    unalias run-help 2>/dev/null
-    autoload -Uz run-help run-help-git
+  unalias run-help 2>/dev/null
+  autoload -Uz run-help run-help-git
 }
