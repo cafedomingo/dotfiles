@@ -115,7 +115,7 @@ _compress_all() {
                        tar -cf - "$file" | gzip -6 > "$(basename "$file").$format"
                      fi ;;
             tar.xz)  tar -cf - "$file" | xz > "$(basename "$file").$format" ;;
-            zip)     zip "$(basename "$file").$format" "$file" ;;
+            zip)     command zip -r "$(basename "$file").$format" "$file" ;;
             *)       echo "Fast compression not implemented for $format" >&2; continue ;;
           esac
         else
