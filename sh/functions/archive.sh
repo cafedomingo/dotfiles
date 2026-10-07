@@ -85,6 +85,9 @@ _compress_all() {
   local format="$1"        # zip, 7z, tar.xz
   shift
 
+  # count a file as compressed only if every stage of its pipeline succeeded
+  setopt local_options pipe_fail
+
   # auto-detect command names based on format
   local base_name="$format"
   case "$format" in
@@ -145,17 +148,17 @@ fi
 if command -v pigz >/dev/null 2>&1; then
   [[ -o interactive ]] && alias pigz='pigz -R -6'
   alias gz='pigz -R -6'
-  function gz-max() { tar -cf - "$1" | command pigz -9 -R > "$1.tar.gz"; }
+  function gz-max() { setopt local_options pipe_fail; tar -cf - "$1" | command pigz -9 -R > "$1.tar.gz"; }
   function gz-all() { _compress_all "tar.gz" "$@"; }
 elif command -v gzip >/dev/null 2>&1; then
   alias gz='gzip -6'
-  function gz-max() { tar -cf - "$1" | command gzip -9 > "$1.tar.gz"; }
+  function gz-max() { setopt local_options pipe_fail; tar -cf - "$1" | command gzip -9 > "$1.tar.gz"; }
   function gz-all() { _compress_all "tar.gz" "$@"; }
 fi
 
 if command -v xz >/dev/null 2>&1; then
   [[ -o interactive ]] && alias xz='xz -T0 -6'
-  function xz-max() { tar -cf - "$1" | command xz -9 -e -T0 > "$1.tar.xz"; }
+  function xz-max() { setopt local_options pipe_fail; tar -cf - "$1" | command xz -9 -e -T0 > "$1.tar.xz"; }
   function xz-all() { _compress_all "tar.xz" "$@"; }
 fi
 
