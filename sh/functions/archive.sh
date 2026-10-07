@@ -120,7 +120,11 @@ _compress_all() {
           esac
         else
           # use max compression (default)
-          "${base_name}-max" "$(basename "$file").$format" "$file"
+          # tar.* -max helpers take only the input and name the output themselves
+          case "$format" in
+            tar.*) "${base_name}-max" "$file" ;;
+            *)     "${base_name}-max" "$(basename "$file").$format" "$file" ;;
+          esac
         fi
         [ $? -eq 0 ] && ((count++))
         ;;
