@@ -2,6 +2,6 @@
 () {
   local file
   for file in "$(dirname "${(%):-%x}")"/functions/*.sh; do
-    [ -f "$file" ] && [ -s "$file" ] && . "$file"
+    [[ -f $file && -s $file ]] && source "$file"
   done
 }
