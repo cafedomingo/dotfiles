@@ -27,11 +27,6 @@ zstyle ':completion:*' special-dirs true
 zstyle ':completion::complete:*' use-cache 1
 zstyle ':completion::complete:*' cache-path "$ZSH_CACHE_DIR"
 
-# complete SSH hosts from ~/.ssh/config
-if [[ -e ~/.ssh/config ]]; then
-  zstyle ':completion:*:*:ssh:*' hosts "$(awk '/^Host / {print $2}' ~/.ssh/config | grep -v '[*?]')"
-fi
-
 # show colors on completion suggestions
 zstyle ':completion:*' list-colors ''
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#) ([0-9a-z-]#)*=01;34=0=01'
