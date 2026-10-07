@@ -1,17 +1,16 @@
 ## docs: https://zsh.sourceforge.io/Doc/Release
 # history configuration
-export HISTSIZE=500000
-export SAVEHIST=100000
+HISTSIZE=500000
+SAVEHIST=100000
 HISTFILE=${ZDOTDIR:-$HOME}/.zsh_history  # macOS /etc/zshrc sets this, debian does not
-setopt append_history      # append history to the zsh_history file
 setopt extended_history    # add timestamps to history
 setopt hist_ignore_all_dups
 setopt hist_ignore_space   # ignore commands starting with space
 setopt hist_reduce_blanks  # remove unnecessary blanks
-setopt share_history       # share history between sessions NOTE: similiar to inc_append_history
+setopt share_history       # share history between sessions (implies inc_append_history)
 
 # directory navigation
-export DIRSTACKSIZE=16
+DIRSTACKSIZE=16
 setopt auto_cd            # 'dir' executes 'cd dir'
 setopt cdable_vars        # attempt to expand non-directory arguments for cd command
 setopt auto_pushd         # cd pushes to directory stack
@@ -30,14 +29,11 @@ unsetopt menu_complete    # do not autoselect first completion
 setopt correct            # suggest corrections for mistyped commands
 SPROMPT="Correct '%R' to '%r'? [Yes/No/Edit/Abort] "
 
-# prompt
-setopt prompt_subst       # enable command substitution in prompt. needed for the suggestion plugins
-
 # keybindings
 bindkey -e                # use emacs keybindings (Ctrl+A, Ctrl+E, etc.)
 
 # Set tab title to current directory
-autoload -U add-zsh-hook
+autoload -Uz add-zsh-hook
 
 set_tab_title() {
   print -Pn "\e]1;%~\a"
@@ -52,6 +48,7 @@ add-zsh-hook precmd set_tab_title
     "${HOMEBREW_PREFIX:-/opt/homebrew}/share/zsh/$ZSH_VERSION/help/"
   )
 
+  local dir
   for dir in $help_dirs; do
     [[ -d $dir ]] && export HELPDIR=$dir && break
   done
