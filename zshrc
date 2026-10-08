@@ -4,7 +4,7 @@
     ~/.sh/plugins.zsh
     ~/.sh/completions.zsh
     ~/.sh/prompt.zsh
-    ~/.sh/functions.sh
+    ~/.sh/functions.zsh
     ~/.zshrc.local
   )
 
@@ -17,7 +17,7 @@
   # for its non-interactive shell. Guard aliases explicitly so they don't
   # affect tool invocations.
   if [[ -o interactive ]]; then
-    [[ -s ~/.sh/aliases.sh ]] && source ~/.sh/aliases.sh
+    [[ -s ~/.sh/aliases.zsh ]] && source ~/.sh/aliases.zsh
     [[ -s ~/.aliases.local ]] && source ~/.aliases.local
   fi
 }
