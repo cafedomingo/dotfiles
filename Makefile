@@ -28,17 +28,23 @@ SUCCESS := \033[1;92m
 INFO := \033[1;94m
 RESET := \033[0m
 
-.PHONY: all install cleanup link starship private clean update-submodules help
+.PHONY: all install cleanup submodules link starship private clean update-submodules help
 
 all: install
 
-install: cleanup link starship private
+install: cleanup submodules link starship private
 	@echo -e "$(SUCCESS)⚡️ Installation complete$(RESET)"
 
 cleanup:
 	@echo -e "$(INFO)🧹 Cleaning broken symbolic links$(RESET)"
 	@$(foreach dir,$(CLEANUP_DIRS), \
 		$(RUN) find $(dir) -maxdepth 1 -type l ! -exec test -e {} \; -exec rm -v {} \; 2>/dev/null || true;)
+
+# only uninitialized ones ('-' in status), so uncommitted update-submodules bumps survive
+submodules:
+	@echo -e "$(INFO)📦 Checking out missing submodules$(RESET)"
+	@paths=$$(git -C $(REPO_DIR) submodule status | awk '/^-/ {print $$2}'); \
+	if [ -n "$$paths" ]; then $(RUN) git -C $(REPO_DIR) submodule update --init -- $$paths; fi
 
 link:
 	@echo -e "$(INFO)🔗 Linking dotfiles$(RESET)"
@@ -122,6 +128,7 @@ help:
 	@echo "Targets:"
 	@echo "  install            Full installation (default)"
 	@echo "  cleanup            Clean broken symlinks"
+	@echo "  submodules         Check out missing submodules at their pinned commits"
 	@echo "  link               Create symbolic links"
 	@echo "  starship           Install starship prompt"
 	@echo "  private            Install private assets (themes, fonts)"

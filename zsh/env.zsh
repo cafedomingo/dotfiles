@@ -52,7 +52,7 @@ export EZA_CONFIG_DIR="$HOME/.config/eza"
 
 # pagers
 export PAGER="less -RF"
-if command -v groff >/dev/null 2>&1; then
+if (( $+commands[groff] )); then
   export MANROFFOPT="-c"
 fi
 if less --use-color -Dk -F -X </dev/null >/dev/null 2>&1; then
@@ -62,12 +62,12 @@ else
 fi
 
 # fzf (fuzzy finder) - environment variables only
-if command -v fzf >/dev/null 2>&1; then
+if (( $+commands[fzf] )); then
   # Default options
   export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border --inline-info'
 
   # Use ripgrep for file finding if available
-  if command -v rg >/dev/null 2>&1; then
+  if (( $+commands[rg] )); then
     export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git/*"'
     export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
   fi

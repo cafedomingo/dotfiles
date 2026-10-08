@@ -1,10 +1,10 @@
 () {
   local -r files=(
-    ~/.sh/options.zsh
-    ~/.sh/plugins.zsh
-    ~/.sh/completions.zsh
-    ~/.sh/prompt.zsh
-    ~/.sh/functions.sh
+    ~/.zsh/options.zsh
+    ~/.zsh/plugins.zsh
+    ~/.zsh/completions.zsh
+    ~/.zsh/prompt.zsh
+    ~/.zsh/functions.zsh
     ~/.zshrc.local
   )
 
@@ -17,7 +17,7 @@
   # for its non-interactive shell. Guard aliases explicitly so they don't
   # affect tool invocations.
   if [[ -o interactive ]]; then
-    [[ -s ~/.sh/aliases.sh ]] && source ~/.sh/aliases.sh
+    [[ -s ~/.zsh/aliases.zsh ]] && source ~/.zsh/aliases.zsh
     [[ -s ~/.aliases.local ]] && source ~/.aliases.local
   fi
 }
