@@ -1,4 +1,5 @@
 #!/bin/sh
+# shellcheck disable=SC2154 # fields are assigned by the jq eval below
 input=$(cat)
 
 # single jq pass: spawning one process per field adds up on every render

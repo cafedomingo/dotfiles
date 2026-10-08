@@ -184,6 +184,7 @@ dict_setting "com.apple.finder" "StandardViewSettings" "IconViewSettings" "-dict
 setting "com.apple.finder" "FXPreferredViewStyle" "string" "Nlsv"
 
 # show the ~/Library folder
+# shellcheck disable=SC2088 # display label, not a path
 toggle_visibility "$HOME/Library" '~/Library'
 
 # expand file info panes
