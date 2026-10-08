@@ -38,7 +38,6 @@ REPO="${DOTFILES_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)}"
 PRIVATE_REPO="cafedomingo/dotfiles-private"
 PRIVATE_DIR="$REPO/private"
 
-DRY_RUN=false
 FORCE=false
 MODE=""
 
@@ -109,11 +108,11 @@ conflict() {
 symlink() {
   case $MODE in
     install)
-      run mkdir -p "$(dirname "$2")"
-      run ln -sfnv "$1" "$2"
+      mkdir -p "$(dirname "$2")"
+      ln -sfnv "$1" "$2"
       ;;
     remove)
-      [[ "$(readlink "$2" 2>/dev/null)" == "$REPO"/* ]] && run rm -fv "$2"
+      [[ "$(readlink "$2" 2>/dev/null)" == "$REPO"/* ]] && rm -fv "$2"
       ;;
   esac
   return 0
@@ -125,10 +124,6 @@ info()    { printf '\033[1;94m%s\033[0m\n' "$1"; }
 success() { printf '\033[1;92m%s\033[0m\n' "$1"; }
 die()     { printf '\033[1;91m%s\033[0m\n' "$1" >&2; exit 1; }
 
-run() {
-  if [[ $DRY_RUN == true ]]; then printf '  [dry-run] %s\n' "$*"; else "$@"; fi
-}
-
 # Only links this repo created, so a broken link left by anything else is
 # left alone.
 remove_broken_links() {
@@ -136,7 +131,7 @@ remove_broken_links() {
   [[ -d $1 ]] || return 0
   while IFS= read -r link; do
     [[ -e $link ]] && continue
-    [[ "$(readlink "$link")" == "$REPO"/* ]] && run rm -fv "$link"
+    [[ "$(readlink "$link")" == "$REPO"/* ]] && rm -fv "$link"
   done < <(find "$1" -maxdepth "$2" -type l 2>/dev/null)
   return 0
 }
@@ -156,7 +151,7 @@ cmd_submodules() {
   paths=$(git -C "$REPO" submodule status | awk '/^-/ {print $2}')
   # word splitting is intended: submodule paths have no spaces
   # shellcheck disable=SC2086
-  [[ -z $paths ]] || run git -C "$REPO" submodule update --init -- $paths
+  [[ -z $paths ]] || git -C "$REPO" submodule update --init -- $paths
 }
 
 cmd_link() {
@@ -178,11 +173,7 @@ cmd_cleanup() {
 
 cmd_starship() {
   info "🚀 Installing starship prompt"
-  run mkdir -p "$HOME/bin"
-  if [[ $DRY_RUN == true ]]; then
-    printf '  [dry-run] %s\n' "curl -fsSL https://starship.rs/install.sh | sh -s -- --bin-dir=$HOME/bin --yes"
-    return 0
-  fi
+  mkdir -p "$HOME/bin"
   curl -fsSL https://starship.rs/install.sh \
     | sh -s -- --bin-dir="$HOME/bin" --yes 2>&1 \
     | sed '/Please follow the steps/,$d'
@@ -200,7 +191,6 @@ cmd_private() {
   fi
 
   info "📦 Installing private assets $latest"
-  if [[ $DRY_RUN == true ]]; then return 0; fi
   tmp="$(mktemp -d)"
   gh release download "$latest" --repo "$PRIVATE_REPO" \
     --pattern 'dotfiles-private-*.tar.gz' -O - \
@@ -215,17 +205,17 @@ cmd_bootstrap() {
   local script="$REPO/$PKGDIR/install.sh"
   [[ -n $PKGDIR && -x $script ]] || die "no usable bootstrap script for $(uname -s)"
   info "🧰 Bootstrapping packages for $OS"
-  if [[ $DRY_RUN == true ]]; then "$script" --dry-run; else "$script"; fi
+  "$script"
 }
 
 cmd_update_submodules() {
   info "📦 Updating submodules to upstream HEAD"
-  run git -C "$REPO" submodule update --remote
+  git -C "$REPO" submodule update --remote
 }
 
 cmd_help() {
   cat <<'EOF'
-Usage: ./install [-n|--dry-run] [-f|--force] [command]
+Usage: ./install [-f|--force] [command]
 
   install            Clean up, check out submodules, link, install starship
                      and private assets (default)
@@ -247,7 +237,6 @@ EOF
 cmd=""
 while [[ $# -gt 0 ]]; do
   case $1 in
-    -n|--dry-run) DRY_RUN=true ;;
     -f|--force)   FORCE=true ;;
     -h|--help)    cmd_help; exit 0 ;;
     -*)           die "unknown option: $1" ;;
@@ -257,8 +246,6 @@ while [[ $# -gt 0 ]]; do
   shift
 done
 cmd="${cmd:-install}"
-
-[[ $DRY_RUN == true ]] && info "=== DRY RUN, NO CHANGES WILL BE MADE ==="
 
 case $cmd in
   install)           cmd_cleanup; cmd_submodules; cmd_link; cmd_starship; cmd_private
