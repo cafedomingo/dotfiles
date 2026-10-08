@@ -1,0 +1,51 @@
+name: lint
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+env:
+  SHELLCHECK_VERSION: v0.11.0
+  SHFMT_VERSION: v3.14.1
+
+jobs:
+  shellcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: install shellcheck
+        run: |
+          curl -fsSL "https://github.com/koalaman/shellcheck/releases/download/${SHELLCHECK_VERSION}/shellcheck-${SHELLCHECK_VERSION}.linux.x86_64.tar.xz" \
+            | tar -xJ -C "$RUNNER_TEMP"
+          echo "$RUNNER_TEMP/shellcheck-${SHELLCHECK_VERSION}" >> "$GITHUB_PATH"
+      # shellcheck has no zsh support, so this covers the executable sh/bash scripts only
+      - run: git ls-files -z '*.sh' | xargs -0 shellcheck
+
+  zsh-syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: install zsh
+        run: sudo apt-get update && sudo apt-get install -y zsh
+      - name: zsh -n
+        run: |
+          status=0
+          for f in $(git ls-files '*.zsh') zshrc zprofile; do
+            zsh -n "$f" || status=1
+          done
+          exit $status
+
+  shfmt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: install shfmt
+        run: |
+          curl -fsSL -o "$RUNNER_TEMP/shfmt" "https://github.com/mvdan/sh/releases/download/${SHFMT_VERSION}/shfmt_${SHFMT_VERSION}_linux_amd64"
+          chmod +x "$RUNNER_TEMP/shfmt"
+      # settings come from .editorconfig
+      - run: git ls-files -z '*.sh' '*.zsh' zshrc zprofile | xargs -0 "$RUNNER_TEMP/shfmt" -d
