@@ -1,12 +1,29 @@
 #!/usr/bin/env bash
+#
+# Every tracked top-level entry is linked into $HOME by convention:
+#   file  foo  ->  ~/.foo
+#   dir   foo  ->  ~/.foo, mirrored file by file under real directories, so an
+#                  app writing its own state into ~/.foo doesn't write into the repo
+# Only the exceptions are listed here.
+
+# not dotfiles
+SKIP="install LICENSE README.md macos linux private"
+
+# directories linked whole instead of mirrored
+WHOLE="bin zsh"
+
+# links outside the convention: [darwin] link <source> <destination under $HOME>
+extras() {
+  darwin link macos/sublime-prefs.json "Library/Application Support/Sublime Text/Packages/User/Preferences.sublime-settings"
+}
+
+# ---------------------------------------------------------------------------
 
 set -euo pipefail
 
 REPO="${DOTFILES_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
 PRIVATE_REPO="cafedomingo/dotfiles-private"
 PRIVATE_DIR="$REPO/private"
-
-SKIP="macos linux private install LICENSE README.md"
 
 DRY_RUN=false
 FORCE=false
@@ -18,32 +35,25 @@ case "$(uname -s)" in
   *)      OS=unknown; PKGDIR="" ;;
 esac
 
-# Destinations are relative to $HOME. Use mirror where the app also writes its
-# own state into the directory, so that state stays out of the repo.
+# Everything to link: the convention, then the extras.
 manifest() {
-  link   bin           .bin
-  link   zsh           .zsh
-  link   curlrc        .curlrc
-  link   gitattributes .gitattributes
-  link   gitconfig     .gitconfig
-  link   gitignore     .gitignore
-  link   hushlogin     .hushlogin
-  link   nanorc        .nanorc
-  link   vimrc         .vimrc
-  link   zprofile      .zprofile
-  link   zshrc         .zshrc
-  mirror claude        .claude
-  mirror config        .config
-  mirror ssh           .ssh
-  darwin link macos/sublime-prefs.json "Library/Application Support/Sublime Text/Packages/User/Preferences.sublime-settings"
+  local base
+  while read -r base; do
+    listed "$SKIP" "$base" && continue
+    if [[ -d $REPO/$base ]] && ! listed "$WHOLE" "$base"; then
+      mirror "$base" ".$base"
+    else
+      link "$base" ".$base"
+    fi
+  done < <(top_level)
+  extras
 }
 
 # --- manifest verbs, each doing whatever MODE currently asks for ------------
 
 link() {
   case $MODE in
-    verify) [[ -e "$REPO/$1" ]] || die "manifest lists '$1', which does not exist" ;;
-    claim)  printf '%s\n' "${1%%/*}" ;;
+    verify) [[ -e "$REPO/$1" ]] || die "extras lists '$1', which does not exist" ;;
     dirs)   ;;
     *)      symlink "$REPO/$1" "$HOME/$2" ;;
   esac
@@ -52,8 +62,7 @@ link() {
 mirror() {
   local file
   case $MODE in
-    verify) [[ -d "$REPO/$1" ]] || die "manifest lists '$1', which does not exist" ;;
-    claim)  printf '%s\n' "${1%%/*}" ;;
+    verify) [[ -d "$REPO/$1" ]] || die "extras lists '$1', which does not exist" ;;
     dirs)   printf '%s\n' "$HOME/$2" ;;
     *)      while read -r file; do
               symlink "$file" "$HOME/$2/${file#"$REPO/$1/"}"
@@ -63,8 +72,8 @@ mirror() {
 
 darwin() {
   case $MODE in
-    verify|claim) "$@" ;;
-    *)            if [[ $OS == darwin ]]; then "$@"; fi ;;
+    verify) "$@" ;;
+    *)      if [[ $OS == darwin ]]; then "$@"; fi ;;
   esac
 }
 
@@ -89,6 +98,8 @@ symlink() {
 info()    { printf '\033[1;94m%s\033[0m\n' "$1"; }
 success() { printf '\033[1;92m%s\033[0m\n' "$1"; }
 die()     { printf '\033[1;91m%s\033[0m\n' "$1" >&2; exit 1; }
+
+listed() { [[ " $1 " == *" $2 "* ]]; }
 
 run() {
   if [[ $DRY_RUN == true ]]; then printf '  [dry-run] %s\n' "$*"; else "$@"; fi
@@ -117,13 +128,13 @@ remove_broken_links() {
 
 # --- commands --------------------------------------------------------------
 
+# Exceptions that point at nothing are stale, so fail rather than skip them.
 cmd_check() {
-  local claimed base
-  MODE=verify; manifest
-  MODE=claim;  claimed=" $SKIP $(manifest | tr '\n' ' ') "
-  while read -r base; do
-    [[ $claimed == *" $base "* ]] || die "'$base' is in the repo but not in the manifest or SKIP"
-  done < <(top_level)
+  local base
+  for base in $WHOLE; do
+    [[ -d $REPO/$base ]] || die "WHOLE lists '$base', which is not a directory"
+  done
+  MODE=verify; extras
 }
 
 # Only uninitialized ones ('-' in status), so uncommitted update-submodules
@@ -211,7 +222,7 @@ Usage: ./install [-n|--dry-run] [-f|--force] [command]
   link               Create symbolic links
   clean              Remove symlinks this script created
   cleanup            Remove broken symbolic links
-  check              Verify the manifest matches the repo
+  check              Verify the exceptions point at things that exist
   starship           Install the starship prompt
   private            Install private assets (themes, fonts)
   bootstrap          Install system packages (Homebrew on macOS, apt on Linux)
