@@ -1,6 +1,6 @@
 _7z=''
 for _cmd in 7zz 7z 7za; do
-  if command -v "$_cmd" >/dev/null 2>&1; then
+  if (( $+commands[$_cmd] )); then
     _7z="$_cmd"
     break
   fi
@@ -61,7 +61,7 @@ Extract various archive formats including zip, tar, 7z, rar, etc."
   local file="$1"
   case "$file" in
     *.tar.bz2|*.tbz|*.tbz2) command tar -jxvf "$file" ;;
-    *.tar.gz|*.tgz)    if command -v unpigz >/dev/null 2>&1; then command tar --use-compress-program=unpigz -xvf "$file"; else command tar -zxvf "$file"; fi ;;
+    *.tar.gz|*.tgz)    if (( $+commands[unpigz] )); then command tar --use-compress-program=unpigz -xvf "$file"; else command tar -zxvf "$file"; fi ;;
     *.tar.lz|*.tlz)    command tar --lzip -xvf "$file" ;;
     *.tar.xz|*.txz)    command tar -Jxvf "$file" ;;
     *.tar.zst)         command tar --zstd -xvf "$file" ;;
@@ -69,7 +69,7 @@ Extract various archive formats including zip, tar, 7z, rar, etc."
     *.7z)              command "$_7z" x "$file" ;;
     *.bz2)             command bunzip2 "$file"  ;;
     *.dmg)             hdiutil mount "$file" ;;
-    *.gz)              if command -v unpigz >/dev/null 2>&1; then command unpigz "$file"; else command gunzip "$file"; fi ;;
+    *.gz)              if (( $+commands[unpigz] )); then command unpigz "$file"; else command gunzip "$file"; fi ;;
     *.lz)              command lzip -d "$file" ;;
     *.rar)             command unar "$file" ;;
     *.xz)              command unxz "$file" ;;
@@ -98,7 +98,7 @@ _compress_all() {
   [[ "$1" == "-f" ]] && use_fast=true && shift
 
   local has_pigz=false
-  command -v pigz >/dev/null 2>&1 && has_pigz=true
+  (( $+commands[pigz] )) && has_pigz=true
 
   local count=0 file
   for file in ./*; do
@@ -145,24 +145,24 @@ if [[ -n "$_7z" ]]; then
   7z-all() { _compress_all "7z" "$@"; }
 fi
 
-if command -v pigz >/dev/null 2>&1; then
+if (( $+commands[pigz] )); then
   [[ -o interactive ]] && alias pigz='pigz -R -6'
   alias gz='pigz -R -6'
   gz-max() { setopt local_options pipe_fail; tar -cf - "$1" | command pigz -9 -R > "$1.tar.gz"; }
   gz-all() { _compress_all "tar.gz" "$@"; }
-elif command -v gzip >/dev/null 2>&1; then
+elif (( $+commands[gzip] )); then
   alias gz='gzip -6'
   gz-max() { setopt local_options pipe_fail; tar -cf - "$1" | command gzip -9 > "$1.tar.gz"; }
   gz-all() { _compress_all "tar.gz" "$@"; }
 fi
 
-if command -v xz >/dev/null 2>&1; then
+if (( $+commands[xz] )); then
   [[ -o interactive ]] && alias xz='xz -T0 -6'
   xz-max() { setopt local_options pipe_fail; tar -cf - "$1" | command xz -9 -e -T0 > "$1.tar.xz"; }
   xz-all() { _compress_all "tar.xz" "$@"; }
 fi
 
-if command -v zip >/dev/null 2>&1; then
+if (( $+commands[zip] )); then
   [[ -o interactive ]] && alias zip='zip -6 -r'
   zip-max() { command zip -9 -r "$@"; }
   zip-all() { _compress_all "zip" "$@"; }

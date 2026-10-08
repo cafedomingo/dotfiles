@@ -31,7 +31,7 @@ Options:
     charset='[:alnum:]'
   fi
 
-  if command -v pbcopy >/dev/null 2>&1; then
+  if (( $+commands[pbcopy] )); then
     LC_ALL=C tr -dc "$charset" < /dev/urandom | head -c "$length" | pbcopy
   else
     LC_ALL=C tr -dc "$charset" < /dev/urandom | head -c "$length"

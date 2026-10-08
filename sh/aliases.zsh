@@ -13,13 +13,13 @@ alias ldot='ls -ld .*'
 alias lsize='ls -1Ss'
 
 # eza
-if command -v eza >/dev/null 2>&1; then
+if (( $+commands[eza] )); then
   alias ll='eza -l --git --group-directories-first'
   alias ls='ll'
   alias lsize='eza -l -s size -r'  # -r keeps largest first
   alias lr='eza -R -s age'
   alias ltime='eza -l -s age'
-  if command -v tree >/dev/null 2>&1; then
+  if (( $+commands[tree] )); then
     alias lt='tree'
   else
     alias tree='eza -T'
@@ -67,7 +67,7 @@ alias gs='git status'
 
 
 # ripgrep (rg)
-if command -v rg >/dev/null 2>&1; then
+if (( $+commands[rg] )); then
   alias rg='rg --smart-case'
   alias a='rg --no-heading --smart-case'
   alias rgc='rg --context 3'
@@ -78,7 +78,7 @@ if command -v rg >/dev/null 2>&1; then
 fi
 
 # fzf
-if command -v fzf >/dev/null 2>&1; then
+if (( $+commands[fzf] )); then
   alias fp='fzf --preview "bat --color=always --style=header,grid --line-range :300 {}"'
   alias fd='cd "$(find . -type d 2>/dev/null | fzf)"'
   fv() {
@@ -109,7 +109,7 @@ if command -v fzf >/dev/null 2>&1; then
 fi
 
 # bat
-if command -v bat >/dev/null 2>&1; then
+if (( $+commands[bat] )); then
   alias batn='bat --style=numbers'
   alias cat='bat --plain'
   alias less='bat --paging=always'
@@ -127,7 +127,7 @@ alias rand='od -An -N2 -i /dev/urandom | xargs'
 # macOS
 if [[ $OSTYPE == darwin* ]]; then
   # brew
-  if command -v brew >/dev/null 2>&1; then
+  if (( $+commands[brew] )); then
     alias bup='brew upgrade --yes && brew cleanup -s'
     alias brews='brew list'
     alias casks='brew list --cask'
@@ -157,31 +157,28 @@ if [[ $OSTYPE == darwin* ]]; then
   alias unmute='osascript -e "set volume output muted false"'
 fi
 
-# zsh-specific aliases
-if [[ -n "$ZSH_VERSION" ]]; then
-  # help
-  alias help='run-help'
+# help
+alias help='run-help'
 
-  # navigation
-  alias -- -='cd -'
-  alias -g ...='../..'
-  alias -g ....='../../..'
+# navigation
+alias -- -='cd -'
+alias -g ...='../..'
+alias -g ....='../../..'
 
-  # global aliases for common pipes and redirections
-  alias -g H='| head'
-  alias -g T='| tail'
-  alias -g G='| grep'
-  alias -g L="| less"
-  alias -g N="&> /dev/null"
+# global aliases for common pipes and redirections
+alias -g H='| head'
+alias -g T='| tail'
+alias -g G='| grep'
+alias -g L="| less"
+alias -g N="&> /dev/null"
 
-  # archive viewers (using unified als function)
-  alias -s 7z='als'
-  alias -s rar='als'
-  alias -s tar='als'
-  alias -s taz='als'
-  alias -s tbz='als'
-  alias -s tbz2='als'
-  alias -s tgz='als'
-  alias -s txz='als'
-  alias -s zip='als'
-fi
+# archive viewers (using unified als function)
+alias -s 7z='als'
+alias -s rar='als'
+alias -s tar='als'
+alias -s taz='als'
+alias -s tbz='als'
+alias -s tbz2='als'
+alias -s tgz='als'
+alias -s txz='als'
+alias -s zip='als'
