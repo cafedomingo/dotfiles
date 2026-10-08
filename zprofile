@@ -1,4 +1,4 @@
-[[ -s ~/.sh/env.zsh ]] && source ~/.sh/env.zsh
+[[ -s ~/.zsh/env.zsh ]] && source ~/.zsh/env.zsh
 [[ -s ~/.env.local ]] && source ~/.env.local
 
 # set HOMEBREW_PREFIX and update PATH/MANPATH/INFOPATH/fpath
