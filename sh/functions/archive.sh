@@ -113,11 +113,11 @@ _compress_all() {
           case "$format" in
             7z)      command "$_7z" a -t7z -mmt "$(basename "$file").$format" "$file" ;;
             tar.gz)  if [ "$has_pigz" = true ]; then
-                       tar -cf - "$file" | pigz > "$(basename "$file").$format"
+                       tar -cf - "$file" | command pigz > "$(basename "$file").$format"
                      else
-                       tar -cf - "$file" | gzip -6 > "$(basename "$file").$format"
+                       tar -cf - "$file" | command gzip -6 > "$(basename "$file").$format"
                      fi ;;
-            tar.xz)  tar -cf - "$file" | xz > "$(basename "$file").$format" ;;
+            tar.xz)  tar -cf - "$file" | command xz > "$(basename "$file").$format" ;;
             zip)     command zip -r "$(basename "$file").$format" "$file" ;;
             *)       echo "Fast compression not implemented for $format" >&2; continue ;;
           esac
