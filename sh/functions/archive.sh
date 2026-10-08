@@ -85,6 +85,9 @@ _compress_all() {
   local format="$1"        # zip, 7z, tar.xz
   shift
 
+  # count a file as compressed only if every stage of its pipeline succeeded
+  setopt local_options pipe_fail
+
   # auto-detect command names based on format
   local base_name="$format"
   case "$format" in
@@ -110,17 +113,21 @@ _compress_all() {
           case "$format" in
             7z)      command "$_7z" a -t7z -mmt "$(basename "$file").$format" "$file" ;;
             tar.gz)  if [ "$has_pigz" = true ]; then
-                       tar -cf - "$file" | pigz > "$(basename "$file").$format"
+                       tar -cf - "$file" | command pigz > "$(basename "$file").$format"
                      else
-                       tar -cf - "$file" | gzip -6 > "$(basename "$file").$format"
+                       tar -cf - "$file" | command gzip -6 > "$(basename "$file").$format"
                      fi ;;
-            tar.xz)  tar -cf - "$file" | xz > "$(basename "$file").$format" ;;
-            zip)     zip "$(basename "$file").$format" "$file" ;;
+            tar.xz)  tar -cf - "$file" | command xz > "$(basename "$file").$format" ;;
+            zip)     command zip -r "$(basename "$file").$format" "$file" ;;
             *)       echo "Fast compression not implemented for $format" >&2; continue ;;
           esac
         else
           # use max compression (default)
-          "${base_name}-max" "$(basename "$file").$format" "$file"
+          # tar.* -max helpers take only the input and name the output themselves
+          case "$format" in
+            tar.*) "${base_name}-max" "$file" ;;
+            *)     "${base_name}-max" "$(basename "$file").$format" "$file" ;;
+          esac
         fi
         [ $? -eq 0 ] && ((count++))
         ;;
@@ -130,32 +137,33 @@ _compress_all() {
 }
 
 # fast compression with multi-threading by default
+# overrides that change stock flags are interactive-only so scripts and tools are unaffected
 if [ -n "$_7z" ]; then
-  7z() { command "$_7z" -mmt -mx=6 -md=16m -ms=on "$@"; }
-  7za() { 7z "$@"; }
+  [[ -o interactive ]] && 7z() { command "$_7z" -mmt -mx=6 -md=16m -ms=on "$@"; }
+  [[ -o interactive ]] && 7za() { 7z "$@"; }
   function 7z-max() { command "$_7z" a -t7z -mx=9 -mfb=64 -md=32m -ms=on -mmt "$@"; }
   function 7z-all() { _compress_all "7z" "$@"; }
 fi
 
 if command -v pigz >/dev/null 2>&1; then
-  alias pigz='pigz -R -6'
+  [[ -o interactive ]] && alias pigz='pigz -R -6'
   alias gz='pigz -R -6'
-  function gz-max() { tar -cf - "$1" | command pigz -9 -R > "$1.tar.gz"; }
+  function gz-max() { setopt local_options pipe_fail; tar -cf - "$1" | command pigz -9 -R > "$1.tar.gz"; }
   function gz-all() { _compress_all "tar.gz" "$@"; }
 elif command -v gzip >/dev/null 2>&1; then
   alias gz='gzip -6'
-  function gz-max() { tar -cf - "$1" | command gzip -9 > "$1.tar.gz"; }
+  function gz-max() { setopt local_options pipe_fail; tar -cf - "$1" | command gzip -9 > "$1.tar.gz"; }
   function gz-all() { _compress_all "tar.gz" "$@"; }
 fi
 
 if command -v xz >/dev/null 2>&1; then
-  alias xz='xz -T0 -6'
-  function xz-max() { tar -cf - "$1" | command xz -9 -e -T0 > "$1.tar.xz"; }
+  [[ -o interactive ]] && alias xz='xz -T0 -6'
+  function xz-max() { setopt local_options pipe_fail; tar -cf - "$1" | command xz -9 -e -T0 > "$1.tar.xz"; }
   function xz-all() { _compress_all "tar.xz" "$@"; }
 fi
 
 if command -v zip >/dev/null 2>&1; then
-  alias zip='zip -6 -r'
+  [[ -o interactive ]] && alias zip='zip -6 -r'
   function zip-max() { command zip -9 -r "$@"; }
   function zip-all() { _compress_all "zip" "$@"; }
 fi

@@ -15,6 +15,10 @@ Options:
       *) printf '%s\n' "$usage" >&2; return 1 ;;
     esac
   done
+  shift $((OPTIND - 1))
+  if [ $# -gt 0 ]; then
+    printf '%s\n' "$usage" >&2; return 1
+  fi
 
   case $length in
     ''|*[!0-9]*) printf 'error: invalid length\n' >&2; return 1 ;;

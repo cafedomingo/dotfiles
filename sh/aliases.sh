@@ -1,6 +1,6 @@
 # ls
 if ls --color &> /dev/null; then # GNU
-  alias ls='ls --color -Fh'
+  alias ls='ls --color=auto -Fh'
 else # macOS
   alias ls='ls -GFh'
 fi
@@ -45,7 +45,6 @@ alias dud='du -d 1 -h'
 alias duf='du -sh *'
 
 # find
-alias fd='find . -type d -name '
 alias ff='find . -type f -name '
 
 # grep

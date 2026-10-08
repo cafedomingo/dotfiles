@@ -60,16 +60,7 @@ readonly DRY_RUN
 # determine script location for relative paths
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# xcode cli tools: https://developer.apple.com/download/more/
-check_or_show "Xcode CLI tools" "xcode-select -p" '
-  touch /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress;
-  PROD=$(softwareupdate -l | grep "Command Line Tools" | head -n 1 | sed "s/^[^:]*: *//" | sed "s/-.*//" | tr -d "\n");
-  [[ -n "$PROD" ]] || { rm /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress; exit 1; };
-  softwareupdate -i "$PROD" --verbose;
-  rm /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress
-'
-
-# homebrew: http://brew.sh
+# homebrew: http://brew.sh (its installer also installs the xcode cli tools)
 # set BREW_CMD based on architecture
 if [[ "$(uname -m)" == "arm64" ]]; then
   BREW_CMD="/opt/homebrew/bin/brew"
