@@ -20,6 +20,12 @@ err() {
   echo -e "${RED}[ERR]${NC} $1" >&2
 }
 
+# no options: a leftover -n must not turn into a real install
+[[ $# -eq 0 ]] || {
+  err "usage: $0"
+  exit 1
+}
+
 sudo apt update || {
   err "apt update failed"
   exit 1
