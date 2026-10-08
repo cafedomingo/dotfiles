@@ -2,18 +2,19 @@
 input=$(cat)
 
 # defaults in case jq fails; the eval below overwrites them
-cwd='' model='' remaining='' effort='' cost='' added=0 removed=0 quota='' transcript=''
+cwd='' model='' used='' effort='' cost='' added=0 removed=0 quota='' limited=false transcript=''
 
 # single jq pass: spawning one process per field adds up on every render
 eval "$(printf '%s' "$input" | jq -r '@sh "
 cwd=\(.workspace.current_dir // .cwd)
 model=\(.model.display_name // "")
-remaining=\(.context_window.remaining_percentage // "")
+used=\(.context_window.used_percentage // "")
 effort=\(.effort.level // "")
 cost=\(.cost.total_cost_usd // "")
 added=\(.cost.total_lines_added // 0)
 removed=\(.cost.total_lines_removed // 0)
 quota=\(.rate_limits.five_hour.used_percentage // "")
+limited=\(.rate_limits != null)
 transcript=\(.transcript_path // "")
 "')"
 
@@ -36,6 +37,37 @@ color_pct() { # $1=value $2=good|bad (meaning of a high value)
     [ "$v" -ge 50 ] && printf '%s' "$YELLOW" && return
     printf '%s' "$GREEN"
   fi
+}
+
+# "label ███▌░ 70%": 5-cell bar with eighth-block precision, colored by
+# how full it is, with a dim empty track
+meter() { # $1=label $2=percentage used
+  v=$(printf '%.0f' "$2" 2>/dev/null) || v=0
+  [ "$v" -gt 100 ] && v=100
+  [ "$v" -lt 0 ] && v=0
+  c=$(color_pct "$v" bad)
+  e=$(((v * 40 + 50) / 100)) # eighths filled, rounded
+  fill='' track='' i=0
+  while [ "$i" -lt 5 ]; do
+    f=$((e - i * 8))
+    if [ "$f" -ge 8 ]; then
+      fill="${fill}█"
+    elif [ "$f" -gt 0 ]; then
+      case $f in
+        1) fill="${fill}▏" ;;
+        2) fill="${fill}▎" ;;
+        3) fill="${fill}▍" ;;
+        4) fill="${fill}▌" ;;
+        5) fill="${fill}▋" ;;
+        6) fill="${fill}▊" ;;
+        7) fill="${fill}▉" ;;
+      esac
+    else
+      track="${track}░"
+    fi
+    i=$((i + 1))
+  done
+  printf '%s' " ${c}${1}${R} ${c}${fill}${DIM}${track}${R} ${c}${v}%${R}"
 }
 
 # ISO8601 -> epoch, GNU date then BSD date.
@@ -67,11 +99,9 @@ if git -C "$cwd" rev-parse --git-dir >/dev/null 2>&1; then
   fi
 fi
 
-# context remaining
+# context used, null early in a session
 ctx=""
-if [ -n "$remaining" ]; then
-  ctx=" $(color_pct "$remaining" good)ctx:${remaining%.*}%${R}"
-fi
+[ -n "$used" ] && ctx=$(meter ctx "$used")
 
 # prompt cache countdown: a cache hit is far cheaper, so knowing the window is
 # about to lapse is actionable. TTL is inferred from which ephemeral bucket the
@@ -103,10 +133,12 @@ fi
 
 # subscription quota when present (Pro/Max), otherwise API spend.
 # rate_limits is absent on API billing, so this self-detects per machine.
+# A subscriber can have rate_limits without five_hour (window just reset),
+# so only fall back to spend when rate_limits is missing entirely.
 usage=""
 if [ -n "$quota" ]; then
-  usage=" $(color_pct "$quota" bad)5h:${quota%.*}%${R}"
-elif [ -n "$cost" ]; then
+  usage=$(meter 5h "$quota")
+elif [ "$limited" = false ] && [ -n "$cost" ]; then
   spend=$(printf '%.2f' "$cost" 2>/dev/null)
   # smart hiding: an untouched session reads as noise
   [ "$spend" != "0.00" ] && usage=" ${DIM}\$${spend}${R}"
