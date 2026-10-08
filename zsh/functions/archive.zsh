@@ -103,10 +103,11 @@ _compress_all() {
   local use_fast=false
   [[ "$1" == "-f" ]] && use_fast=true && shift
 
-  local has_pigz=false
-  (($+commands[pigz])) && has_pigz=true
+  # pigz is a parallel drop-in for gzip; both default to -6
+  local gz=gzip
+  (($+commands[pigz])) && gz=pigz
 
-  local count=0 file
+  local count=0 file out
   for file in ./*; do
     [[ -e "$file" ]] || continue
     case "$file" in
@@ -115,27 +116,20 @@ _compress_all() {
         ;;
       *)
         echo "Compressing $(basename "$file")..."
+        out="$(basename "$file").$format"
         if [[ "$use_fast" == true ]]; then
           case "$format" in
-            7z) command "$_7z" a -t7z -mmt "$(basename "$file").$format" "$file" ;;
-            tar.gz) if [[ "$has_pigz" == true ]]; then
-              tar -cf - "$file" | command pigz >"$(basename "$file").$format"
-            else
-              tar -cf - "$file" | command gzip -6 >"$(basename "$file").$format"
-            fi ;;
-            tar.xz) tar -cf - "$file" | command xz >"$(basename "$file").$format" ;;
-            zip) command zip -r "$(basename "$file").$format" "$file" ;;
-            *)
-              echo "Fast compression not implemented for $format" >&2
-              continue
-              ;;
+            7z) command "$_7z" a -t7z -mmt "$out" "$file" ;;
+            tar.gz) tar -cf - "$file" | command "$gz" >"$out" ;;
+            tar.xz) tar -cf - "$file" | command xz >"$out" ;;
+            zip) command zip -r "$out" "$file" ;;
           esac
         else
           # use max compression (default)
           # tar.* -max helpers take only the input and name the output themselves
           case "$format" in
             tar.*) "${base_name}-max" "$file" ;;
-            *) "${base_name}-max" "$(basename "$file").$format" "$file" ;;
+            *) "${base_name}-max" "$out" "$file" ;;
           esac
         fi
         [[ $? -eq 0 ]] && ((count++))
