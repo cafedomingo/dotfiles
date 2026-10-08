@@ -12,11 +12,11 @@ fi
 DRY_RUN=false
 while [[ $# -gt 0 ]]; do
   case $1 in
-    -n|--dry-run)
+    -n | --dry-run)
       DRY_RUN=true
       shift
       ;;
-    -h|--help)
+    -h | --help)
       echo "Usage: $0 [-n|--dry-run] [-h|--help]"
       echo "  -n, --dry-run  Show what would be changed without making changes"
       echo "  -h, --help     Show this help message"
@@ -44,8 +44,8 @@ readonly RESTART_APPS=("Activity Monitor" "Dock" "Finder" "SystemUIServer" "Text
 normalize_bool() {
   local value="$1"
   case "$value" in
-    "1"|"YES"|"yes") echo "true" ;;
-    "0"|"NO"|"no") echo "false" ;;
+    "1" | "YES" | "yes") echo "true" ;;
+    "0" | "NO" | "no") echo "false" ;;
     *) echo "$value" ;;
   esac
 }
@@ -146,8 +146,8 @@ toggle_visibility() {
 
 # check for trackpad (built-in or external)
 has_trackpad() {
-  ioreg -c AppleMultitouchTrackpad -r 2>/dev/null | grep -q "AppleMultitouchTrackpad" || \
-  system_profiler SPBluetoothDataType SPUSBDataType 2>/dev/null | grep -iq "magic trackpad"
+  ioreg -c AppleMultitouchTrackpad -r 2>/dev/null | grep -q "AppleMultitouchTrackpad" ||
+    system_profiler SPBluetoothDataType SPUSBDataType 2>/dev/null | grep -iq "magic trackpad"
 }
 
 if [[ "$DRY_RUN" == "true" ]]; then
@@ -308,7 +308,7 @@ else
 
   for app in "${RESTART_APPS[@]}"; do
     echo "Restarting $app..."
-    killall "${app}" &> /dev/null || true
+    killall "${app}" &>/dev/null || true
   done
   echo -e "${GREEN}✓ Configuration complete!${NC}"
 fi

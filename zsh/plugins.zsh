@@ -3,7 +3,7 @@
   local -r plugins=(
     zsh-autosuggestions
     zsh-syntax-highlighting
-    zsh-history-substring-search  # Must load after zsh-syntax-highlighting
+    zsh-history-substring-search # Must load after zsh-syntax-highlighting
     z
   )
 

@@ -16,8 +16,11 @@ transcript=\(.transcript_path // "")
 "')"
 
 # colors
-R='\033[0m'; DIM='\033[2m'
-GREEN='\033[32m'; YELLOW='\033[33m'; RED='\033[31m'
+R='\033[0m'
+DIM='\033[2m'
+GREEN='\033[32m'
+YELLOW='\033[33m'
+RED='\033[31m'
 
 # pick a color for a percentage, given whether high is good or bad
 color_pct() { # $1=value $2=good|bad (meaning of a high value)

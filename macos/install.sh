@@ -15,7 +15,10 @@ run_or_show() {
     echo "→ Would $description"
   else
     echo "$description..."
-    eval "$command" || { echo "❌ Failed to $description"; exit 1; }
+    eval "$command" || {
+      echo "❌ Failed to $description"
+      exit 1
+    }
   fi
 }
 
@@ -24,7 +27,7 @@ check_or_show() {
   local check_command="$2"
   local install_command="$3"
 
-  if eval "$check_command" &> /dev/null; then
+  if eval "$check_command" &>/dev/null; then
     echo "✓ $description already available"
     return 0
   else
@@ -36,11 +39,11 @@ check_or_show() {
 # parse command line arguments
 while [[ $# -gt 0 ]]; do
   case $1 in
-    -n|--dry-run)
+    -n | --dry-run)
       DRY_RUN=true
       shift
       ;;
-    -h|--help)
+    -h | --help)
       echo "Usage: $0 [-n|--dry-run] [-h|--help]"
       echo "  -n, --dry-run  Show what would be installed without making changes"
       echo "  -h, --help     Show this help message"
@@ -70,14 +73,14 @@ fi
 readonly BREW_CMD
 
 if ! check_or_show "Homebrew" \
-    "[[ -x \"$BREW_CMD\" ]] && \"$BREW_CMD\" --version" \
-    "/bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""; then
+  "[[ -x \"$BREW_CMD\" ]] && \"$BREW_CMD\" --version" \
+  "/bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""; then
   run_or_show "update and upgrade Homebrew" "\"$BREW_CMD\" update && \"$BREW_CMD\" upgrade"
 fi
 
 # install packages
 if [[ "$DRY_RUN" == "true" ]]; then
-  if [[ -x "$BREW_CMD" ]] && "$BREW_CMD" --version &> /dev/null; then
+  if [[ -x "$BREW_CMD" ]] && "$BREW_CMD" --version &>/dev/null; then
     echo "Checking Brewfile dependencies..."
     if "$BREW_CMD" bundle check --file="$SCRIPT_DIR/Brewfile" --verbose; then
       echo "✓ All Brewfile dependencies are installed"
@@ -108,4 +111,3 @@ else
   echo "=== INSTALLATION COMPLETE ==="
   echo "✓ All components installed and configured successfully"
 fi
-

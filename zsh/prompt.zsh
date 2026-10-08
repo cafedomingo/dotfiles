@@ -1,3 +1,3 @@
-if (( $+commands[starship] )); then
+if (($+commands[starship])); then
   eval "$(starship init zsh)"
 fi

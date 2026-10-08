@@ -31,10 +31,10 @@ fi
 
 # PATH
 paths=(
-  /opt/homebrew/bin /opt/homebrew/sbin                    # homebrew (arm64)
-  /usr/local/go/bin                                       # go
-  "$HOME/.local/bin"                                      # user-specific executable files
-  "$HOME/.bin" "$HOME/bin"                                # personal executables
+  /opt/homebrew/bin /opt/homebrew/sbin # homebrew (arm64)
+  /usr/local/go/bin                    # go
+  "$HOME/.local/bin"                   # user-specific executable files
+  "$HOME/.bin" "$HOME/bin"             # personal executables
 )
 
 for p in "${paths[@]}"; do
@@ -52,7 +52,7 @@ export EZA_CONFIG_DIR="$HOME/.config/eza"
 
 # pagers
 export PAGER="less -RF"
-if (( $+commands[groff] )); then
+if (($+commands[groff])); then
   export MANROFFOPT="-c"
 fi
 if less --use-color -Dk -F -X </dev/null >/dev/null 2>&1; then
@@ -62,12 +62,12 @@ else
 fi
 
 # fzf (fuzzy finder) - environment variables only
-if (( $+commands[fzf] )); then
+if (($+commands[fzf])); then
   # Default options
   export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border --inline-info'
 
   # Use ripgrep for file finding if available
-  if (( $+commands[rg] )); then
+  if (($+commands[rg])); then
     export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git/*"'
     export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
   fi
