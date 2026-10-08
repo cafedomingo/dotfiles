@@ -1,9 +1,9 @@
 () {
   local -r completions="$(dirname "${(%):-%x}")"/plugins/zsh-completions
 
-  [[ -d $completions ]] \
-    && (( ! ${fpath[(I)$completions]} )) \
-    && fpath=( $completions $fpath )
+  [[ -d $completions ]] &&
+    ((! ${fpath[(I)$completions]})) &&
+    fpath=($completions $fpath)
 
   autoload -Uz compinit && compinit
 }
@@ -32,6 +32,6 @@ zstyle ':completion:*' list-colors ''
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#) ([0-9a-z-]#)*=01;34=0=01'
 
 # fzf completions and key bindings
-if (( $+commands[fzf] )); then
+if (($+commands[fzf])); then
   source <(fzf --zsh)
 fi

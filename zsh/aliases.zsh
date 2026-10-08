@@ -13,13 +13,13 @@ alias ldot='ls -ld .*'
 alias lsize='ls -1Ss'
 
 # eza
-if (( $+commands[eza] )); then
+if (($+commands[eza])); then
   alias ll='eza -l --git --group-directories-first'
   alias ls='ll'
-  alias lsize='eza -l -s size -r'  # -r keeps largest first
+  alias lsize='eza -l -s size -r' # -r keeps largest first
   alias lr='eza -R -s age'
   alias ltime='eza -l -s age'
-  if (( $+commands[tree] )); then
+  if (($+commands[tree])); then
     alias lt='tree'
   else
     alias tree='eza -T'
@@ -65,9 +65,8 @@ alias gfrb='git fetch && git rebase'
 alias grb='git rebase'
 alias gs='git status'
 
-
 # ripgrep (rg)
-if (( $+commands[rg] )); then
+if (($+commands[rg])); then
   alias rg='rg --smart-case'
   alias a='rg --no-heading --smart-case'
   alias rgc='rg --context 3'
@@ -78,7 +77,7 @@ if (( $+commands[rg] )); then
 fi
 
 # fzf
-if (( $+commands[fzf] )); then
+if (($+commands[fzf])); then
   alias fp='fzf --preview "bat --color=always --style=header,grid --line-range :300 {}"'
   alias fd='cd "$(find . -type d 2>/dev/null | fzf)"'
   fv() {
@@ -109,7 +108,7 @@ if (( $+commands[fzf] )); then
 fi
 
 # bat
-if (( $+commands[bat] )); then
+if (($+commands[bat])); then
   alias batn='bat --style=numbers'
   alias cat='bat --plain'
   alias less='bat --paging=always'
@@ -127,7 +126,7 @@ alias rand='od -An -N2 -i /dev/urandom | xargs'
 # macOS
 if [[ $OSTYPE == darwin* ]]; then
   # brew
-  if (( $+commands[brew] )); then
+  if (($+commands[brew])); then
     alias bup='brew upgrade --yes && brew cleanup -s'
     alias brews='brew list'
     alias casks='brew list --cask'

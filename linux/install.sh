@@ -20,7 +20,10 @@ err() {
   echo -e "${RED}[ERR]${NC} $1" >&2
 }
 
-sudo apt update || { err "apt update failed"; exit 1; }
+sudo apt update || {
+  err "apt update failed"
+  exit 1
+}
 
 packages=()
 while IFS= read -r package; do

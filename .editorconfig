@@ -13,3 +13,13 @@ trim_trailing_whitespace = true
 
 [.gitmodules]
 indent_style = tab
+
+# shell formatting, read by shfmt
+[{*.sh,*.zsh,zshrc,zprofile}]
+switch_case_indent = true
+
+[{*.zsh,zshrc,zprofile}]
+shell_variant = zsh
+
+[zsh/plugins/**]
+ignore = true

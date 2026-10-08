@@ -10,19 +10,27 @@ Options:
     case "$opt" in
       n) length=$OPTARG ;;
       s) use_punct=0 ;;
-      *) printf '%s\n' "$usage" >&2; return 1 ;;
+      *)
+        printf '%s\n' "$usage" >&2
+        return 1
+        ;;
     esac
   done
   shift $((OPTIND - 1))
   if [[ $# -gt 0 ]]; then
-    printf '%s\n' "$usage" >&2; return 1
+    printf '%s\n' "$usage" >&2
+    return 1
   fi
 
   case $length in
-    ''|*[!0-9]*) printf 'error: invalid length\n' >&2; return 1 ;;
+    '' | *[!0-9]*)
+      printf 'error: invalid length\n' >&2
+      return 1
+      ;;
   esac
   if [[ "$length" -lt 1 ]]; then
-    printf 'error: invalid length\n' >&2; return 1
+    printf 'error: invalid length\n' >&2
+    return 1
   fi
 
   if [[ "$use_punct" -eq 1 ]]; then
@@ -31,9 +39,9 @@ Options:
     charset='[:alnum:]'
   fi
 
-  if (( $+commands[pbcopy] )); then
-    LC_ALL=C tr -dc "$charset" < /dev/urandom | head -c "$length" | pbcopy
+  if (($+commands[pbcopy])); then
+    LC_ALL=C tr -dc "$charset" </dev/urandom | head -c "$length" | pbcopy
   else
-    LC_ALL=C tr -dc "$charset" < /dev/urandom | head -c "$length"
+    LC_ALL=C tr -dc "$charset" </dev/urandom | head -c "$length"
   fi
 }
