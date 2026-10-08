@@ -1,25 +1,30 @@
 #!/usr/bin/env bash
+
+# What goes where. Sources are relative to the repo.
 #
-# Every tracked top-level entry is linked into $HOME by convention:
-#   file  foo  ->  ~/.foo
-#   dir   foo  ->  ~/.foo, mirrored file by file under real directories, so an
-#                  app writing its own state into ~/.foo doesn't write into the repo
-# A top-level name the manifest mentions is left to the manifest instead.
-#
-#   skip   <name>                    not a dotfile
-#   link   <source> <dest>           symlink as-is (dest is under $HOME)
-#   mirror <source> <dest>           symlink each file, under real directories
-#   darwin <verb> ...                only on macOS
+#   link   <source> <dest>    symlink as-is
+#   mirror <source> <dest>    symlink each file, under real directories, for
+#                             apps that also write their own state into <dest>
+#   clean  <dir> [depth]      remove broken links into this repo (default depth 1)
+#   macos  <verb> ...         only on macOS
 manifest() {
-  skip   install
-  skip   LICENSE
-  skip   README.md
-  skip   linux
-  skip   macos
-  skip   private
-  link   bin  .bin
-  link   zsh  .zsh
-  darwin link macos/sublime-prefs.json "Library/Application Support/Sublime Text/Packages/User/Preferences.sublime-settings"
+  clean  ~
+  clean  ~/bin
+  link   bin           ~/.bin
+  link   zsh           ~/.zsh
+  link   curlrc        ~/.curlrc
+  link   gitattributes ~/.gitattributes
+  link   gitconfig     ~/.gitconfig
+  link   gitignore     ~/.gitignore
+  link   hushlogin     ~/.hushlogin
+  link   nanorc        ~/.nanorc
+  link   vimrc         ~/.vimrc
+  link   zprofile      ~/.zprofile
+  link   zshrc         ~/.zshrc
+  mirror claude        ~/.claude
+  mirror config        ~/.config
+  mirror ssh           ~/.ssh
+  macos  link macos/sublime-prefs.json ~/"Library/Application Support/Sublime Text/Packages/User/Preferences.sublime-settings"
 }
 
 # ---------------------------------------------------------------------------
@@ -35,62 +40,43 @@ FORCE=false
 MODE=""
 
 case "$(uname -s)" in
-  Darwin) OS=darwin;  PKGDIR=macos ;;
+  Darwin) OS=macos;   PKGDIR=macos ;;
   Linux)  OS=linux;   PKGDIR=linux ;;
   *)      OS=unknown; PKGDIR="" ;;
 esac
 
-# Everything to link: the convention for whatever the manifest doesn't
-# mention, then the manifest itself.
-everything() {
-  local claimed base mode=$MODE
-  MODE=claim; claimed=" $(manifest | tr '\n' ' ') "; MODE=$mode
-  while read -r base; do
-    [[ $claimed == *" $base "* ]] && continue
-    if [[ -d $REPO/$base ]]; then
-      mirror "$base" ".$base"
-    else
-      link "$base" ".$base"
-    fi
-  done < <(top_level)
-  manifest
-}
-
 # --- manifest verbs, each doing whatever MODE currently asks for ------------
 
-skip() {
-  case $MODE in
-    claim) printf '%s\n' "$1" ;;
-  esac
-  return 0
-}
-
-# A source with a path (macos/foo) doesn't claim its top-level directory.
 link() {
   case $MODE in
-    verify) [[ -e "$REPO/$1" ]] || die "manifest lists '$1', which does not exist" ;;
-    claim)  [[ $1 == */* ]] || printf '%s\n' "$1" ;;
-    dirs)   ;;
-    *)      symlink "$REPO/$1" "$HOME/$2" ;;
+    verify)  [[ -e "$REPO/$1" ]] || die "manifest lists '$1', which does not exist" ;;
+    cleanup) ;;
+    *)       symlink "$REPO/$1" "$2" ;;
   esac
 }
 
 mirror() {
   local file
   case $MODE in
-    verify) [[ -d "$REPO/$1" ]] || die "manifest lists '$1', which does not exist" ;;
-    claim)  [[ $1 == */* ]] || printf '%s\n' "$1" ;;
-    dirs)   printf '%s\n' "$HOME/$2" ;;
-    *)      while read -r file; do
-              symlink "$file" "$HOME/$2/${file#"$REPO/$1/"}"
-            done < <(find "$REPO/$1" -type f | sort) ;;
+    verify)  [[ -d "$REPO/$1" ]] || die "manifest lists '$1', which does not exist" ;;
+    cleanup) remove_broken_links "$2" 5 ;;
+    *)       while read -r file; do
+               symlink "$file" "$2/${file#"$REPO/$1/"}"
+             done < <(find "$REPO/$1" -type f | sort) ;;
   esac
 }
 
-darwin() {
+clean() {
   case $MODE in
-    verify|claim) "$@" ;;
-    *)            if [[ $OS == darwin ]]; then "$@"; fi ;;
+    cleanup) remove_broken_links "$1" "${2:-1}" ;;
+  esac
+  return 0
+}
+
+macos() {
+  case $MODE in
+    verify) "$@" ;;
+    *)      if [[ $OS == macos ]]; then "$@"; fi ;;
   esac
 }
 
@@ -120,15 +106,6 @@ run() {
   if [[ $DRY_RUN == true ]]; then printf '  [dry-run] %s\n' "$*"; else "$@"; fi
 }
 
-# Tracked top-level entries, so scratch files in the repo root are ignored.
-top_level() {
-  if git -C "$REPO" rev-parse --git-dir >/dev/null 2>&1; then
-    git -C "$REPO" ls-files | sed 's|/.*||'
-  else
-    ls "$REPO"
-  fi | sed '/^\./d' | sort -u
-}
-
 # Only links this repo created, so a broken link left by anything else is
 # left alone.
 remove_broken_links() {
@@ -143,7 +120,7 @@ remove_broken_links() {
 
 # --- commands --------------------------------------------------------------
 
-# Manifest entries that point at nothing are stale, so fail rather than skip them.
+# Entries that point at nothing are stale, so fail rather than skip them.
 cmd_check() {
   MODE=verify; manifest
 }
@@ -162,21 +139,17 @@ cmd_submodules() {
 cmd_link() {
   cmd_check
   info "🔗 Linking dotfiles"
-  MODE=install; everything
+  MODE=install; manifest
 }
 
 cmd_clean() {
   info "🗑️  Removing dotfiles symlinks"
-  MODE=remove; everything
+  MODE=remove; manifest
 }
 
 cmd_cleanup() {
-  local dir
   info "🧹 Cleaning broken symbolic links"
-  remove_broken_links "$HOME" 1
-  remove_broken_links "$HOME/bin" 1
-  MODE=dirs
-  while read -r dir; do remove_broken_links "$dir" 5; done < <(everything)
+  MODE=cleanup; manifest
 }
 
 cmd_starship() {
