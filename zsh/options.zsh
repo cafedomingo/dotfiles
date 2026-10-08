@@ -4,10 +4,10 @@ HISTSIZE=500000
 SAVEHIST=100000
 HISTFILE=${ZDOTDIR:-$HOME}/.zsh_history # macOS /etc/zshrc sets this, debian does not
 setopt extended_history                 # add timestamps to history
-setopt hist_ignore_all_dups
-setopt hist_ignore_space  # ignore commands starting with space
-setopt hist_reduce_blanks # remove unnecessary blanks
-setopt share_history      # share history between sessions (implies inc_append_history)
+setopt hist_ignore_all_dups             # remove older duplicates of a new command
+setopt hist_ignore_space                # ignore commands starting with space
+setopt hist_reduce_blanks               # remove unnecessary blanks
+setopt share_history                    # share history between sessions (implies inc_append_history)
 
 # directory navigation
 DIRSTACKSIZE=16
