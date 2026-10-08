@@ -2,6 +2,6 @@
 [[ -s ~/.env.local ]] && source ~/.env.local
 
 # set HOMEBREW_PREFIX and update PATH/MANPATH/INFOPATH/fpath
-if command -v brew &>/dev/null; then
+if (( $+commands[brew] )); then
   eval "$(brew shellenv)"
 fi

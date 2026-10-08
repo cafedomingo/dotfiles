@@ -11,12 +11,12 @@ unset _cmd
 als() {
   local file="$1"
 
-  if [ -z "$file" ]; then
+  if [[ -z "$file" ]]; then
     echo "Usage: als <file>"
     return 1
   fi
 
-  if [ ! -f "$file" ]; then
+  if [[ ! -f "$file" ]]; then
     echo "Error: File '$file' not found" >&2
     return 1
   fi
@@ -48,12 +48,12 @@ extract() {
 Usage: extract <file>
 Extract various archive formats including zip, tar, 7z, rar, etc."
 
-  if [ -z "$1" ]; then
+  if [[ -z "$1" ]]; then
     echo "$usage"
     return 1
   fi
 
-  if [ ! -f "$1" ]; then
+  if [[ ! -f "$1" ]]; then
     echo "'$1' is not a valid file" >&2
     return 1
   fi
@@ -95,24 +95,24 @@ _compress_all() {
   esac
 
   local use_fast=false
-  [ "$1" = "-f" ] && use_fast=true && shift
+  [[ "$1" == "-f" ]] && use_fast=true && shift
 
   local has_pigz=false
   command -v pigz >/dev/null 2>&1 && has_pigz=true
 
   local count=0 file
   for file in ./*; do
-    [ -e "$file" ] || continue
+    [[ -e "$file" ]] || continue
     case "$file" in
       *.7z|*.bz2|*.gz|*.lz|*.rar|*.tar|*.tbz2|*.tgz|*.tlz|*.txz|*.xz|*.zst|*.Z|*.zip)
         echo "Skipping already compressed: $(basename "$file")"
         ;;
       *)
         echo "Compressing $(basename "$file")..."
-        if [ "$use_fast" = true ]; then
+        if [[ "$use_fast" == true ]]; then
           case "$format" in
             7z)      command "$_7z" a -t7z -mmt "$(basename "$file").$format" "$file" ;;
-            tar.gz)  if [ "$has_pigz" = true ]; then
+            tar.gz)  if [[ "$has_pigz" == true ]]; then
                        tar -cf - "$file" | command pigz > "$(basename "$file").$format"
                      else
                        tar -cf - "$file" | command gzip -6 > "$(basename "$file").$format"
@@ -129,7 +129,7 @@ _compress_all() {
             *)     "${base_name}-max" "$(basename "$file").$format" "$file" ;;
           esac
         fi
-        [ $? -eq 0 ] && ((count++))
+        [[ $? -eq 0 ]] && ((count++))
         ;;
     esac
   done
@@ -138,32 +138,32 @@ _compress_all() {
 
 # fast compression with multi-threading by default
 # overrides that change stock flags are interactive-only so scripts and tools are unaffected
-if [ -n "$_7z" ]; then
+if [[ -n "$_7z" ]]; then
   [[ -o interactive ]] && 7z() { command "$_7z" -mmt -mx=6 -md=16m -ms=on "$@"; }
   [[ -o interactive ]] && 7za() { 7z "$@"; }
-  function 7z-max() { command "$_7z" a -t7z -mx=9 -mfb=64 -md=32m -ms=on -mmt "$@"; }
-  function 7z-all() { _compress_all "7z" "$@"; }
+  7z-max() { command "$_7z" a -t7z -mx=9 -mfb=64 -md=32m -ms=on -mmt "$@"; }
+  7z-all() { _compress_all "7z" "$@"; }
 fi
 
 if command -v pigz >/dev/null 2>&1; then
   [[ -o interactive ]] && alias pigz='pigz -R -6'
   alias gz='pigz -R -6'
-  function gz-max() { setopt local_options pipe_fail; tar -cf - "$1" | command pigz -9 -R > "$1.tar.gz"; }
-  function gz-all() { _compress_all "tar.gz" "$@"; }
+  gz-max() { setopt local_options pipe_fail; tar -cf - "$1" | command pigz -9 -R > "$1.tar.gz"; }
+  gz-all() { _compress_all "tar.gz" "$@"; }
 elif command -v gzip >/dev/null 2>&1; then
   alias gz='gzip -6'
-  function gz-max() { setopt local_options pipe_fail; tar -cf - "$1" | command gzip -9 > "$1.tar.gz"; }
-  function gz-all() { _compress_all "tar.gz" "$@"; }
+  gz-max() { setopt local_options pipe_fail; tar -cf - "$1" | command gzip -9 > "$1.tar.gz"; }
+  gz-all() { _compress_all "tar.gz" "$@"; }
 fi
 
 if command -v xz >/dev/null 2>&1; then
   [[ -o interactive ]] && alias xz='xz -T0 -6'
-  function xz-max() { setopt local_options pipe_fail; tar -cf - "$1" | command xz -9 -e -T0 > "$1.tar.xz"; }
-  function xz-all() { _compress_all "tar.xz" "$@"; }
+  xz-max() { setopt local_options pipe_fail; tar -cf - "$1" | command xz -9 -e -T0 > "$1.tar.xz"; }
+  xz-all() { _compress_all "tar.xz" "$@"; }
 fi
 
 if command -v zip >/dev/null 2>&1; then
   [[ -o interactive ]] && alias zip='zip -6 -r'
-  function zip-max() { command zip -9 -r "$@"; }
-  function zip-all() { _compress_all "zip" "$@"; }
+  zip-max() { command zip -9 -r "$@"; }
+  zip-all() { _compress_all "zip" "$@"; }
 fi

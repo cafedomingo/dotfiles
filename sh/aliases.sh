@@ -1,5 +1,5 @@
 # ls
-if ls --color &> /dev/null; then # GNU
+if ls --color >/dev/null 2>&1; then # GNU
   alias ls='ls --color=auto -Fh'
 else # macOS
   alias ls='ls -GFh'
@@ -35,7 +35,6 @@ alias mkdir="mkdir -p"
 
 # history
 alias h='history'
-alias hgrep='fc -El 0 | grep'
 
 # diff
 #alias diff='diff --color=auto'
@@ -85,27 +84,27 @@ if command -v fzf >/dev/null 2>&1; then
   fv() {
     local file
     file=$(fzf --preview "bat --color=always --style=header,grid --line-range :300 {}")
-    [ -n "$file" ] && ${EDITOR} "$file"
+    [[ -n "$file" ]] && ${EDITOR} "$file"
   }
   fgl() {
     local hash
     hash=$(git log --oneline --color=always | fzf --ansi --preview "git show --color=always {1}" | cut -d" " -f1)
-    [ -n "$hash" ] && git show "$hash"
+    [[ -n "$hash" ]] && git show "$hash"
   }
   fgb() {
     local branch
     branch=$(git branch -a | grep -v HEAD | sed "s/.* //" | sed "s#remotes/[^/]*/##" | sort -u | fzf)
-    [ -n "$branch" ] && git checkout "$branch"
+    [[ -n "$branch" ]] && git checkout "$branch"
   }
   fkill() {
     local pid
     pid=$(ps aux | fzf --header-lines=1 | awk '{print $2}')
-    [ -n "$pid" ] && kill "$pid"
+    [[ -n "$pid" ]] && kill "$pid"
   }
   frg() {
     local file
     file=$(rg --line-number --no-heading --color=always --smart-case . | fzf --ansi --delimiter : --preview "bat --color=always --highlight-line {2} {1}" | cut -d: -f1)
-    [ -n "$file" ] && ${EDITOR} "$file"
+    [[ -n "$file" ]] && ${EDITOR} "$file"
   }
 fi
 
@@ -126,7 +125,7 @@ alias sudo='sudo '
 alias rand='od -An -N2 -i /dev/urandom | xargs'
 
 # macOS
-if [[ "$(uname -s)" == "Darwin" ]]; then
+if [[ $OSTYPE == darwin* ]]; then
   # brew
   if command -v brew >/dev/null 2>&1; then
     alias bup='brew upgrade --yes && brew cleanup -s'
@@ -151,7 +150,7 @@ if [[ "$(uname -s)" == "Darwin" ]]; then
   alias xcinstall='xcode-select --install'
 
   # quick look
-  ql() { qlmanage -p "$@" &>/dev/null; }
+  ql() { qlmanage -p "$@" >/dev/null 2>&1; }
 
   # volume
   alias mute='osascript -e "set volume output muted true"'
