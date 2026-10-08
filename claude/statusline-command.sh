@@ -1,6 +1,8 @@
 #!/bin/sh
-# shellcheck disable=SC2154 # fields are assigned by the jq eval below
 input=$(cat)
+
+# defaults in case jq fails; the eval below overwrites them
+cwd='' model='' remaining='' effort='' cost='' added=0 removed=0 quota='' transcript=''
 
 # single jq pass: spawning one process per field adds up on every render
 eval "$(printf '%s' "$input" | jq -r '@sh "
