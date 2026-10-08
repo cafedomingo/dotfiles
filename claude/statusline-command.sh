@@ -47,7 +47,7 @@ iso_epoch() {
 
 # user@host
 user=$(whoami)
-host=$(hostname -s)
+host=$(scutil --get LocalHostName 2>/dev/null || hostname -s)
 
 # directory: truncate long paths with ellipsis, similar to starship truncation_length=10
 dir=$(printf '%s' "$cwd" | sed "s|$HOME|~|")
