@@ -1,0 +1,271 @@
+#!/usr/bin/env bash
+
+# What goes where. Sources are relative to the repo.
+#
+#   link   <source> <dest>    symlink as-is
+#   mirror <source> <dest>    symlink each file, under real directories, for
+#                             apps that also write their own state into <dest>
+#   prune  <dir> [depth]      remove broken links into this repo (default depth 1)
+#   macos  <verb> ...         only on macOS
+#   linux  <verb> ...         only on Linux
+#
+# link refuses to replace a real file or directory, so move it aside first.
+manifest() {
+  prune  ~
+  prune  ~/bin
+  link   bin           ~/.bin
+  link   zsh           ~/.zsh
+  link   curlrc        ~/.curlrc
+  link   gitattributes ~/.gitattributes
+  link   gitconfig     ~/.gitconfig
+  link   gitignore     ~/.gitignore
+  link   hushlogin     ~/.hushlogin
+  link   nanorc        ~/.nanorc
+  link   vimrc         ~/.vimrc
+  link   zprofile      ~/.zprofile
+  link   zshrc         ~/.zshrc
+  mirror claude        ~/.claude
+  mirror config        ~/.config
+  mirror ssh           ~/.ssh
+  macos  link macos/sublime-prefs.json ~/"Library/Application Support/Sublime Text/Packages/User/Preferences.sublime-settings"
+}
+
+# ---------------------------------------------------------------------------
+
+set -euo pipefail
+
+REPO="$(cd "${DOTFILES_DIR:-$(dirname "${BASH_SOURCE[0]}")}" && pwd -P)"
+PRIVATE_REPO="cafedomingo/dotfiles-private"
+PRIVATE_DIR="$REPO/private"
+
+FORCE=false
+MODE=""
+
+case "$(uname -s)" in
+  Darwin) OS=macos ;;
+  Linux)  OS=linux ;;
+  *)      OS=unknown ;;
+esac
+
+# --- manifest verbs, each doing whatever MODE currently asks for ------------
+
+link() {
+  case $MODE in
+    verify)  [[ -e "$REPO/$1" ]] || die "manifest lists '$1', which does not exist" ;;
+    cleanup) ;;
+    *)       symlink "$REPO/$1" "$2" ;;
+  esac
+}
+
+mirror() {
+  local file
+  case $MODE in
+    verify)  [[ -d "$REPO/$1" ]] || die "manifest lists '$1', which does not exist" ;;
+    cleanup) remove_broken_links "$2" 5 ;;
+    *)       while IFS= read -r -d '' file; do
+               symlink "$REPO/$file" "$2/${file#"$1/"}"
+             done < <(repo_files "$1") ;;
+  esac
+}
+
+prune() {
+  case $MODE in
+    cleanup) remove_broken_links "$1" "${2:-1}" ;;
+  esac
+  return 0
+}
+
+# Sources are verified on every OS, so a typo shows up wherever check runs.
+macos() {
+  case $MODE in
+    verify) "$@" ;;
+    *)      if [[ $OS == macos ]]; then "$@"; fi ;;
+  esac
+}
+
+linux() {
+  case $MODE in
+    verify) "$@" ;;
+    *)      if [[ $OS == linux ]]; then "$@"; fi ;;
+  esac
+}
+
+# Checked for every entry before anything is linked, so a conflict doesn't
+# leave a half-linked setup. Replacing a real file would lose it, and ln would
+# quietly create "$dest/$(basename "$source")" inside a real directory.
+conflict() {
+  if [[ -e $1 && ! -L $1 ]]; then
+    die "$1 is a real $([[ -d $1 ]] && echo directory || echo file), move it aside first"
+  fi
+  return 0
+}
+
+symlink() {
+  case $MODE in
+    conflicts) conflict "$2" ;;
+    install)
+      mkdir -p "$(dirname "$2")"
+      ln -sfnv "$1" "$2"
+      ;;
+    remove)
+      [[ "$(readlink "$2" 2>/dev/null)" == "$REPO"/* ]] && rm -fv "$2"
+      ;;
+  esac
+  return 0
+}
+
+# --- helpers ---------------------------------------------------------------
+
+info()    { printf '\033[1;94m%s\033[0m\n' "$1"; }
+success() { printf '\033[1;92m%s\033[0m\n' "$1"; }
+die()     { printf '\033[1;91m%s\033[0m\n' "$1" >&2; exit 1; }
+
+# Tracked files only (NUL-separated, relative to the repo), so stray files
+# like .DS_Store or untracked drafts aren't linked.
+repo_files() {
+  if git -C "$REPO" rev-parse --git-dir >/dev/null 2>&1; then
+    git -C "$REPO" ls-files -z -- "$1"
+  else
+    (cd "$REPO" && find "$1" -type f -print0)
+  fi
+}
+
+# Only links this repo created, so a broken link left by anything else is
+# left alone.
+remove_broken_links() {
+  local link
+  [[ -d $1 ]] || return 0
+  while IFS= read -r link; do
+    [[ -e $link ]] && continue
+    [[ "$(readlink "$link")" == "$REPO"/* ]] && rm -fv "$link"
+  done < <(find "$1" -maxdepth "$2" -type l 2>/dev/null)
+  return 0
+}
+
+# --- commands --------------------------------------------------------------
+
+# Entries that point at nothing are stale, so fail rather than skip them.
+cmd_check() {
+  MODE=verify; manifest
+}
+
+# Only uninitialized ones ('-' in status), so uncommitted update-submodules
+# bumps survive.
+cmd_submodules() {
+  local paths
+  info "📦 Checking out missing submodules"
+  paths=$(git -C "$REPO" submodule status | awk '/^-/ {print $2}')
+  # word splitting is intended: submodule paths have no spaces
+  # shellcheck disable=SC2086
+  [[ -z $paths ]] || git -C "$REPO" submodule update --init -- $paths
+}
+
+cmd_link() {
+  cmd_check
+  MODE=conflicts; manifest
+  info "🔗 Linking dotfiles"
+  MODE=install; manifest
+}
+
+cmd_clean() {
+  info "🗑️  Removing dotfiles symlinks"
+  MODE=remove; manifest
+}
+
+cmd_cleanup() {
+  info "🧹 Cleaning broken symbolic links"
+  MODE=cleanup; manifest
+}
+
+cmd_starship() {
+  info "🚀 Installing starship prompt"
+  mkdir -p "$HOME/bin"
+  curl -fsSL https://starship.rs/install.sh \
+    | sh -s -- --bin-dir="$HOME/bin" --yes 2>&1 \
+    | sed '/Please follow the steps/,$d'
+}
+
+cmd_private() {
+  local latest tmp
+  command -v gh >/dev/null || { info "Skipping private assets (gh not installed)"; return 0; }
+  gh auth status >/dev/null 2>&1 || { info "Skipping private assets (gh not authenticated)"; return 0; }
+
+  latest="$(gh release view --repo "$PRIVATE_REPO" --json tagName -q .tagName 2>/dev/null || true)"
+  [[ -n $latest ]] || { info "Skipping private assets (no releases found)"; return 0; }
+  if [[ $FORCE != true && "$(cat "$PRIVATE_DIR/.version" 2>/dev/null)" == "$latest" ]]; then
+    info "Private assets up to date ($latest)"; return 0
+  fi
+
+  info "📦 Installing private assets $latest"
+  tmp="$(mktemp -d)"
+  chmod 755 "$tmp" # mktemp -d is 0700, and this becomes private/
+  gh release download "$latest" --repo "$PRIVATE_REPO" \
+    --pattern 'dotfiles-private-*.tar.gz' -O - \
+    | tar xz -C "$tmp" --strip-components=1
+  rm -rf "$PRIVATE_DIR"
+  mv "$tmp" "$PRIVATE_DIR"
+  "$PRIVATE_DIR/install.sh"
+  printf '%s\n' "$latest" > "$PRIVATE_DIR/.version"
+}
+
+cmd_bootstrap() {
+  local script="$REPO/$OS/install.sh"
+  [[ $OS != unknown && -x $script ]] || die "no usable bootstrap script for $(uname -s)"
+  info "🧰 Bootstrapping packages for $OS"
+  "$script"
+}
+
+cmd_update_submodules() {
+  info "📦 Updating submodules to upstream HEAD"
+  git -C "$REPO" submodule update --remote
+}
+
+cmd_help() {
+  cat <<'EOF'
+Usage: ./install [-f|--force] [command]
+
+  install            Clean up, check out submodules, link, install starship
+                     and private assets (default)
+  submodules         Check out missing submodules at their pinned commits
+  link               Create symbolic links
+  clean              Remove symlinks this script created
+  cleanup            Remove broken symbolic links
+  check              Verify the manifest points at things that exist
+  starship           Install the starship prompt
+  private            Install private assets (themes, fonts)
+  bootstrap          Install system packages (Homebrew on macOS, apt on Linux)
+  update-submodules  Update submodules to upstream HEAD
+  help               Show this help
+EOF
+}
+
+# --- main ------------------------------------------------------------------
+
+cmd=""
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    -f|--force)   FORCE=true ;;
+    -h|--help)    cmd_help; exit 0 ;;
+    -*)           die "unknown option: $1" ;;
+    *)            [[ -z $cmd ]] || die "only one command at a time, got '$cmd' and '$1'"
+                  cmd=$1 ;;
+  esac
+  shift
+done
+cmd="${cmd:-install}"
+
+case $cmd in
+  install)           cmd_cleanup; cmd_submodules; cmd_link; cmd_starship; cmd_private
+                     success "⚡️ Installation complete" ;;
+  submodules)        cmd_submodules ;;
+  link)              cmd_link ;;
+  clean)             cmd_clean ;;
+  cleanup)           cmd_cleanup ;;
+  check)             cmd_check ;;
+  starship)          cmd_starship ;;
+  private)           cmd_private ;;
+  bootstrap)         cmd_bootstrap ;;
+  update-submodules) cmd_update_submodules ;;
+  help)              cmd_help ;;
+  *)                 die "unknown command: $cmd" ;;
+esac
