@@ -115,10 +115,10 @@ if (($+commands[bat])); then
 fi
 
 # claude
-alias cc='claude'
 if [[ -f ~/.claude/settings.work.json ]]; then
   alias claude='claude --settings ~/.claude/settings.work.json'
 fi
+alias cc='claude'
 
 # allow sudo to use aliases
 alias sudo='sudo '
