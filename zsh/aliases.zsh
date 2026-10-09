@@ -115,8 +115,8 @@ if (($+commands[bat])); then
 fi
 
 # claude
-if [[ -f ~/.claude/settings.local.json ]]; then
-  alias claude='claude --settings ~/.claude/settings.local.json'
+if [[ -f ~/.claude/settings.machine.json ]]; then
+  alias claude='claude --settings ~/.claude/settings.machine.json'
 fi
 alias cc='claude'
 
