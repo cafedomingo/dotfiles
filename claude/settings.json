@@ -73,7 +73,12 @@
     "swift-lsp@claude-plugins-official": true
   },
   "outputStyle": "Concise",
+  "modelSettings": {
+    "claude-opus-5-5": {
+      "effortLevel": "medium"
+    }
+  },
   "tui": "fullscreen",
-  "autoDreamEnabled": true,
+  "skipWorkflowUsageWarning": true,
   "agentPushNotifEnabled": true
 }
