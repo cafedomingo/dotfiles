@@ -47,12 +47,8 @@
       "Bash(mkfs.*)",
       "Bash(dd if=*)"
     ],
-    "ask": [
-      "Bash(git push *)"
-    ],
     "defaultMode": "auto"
   },
-  "model": "opus",
   "statusLine": {
     "type": "command",
     "command": "sh ~/.claude/statusline-command.sh",
