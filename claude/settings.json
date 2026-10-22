@@ -76,5 +76,7 @@
   },
   "tui": "fullscreen",
   "skipWorkflowUsageWarning": true,
-  "agentPushNotifEnabled": true
+  "theme": "dark",
+  "agentPushNotifEnabled": true,
+  "model": "opus"
 }
