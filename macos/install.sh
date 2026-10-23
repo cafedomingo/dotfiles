@@ -30,6 +30,9 @@ echo "Installing packages from Brewfile..."
 "$BREW_CMD" bundle --file="$SCRIPT_DIR/Brewfile"
 "$BREW_CMD" cleanup
 
+echo "Installing gh extensions..."
+"$(dirname "$BREW_CMD")/gh" extension install github/gh-stack
+
 # preferences keep their own --dry-run, since defaults writes are hard to undo
 "$SCRIPT_DIR/prefs.sh"
 
