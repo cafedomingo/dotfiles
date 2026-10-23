@@ -30,6 +30,11 @@ echo "Installing packages from Brewfile..."
 "$BREW_CMD" bundle --file="$SCRIPT_DIR/Brewfile"
 "$BREW_CMD" cleanup
 
+# gh extensions aren't Homebrew packages; rerunning install is a no-op
+echo "Installing gh extensions..."
+"$(dirname "$BREW_CMD")/gh" extension install github/gh-stack ||
+  echo "warning: couldn't install gh-stack; run 'gh auth login' and rerun" >&2
+
 # preferences keep their own --dry-run, since defaults writes are hard to undo
 "$SCRIPT_DIR/prefs.sh"
 
