@@ -33,6 +33,7 @@ fi
 paths=(
   /opt/homebrew/bin /opt/homebrew/sbin # homebrew (arm64)
   /usr/local/go/bin                    # go
+  /boot/dietpi{,/func,/misc}           # dietpi-* commands (DietPi only aliases them for bash)
   "$HOME/.local/bin"                   # user-specific executable files
   "$HOME/.bin" "$HOME/bin"             # personal executables
 )
