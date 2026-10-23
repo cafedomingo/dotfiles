@@ -32,7 +32,7 @@ echo "Installing packages from Brewfile..."
 
 echo "Installing gh extensions..."
 "$(dirname "$BREW_CMD")/gh" extension install github/gh-stack ||
-  echo "warning: couldn't install gh-stack; run 'gh auth login' and rerun" >&2
+  echo "warning: couldn't install gh-stack; rerun to retry" >&2
 
 # preferences keep their own --dry-run, since defaults writes are hard to undo
 "$SCRIPT_DIR/prefs.sh"
