@@ -31,8 +31,7 @@ echo "Installing packages from Brewfile..."
 "$BREW_CMD" cleanup
 
 echo "Installing gh extensions..."
-"$(dirname "$BREW_CMD")/gh" extension install github/gh-stack ||
-  echo "warning: couldn't install gh-stack; rerun to retry" >&2
+"$(dirname "$BREW_CMD")/gh" extension install github/gh-stack
 
 # preferences keep their own --dry-run, since defaults writes are hard to undo
 "$SCRIPT_DIR/prefs.sh"
