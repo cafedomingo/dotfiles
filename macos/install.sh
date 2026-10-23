@@ -30,7 +30,6 @@ echo "Installing packages from Brewfile..."
 "$BREW_CMD" bundle --file="$SCRIPT_DIR/Brewfile"
 "$BREW_CMD" cleanup
 
-# install gh extensions
 echo "Installing gh extensions..."
 "$(dirname "$BREW_CMD")/gh" extension install github/gh-stack ||
   echo "warning: couldn't install gh-stack; run 'gh auth login' and rerun" >&2
