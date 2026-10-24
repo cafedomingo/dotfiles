@@ -35,3 +35,4 @@ Icon[!a-zA-Z0-9]
 
 # claude
 **/.claude/settings.local.json
+**/.claude/worktrees/
